@@ -86,7 +86,7 @@
 <div class="modal-overlay" id="breakSummaryModal"><div class="modal-card" style="border:2px solid #ff9100"><div style="font-size:36px">⏱️</div><div style="font-size:18px;color:#004d66;font-weight:bold">Break Completed</div><div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:8px;padding:10px"><div style="font-size:11px;color:#166534;font-weight:bold">TOTAL DURATION</div><div id="modalDurationText" style="font-size:22px;font-weight:900;color:#15803d">0 Hours & 0 Mins</div></div><div style="background:#f8fafc;border-radius:6px;padding:8px;font-size:12px;text-align:left;color:#334155"><div><strong>👤 Inspector:</strong> <span id="modalSummaryUser">--</span></div><div><strong>🚉 Station:</strong> <span id="modalSummaryStation">--</span></div><div><strong>⏱️ Time:</strong> <span id="modalSummaryTime">-- ➔ --</span></div></div><button class="btn btn-download-share" style="width:100%;padding:10px 0" type="button" onclick="closeBreakSummaryModal()">OK / Done</button></div></div>
 
 <script>
-const APP_VERSION="1.2.1";
+const APP_VERSION="1.2.2";
 const CLOUD_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxZCFVNqqDgpJpfLLyGnYH5et7bYU_ZRqyIsNp3vvbtYwwDpdhrTVTlrHEr1ZppaIMh7A/exec";
 const SUPERVISOR_PIN="1234";
 const INSPECTORS=["Fathy Helmy Fattouh Hassan","Karim Gamal Salah Al-Din","Karim Moustafa Mostafa","Khaled Mostafa Abdel Moneim","Mohamed El-Sayed Ibrahim","Shorouk Tarek Taha Yaseen","Mahmoud Taher Mahmoud Zaki","Ehab Abdel Kareem","Nancy Hesham Hassan Abdelrehim","Nourhan Karam Hanafy Mohamdy","Mohamed Emad Imam Mahmoud","Ehab Shabaan Fahmy Elsayed","Yasmine Mohamed Alsayed Abdelsattar Akila"];
@@ -130,9 +130,50 @@ function closeSupervisorPinModal(){document.getElementById("pinModal").style.dis
 document.getElementById("supervisorPinInput").addEventListener("input",function(){if(this.value===SUPERVISOR_PIN){closeSupervisorPinModal();navigateTo("screenSupervisor")}});
 function normalizeBreak(b){return {breakId:b.breakId||b.breakID||b[0]||"",status:b.status||b[1]||"",date:b.date||b[2]||"",user:b.user||b[3]||"",station:b.station||b[4]||"",startTime:b.startTime||b[5]||"",startTimestamp:b.startTimestamp||b[6]||"",endTime:b.endTime||b[7]||"",duration:b.duration||b[8]||"",gps:b.gps||b[9]||"",mapsUrl:b.mapsUrl||b[10]||"",appVersion:b.appVersion||b[11]||""}}
 function isBreakActive(b){return String(b.status||"").toUpperCase()==="ACTIVE"||(!b.endTime&&String(b.status||"").toUpperCase()!=="COMPLETED")}
-function getLiveBreakDuration(ts){const start=Number(ts);if(!Number.isFinite(start)||start<=0)return "In progress";const sec=Math.floor(Math.max(0,Date.now()-start)/1000),h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
-function startSupervisorLiveTimers(){clearInterval(supervisorLiveTimerInterval);const tick=()=>document.querySelectorAll("[data-live-start]").forEach(el=>el.innerText="Live Duration: "+getLiveBreakDuration(el.dataset.liveStart));tick();supervisorLiveTimerInterval=setInterval(tick,1000)}
-function renderSupervisorBreaks(){const container=document.getElementById("supervisorLogContainer");document.getElementById("supervisorTotalBadge").innerText="Total Breaks: "+cloudBreaksData.length;if(!cloudBreaksData.length){container.innerHTML="<div style='text-align:center;padding:20px;color:#fff'>No breaks recorded yet.</div>";return}container.innerHTML=cloudBreaksData.map(b=>{const active=isBreakActive(b),status=active?`<div class="break-live-status"><span class="break-live-lamp"></span><span>Still On Break</span></div>`:`<div class="break-completed-status"><span>✅</span><span>Break Completed</span></div>`,time=active?`<div style="color:#333"><strong>⏱️ Started:</strong> ${escapeHtml(b.startTime||"--")}</div><div class="live-break-duration" data-live-start="${escapeHtml(b.startTimestamp)}">Live Duration: ${getLiveBreakDuration(b.startTimestamp)}</div>`:`<div style="color:#333"><strong>⏱️ Time:</strong> ${escapeHtml(b.startTime||"--")} ➔ ${escapeHtml(b.endTime||"--")} (${escapeHtml(b.duration||"--")} mins)</div>`,map=b.mapsUrl?`<a href="${escapeHtml(b.mapsUrl)}" target="_blank" rel="noopener noreferrer" class="map-link-btn">🗺️ View on Google Maps</a>`:"";return `<div class="supervisor-log-item ${active?"active-break-card":""}">${status}<div class="user-title">👤 ${escapeHtml(b.user||"Unknown Inspector")} &bull; <span style="font-size:13px;font-weight:600;color:#555">${escapeHtml(b.station||"--")}</span></div><div style="margin-top:2px;color:#333"><strong>📅 Date:</strong> ${escapeHtml(b.date||"--")}</div>${time}${map}</div>`}).join("");startSupervisorLiveTimers()}
+function formatCloudDate(value){
+  if(!value)return "--";
+  const text=String(value).trim();
+  const already=text.match(/^(\d{2})-([A-Za-z]{3})-(\d{4})$/);
+  if(already)return `${already[1]}-${already[2][0].toUpperCase()+already[2].slice(1).toLowerCase()}-${already[3]}`;
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime()))return text;
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return `${String(d.getUTCDate()).padStart(2,"0")}-${months[d.getUTCMonth()]}-${d.getUTCFullYear()}`;
+}
+function formatCloudTime(value){
+  if(!value)return "--";
+  const text=String(value).trim();
+  let hours,minutes;
+  const plain=text.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?$/i);
+  if(plain){
+    hours=Number(plain[1]);minutes=Number(plain[2]);
+    if(plain[3]){const ap=plain[3].toUpperCase();if(ap==="PM"&&hours<12)hours+=12;if(ap==="AM"&&hours===12)hours=0;}
+  }else{
+    const d=new Date(value);
+    if(Number.isNaN(d.getTime()))return text;
+    hours=d.getUTCHours();minutes=d.getUTCMinutes();
+  }
+  const period=hours>=12?"PM":"AM";
+  const h12=hours%12||12;
+  return `${String(h12).padStart(2,"0")}:${String(minutes).padStart(2,"0")} ${period}`;
+}
+function getStartMilliseconds(ts,dateValue,timeValue){
+  const numeric=Number(ts);
+  if(Number.isFinite(numeric)&&numeric>100000000000)return numeric;
+  const parsed=Date.parse(ts);
+  if(Number.isFinite(parsed)&&parsed>0)return parsed;
+  const dateText=formatCloudDate(dateValue);
+  const timeText=formatCloudTime(timeValue);
+  const parts=dateText.match(/^(\d{2})-([A-Za-z]{3})-(\d{4})$/);
+  const timeParts=timeText.match(/^(\d{2}):(\d{2}) (AM|PM)$/);
+  if(!parts||!timeParts)return 0;
+  const months={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  let h=Number(timeParts[1]);if(timeParts[3]==="PM"&&h<12)h+=12;if(timeParts[3]==="AM"&&h===12)h=0;
+  return new Date(Number(parts[3]),months[parts[2]],Number(parts[1]),h,Number(timeParts[2]),0).getTime();
+}
+function getLiveBreakDuration(ts,dateValue,timeValue){const start=getStartMilliseconds(ts,dateValue,timeValue);if(!start)return "In progress";const sec=Math.floor(Math.max(0,Date.now()-start)/1000),h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
+function startSupervisorLiveTimers(){clearInterval(supervisorLiveTimerInterval);const tick=()=>document.querySelectorAll("[data-live-start]").forEach(el=>el.innerText="Live Duration: "+getLiveBreakDuration(el.dataset.liveStart,el.dataset.liveDate,el.dataset.liveTime));tick();supervisorLiveTimerInterval=setInterval(tick,1000)}
+function renderSupervisorBreaks(){const container=document.getElementById("supervisorLogContainer");document.getElementById("supervisorTotalBadge").innerText="Total Breaks: "+cloudBreaksData.length;if(!cloudBreaksData.length){container.innerHTML="<div style='text-align:center;padding:20px;color:#fff'>No breaks recorded yet.</div>";return}container.innerHTML=cloudBreaksData.map(b=>{const active=isBreakActive(b),status=active?`<div class="break-live-status"><span class="break-live-lamp"></span><span>Still On Break</span></div>`:`<div class="break-completed-status"><span>✅</span><span>Break Completed</span></div>`,time=active?`<div style="color:#333"><strong>⏱️ Started:</strong> ${escapeHtml(formatCloudTime(b.startTime))}</div><div class="live-break-duration" data-live-start="${escapeHtml(b.startTimestamp)}" data-live-date="${escapeHtml(b.date)}" data-live-time="${escapeHtml(b.startTime)}">Live Duration: ${getLiveBreakDuration(b.startTimestamp,b.date,b.startTime)}</div>`:`<div style="color:#333"><strong>⏱️ Time:</strong> ${escapeHtml(formatCloudTime(b.startTime))} ➔ ${escapeHtml(formatCloudTime(b.endTime))} (${escapeHtml(b.duration||"--")} mins)</div>`,map=b.mapsUrl?`<a href="${escapeHtml(b.mapsUrl)}" target="_blank" rel="noopener noreferrer" class="map-link-btn">🗺️ View on Google Maps</a>`:"";return `<div class="supervisor-log-item ${active?"active-break-card":""}">${status}<div class="user-title">👤 ${escapeHtml(b.user||"Unknown Inspector")} &bull; <span style="font-size:13px;font-weight:600;color:#555">${escapeHtml(b.station||"--")}</span></div><div style="margin-top:2px;color:#333"><strong>📅 Date:</strong> ${escapeHtml(formatCloudDate(b.date))}</div>${time}${map}</div>`}).join("");startSupervisorLiveTimers()}
 function loadBreaksFromCloud(){const container=document.getElementById("supervisorLogContainer");container.innerHTML="<div style='text-align:center;padding:20px;color:#ffd54f'>📡 Loading from Google Sheet...</div>";fetch(CLOUD_SCRIPT_URL,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(data=>{const rows=Array.isArray(data)?data:(Array.isArray(data.data)?data.data:[]);cloudBreaksData=rows.map(normalizeBreak).reverse();renderSupervisorBreaks()}).catch(()=>container.innerHTML="<div style='text-align:center;padding:20px;color:#ff8a80'>⚠️ Error fetching from cloud. Tap Refresh Cloud to retry.</div>")}
 function exportSupervisorBreaksExcel(){if(!cloudBreaksData.length){alert("⚠️ No records to export!");return}let csv="\uFEFFBreak ID,Status,Date,Inspector,Station,Start Time,End Time,Duration (Mins),GPS,Google Maps Link,App Version\n";cloudBreaksData.forEach(b=>csv+=`"${b.breakId}","${b.status}","${b.date}","${b.user}","${b.station}","${b.startTime}","${b.endTime}","${b.duration}","${b.gps}","${b.mapsUrl}","${b.appVersion}"\n`);downloadCsv(csv,`Breaks_Report_${formattedDate}.csv`)}
 </script>
