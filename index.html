@@ -1,181 +1,654 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#005a79">
-  <title>Quality Operations Hub</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <style>
-    :root{--bg-color:#005a79;--text-color:#fff;--btn-bg:#fff;--btn-text:#004d66;--accent-orange:#ff9100;--accent-dark-orange:#e65100}
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{background:var(--bg-color);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--text-color);display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
-    .container{width:100%;max-width:440px;min-height:100vh;padding:16px 20px;display:flex;flex-direction:column;position:relative;background:var(--bg-color);transition:background .3s ease}
-    .container.break-theme{background:linear-gradient(135deg,#0d222d 0%,#16394c 100%)}
-    .nav-back-bar{display:flex;align-items:center;justify-content:flex-start;margin-bottom:10px}
-    .btn-back{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:bold;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-    .header{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin:4px 0 14px;width:100%}
-    .header-title{font-size:22px;font-weight:800;text-align:center;letter-spacing:.5px}
-    .date-display{font-size:14px;font-weight:700;color:rgba(255,255,255,.95);background:rgba(0,0,0,.25);padding:4px 14px;border-radius:20px;letter-spacing:.5px}
-    .app-screen{display:none;width:100%;flex-direction:column;align-items:center;gap:12px}.app-screen.active-screen{display:flex}
-    .hub-cards-container{width:100%;display:flex;flex-direction:column;gap:14px;margin-top:10px}
-    .hub-card{background:#fff;color:#004d66;border-radius:14px;padding:20px 18px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.2);display:flex;align-items:center;gap:16px;transition:all .2s ease;border-left:6px solid #005a79}.hub-card-break{border-left-color:#ff9100}.hub-card-supervisor{border-left-color:#ffd54f;background:#fffdf7}.hub-card:active{transform:scale(.98)}
-    .hub-card-icon{font-size:34px;line-height:1}.hub-card-title{font-size:17px;font-weight:800}.hub-card-desc{font-size:12px;color:#555;margin-top:3px}
-    .select-field{width:100%;padding:12px 14px;font-size:15px;border:2px solid transparent;border-radius:8px;text-align:center;background:#fff;color:#004d66;font-weight:bold;cursor:pointer;outline:none}
-    .train-box-wrapper{width:100%;background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
-    .input-field{width:100%;padding:10px;font-size:24px;border:2px solid transparent;border-radius:8px;text-align:center;background:#fff;color:#004d66;letter-spacing:4px;font-weight:800;outline:none;display:block}
-    .btn{width:95%;background:var(--btn-bg);color:var(--btn-text);border:2px solid transparent;border-radius:8px;padding:13px 0;font-size:17px;font-weight:bold;cursor:pointer;box-shadow:0 3px 6px rgba(0,0,0,.15);text-align:center;display:block}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.65;cursor:not-allowed}
-    .btn.recorded{background:#e8f5e9;color:#1b5e20;border:2px solid #81c784}.btn-submit{background:#2e7d32;color:#fff}.btn-download-share{background:linear-gradient(135deg,#ff9100 0%,#e65100 100%);color:#fff;box-shadow:0 4px 12px rgba(230,81,0,.35)}.btn-start-break{background:linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%);color:#fff}.btn-end-break{background:linear-gradient(135deg,#d32f2f 0%,#b71c1c 100%);color:#fff}
-    .timer-box{background:rgba(0,0,0,.35);border:2px solid #ff9100;border-radius:12px;padding:10px;width:95%;text-align:center}.timer-val{font-size:32px;font-weight:900;color:#ffd54f;font-family:monospace;letter-spacing:2px}.counter-badge{background:rgba(0,0,0,.25);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:bold;color:#ffd54f}
-    .error-highlight{border:2px solid #ff5252!important;background:#ffebee!important;color:#c62828!important}
-    .footer{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.85);margin-top:20px;width:100%}.status-msg{font-size:12px;color:#ffd54f;font-weight:500;min-height:18px}
-    .toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%) translateY(100px);background:#1b5e20;color:#fff;padding:10px 20px;border-radius:25px;font-size:14px;font-weight:bold;opacity:0;transition:all .3s ease;z-index:1000;pointer-events:none;white-space:nowrap}.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;justify-content:center;align-items:center;padding:20px}.modal-card{background:#fff;color:#333;border-radius:12px;width:100%;max-width:320px;padding:22px 18px;display:flex;flex-direction:column;gap:12px;text-align:center}.pin-input{width:100%;padding:12px;font-size:24px;text-align:center;letter-spacing:8px;border:2px solid #005a79;border-radius:8px;font-weight:bold;outline:none}
-    .supervisor-log-item{background:#fff;color:#222;border-radius:10px;padding:12px 14px;margin-bottom:10px;text-align:left;font-size:13px;border-left:5px solid #ff9100;box-shadow:0 2px 6px rgba(0,0,0,.1);display:flex;flex-direction:column;gap:4px}.supervisor-log-item .user-title{font-size:15px;font-weight:bold;color:#005a79}.map-link-btn{display:inline-block;background:#0284c7;color:#fff;padding:5px 12px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:11px;margin-top:4px;align-self:flex-start}
-    .supervisor-log-item.active-break-card{border-left-color:#22c55e;background:linear-gradient(135deg,#fff 0%,#f0fdf4 100%);box-shadow:0 0 0 1px rgba(34,197,94,.22),0 5px 14px rgba(34,197,94,.18)}
-    .break-live-status,.break-completed-status{display:inline-flex;align-items:center;gap:7px;width:fit-content;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.4px}.break-live-status{background:#dcfce7;color:#166534;border:1px solid #86efac}.break-completed-status{color:#475569;background:#f1f5f9;border:1px solid #cbd5e1}
-    .break-live-lamp{width:11px;height:11px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.18),0 0 12px rgba(34,197,94,.9);animation:liveBreakBlink 1.1s ease-in-out infinite;flex-shrink:0}
-    @keyframes liveBreakBlink{0%,100%{opacity:1;transform:scale(1);box-shadow:0 0 0 4px rgba(34,197,94,.18),0 0 13px rgba(34,197,94,.95)}50%{opacity:.25;transform:scale(.72);box-shadow:0 0 0 1px rgba(34,197,94,.08),0 0 3px rgba(34,197,94,.25)}}
-    .live-break-duration{color:#15803d;font-weight:900}
-    @media (prefers-reduced-motion:reduce){.break-live-lamp{animation:none}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Operations Hub</title>
+    <!-- html2canvas library for screenshot generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #005a79;
+            --text-color: #ffffff;
+            --btn-bg: #ffffff;
+            --btn-text: #004d66;
+            --accent-orange: #ff9100;
+            --accent-dark-orange: #e65100;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            min-height: 100vh;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: relative;
+            background-color: var(--bg-color);
+            transition: background 0.3s ease;
+        }
+
+        .container.break-theme {
+            background: linear-gradient(135deg, #0d222d 0%, #16394c 100%);
+        }
+
+        .nav-back-bar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 4px;
+            margin-bottom: 14px;
+            width: 100%;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .date-display {
+            font-size: 14px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            background: rgba(0, 0, 0, 0.25);
+            padding: 4px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .app-screen {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .app-screen.active-screen {
+            display: flex;
+        }
+
+        .hub-cards-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .hub-card {
+            background: #ffffff;
+            color: #004d66;
+            border-radius: 14px;
+            padding: 20px 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s ease;
+            border-left: 6px solid #005a79;
+        }
+
+        .hub-card-break {
+            border-left-color: #ff9100;
+        }
+
+        .hub-card-supervisor {
+            border-left-color: #ffd54f;
+            background: #fffdf7;
+        }
+
+        .hub-card:active {
+            transform: scale(0.98);
+        }
+
+        .hub-card-icon {
+            font-size: 34px;
+            line-height: 1;
+        }
+
+        .hub-card-title {
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .hub-card-desc {
+            font-size: 12px;
+            color: #555555;
+            margin-top: 3px;
+        }
+
+        .select-field {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            text-align: center;
+            box-sizing: border-box;
+            background-color: #ffffff;
+            color: #004d66;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .train-box-wrapper {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            font-size: 24px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            text-align: center;
+            background-color: #ffffff;
+            color: #004d66;
+            letter-spacing: 4px;
+            font-weight: 800;
+            outline: none;
+            display: block;
+        }
+
+        .btn {
+            width: 95%;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 13px 0;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            display: block;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn.recorded {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            border: 2px solid #81c784;
+        }
+
+        .btn-submit {
+            background-color: #2e7d32;
+            color: #ffffff;
+        }
+
+        .btn-download-share {
+            background: linear-gradient(135deg, #ff9100 0%, #e65100 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(230, 81, 0, 0.35);
+        }
+
+        .btn-start-break {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: #ffffff;
+        }
+
+        .btn-end-break {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: #ffffff;
+        }
+
+        .timer-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 2px solid #ff9100;
+            border-radius: 12px;
+            padding: 10px;
+            width: 95%;
+            text-align: center;
+        }
+
+        .timer-val {
+            font-size: 32px;
+            font-weight: 900;
+            color: #ffd54f;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        .counter-badge {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #ffd54f;
+        }
+
+        .error-highlight {
+            border: 2px solid #ff5252 !important;
+            background-color: #ffebee !important;
+            color: #c62828 !important;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .status-msg {
+            font-size: 12px;
+            color: #ffd54f;
+            font-weight: 500;
+            min-height: 18px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: #1b5e20;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            color: #333333;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 320px;
+            padding: 22px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+        }
+
+        .pin-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 8px;
+            border: 2px solid #005a79;
+            border-radius: 8px;
+            font-weight: bold;
+            outline: none;
+        }
+
+        .supervisor-log-item {
+            background: #ffffff;
+            color: #222;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 13px;
+            border-left: 5px solid #ff9100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .supervisor-log-item .user-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #005a79;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* Pulsing Green Lamp */
+        .pulsing-lamp {
+            width: 10px;
+            height: 10px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            animation: pulseGreen 1.4s infinite;
+        }
+
+        @keyframes pulseGreen {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            70% {
+                transform: scale(1.15);
+                box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+
+        .badge-active-break {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .badge-completed {
+            display: inline-flex;
+            align-items: center;
+            background: #f1f5f9;
+            color: #475569;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .map-link-btn {
+            display: inline-block;
+            background: #0284c7;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 11px;
+            margin-top: 4px;
+            align-self: flex-start;
+        }
+    </style>
 </head>
 <body>
-<div class="container" id="appContainer">
-  <div class="nav-back-bar" id="navBackBar" style="display:none"><button class="btn-back" type="button" onclick="navigateTo('screenHub')">⬅ Hub Menu</button></div>
-  <div class="header"><div class="header-title" id="pageTitle">Quality Operations Hub</div><div class="date-display" id="currentDate"></div></div>
 
-  <div class="app-screen active-screen" id="screenHub">
-    <div class="hub-cards-container">
-      <div class="hub-card" onclick="navigateTo('screenRegularity')"><div class="hub-card-icon">⏱️</div><div><div class="hub-card-title">Regularity Measurement</div><div class="hub-card-desc">Log train arrivals and departures with CSV export</div></div></div>
-      <div class="hub-card hub-card-break" onclick="navigateTo('screenBreaks')"><div class="hub-card-icon">☕</div><div><div class="hub-card-title">Quality Investigator Breaks</div><div class="hub-card-desc">Live persistent break timer with mandatory GPS sync</div></div></div>
-      <div class="hub-card hub-card-supervisor" onclick="openSupervisorPinModal()"><div class="hub-card-icon">🔒</div><div><div class="hub-card-title">Supervisor Live Monitor</div><div class="hub-card-desc">Live cloud sync for all team breaks and Google Maps links</div></div></div>
+    <div class="container" id="appContainer">
+
+        <!-- Top Navigation -->
+        <div class="nav-back-bar" id="navBackBar" style="display: none;">
+            <button class="btn-back" type="button" onclick="navigateTo('screenHub')">⬅ Hub Menu</button>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title" id="pageTitle">Quality Operations Hub</div>
+            <div class="date-display" id="currentDate"></div>
+        </div>
+
+        <!-- SCREEN 1: HUB MENU -->
+        <div class="app-screen active-screen" id="screenHub">
+            <div class="hub-cards-container">
+                <div class="hub-card" onclick="navigateTo('screenRegularity')">
+                    <div class="hub-card-icon">⏱️</div>
+                    <div>
+                        <div class="hub-card-title">Regularity Measurement</div>
+                        <div class="hub-card-desc">Log train arrivals and departures with CSV export</div>
+                    </div>
+                </div>
+
+                <div class="hub-card hub-card-break" onclick="navigateTo('screenBreaks')">
+                    <div class="hub-card-icon">☕</div>
+                    <div>
+                        <div class="hub-card-title">Quality Investigator Breaks</div>
+                        <div class="hub-card-desc">Live persistent break timer with mandatory GPS sync</div>
+                    </div>
+                </div>
+
+                <div class="hub-card hub-card-supervisor" onclick="openSupervisorPinModal()">
+                    <div class="hub-card-icon">🔒</div>
+                    <div>
+                        <div class="hub-card-title">Supervisor Live Monitor</div>
+                        <div class="hub-card-desc">Live cloud sync for all team breaks & Google Maps links</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: REGULARITY MEASUREMENT -->
+        <div class="app-screen" id="screenRegularity">
+            <select id="userSelect" class="select-field">
+                <option value="" disabled selected>👤 Select Inspector Name</option>
+                <option value="Fathy Helmy Fattouh Hassan">Fathy Helmy Fattouh Hassan</option>
+                <option value="Karim Gamal Salah Al-Din">Karim Gamal Salah Al-Din</option>
+                <option value="Karim Moustafa Mostafa">Karim Moustafa Mostafa</option>
+                <option value="Khaled Mostafa Abdel Moneim">Khaled Mostafa Abdel Moneim</option>
+                <option value="Mohamed El-Sayed Ibrahim">Mohamed El-Sayed Ibrahim</option>
+                <option value="Shorouk Tarek Taha Yaseen">Shorouk Tarek Taha Yaseen</option>
+                <option value="Mahmoud Taher Mahmoud Zaki">Mahmoud Taher Mahmoud Zaki</option>
+                <option value="Ehab Abdel Kareem">Ehab Abdel Kareem</option>
+                <option value="Nancy Hesham Hassan Abdelrehim">Nancy Hesham Hassan Abdelrehim</option>
+                <option value="Nourhan Karam Hanafy Mohamdy">Nourhan Karam Hanafy Mohamdy</option>
+                <option value="Mohamed Emad Imam Mahmoud">Mohamed Emad Imam Mahmoud</option>
+                <option value="Ehab Shabaan Fahmy Elsayed">Ehab Shabaan Fahmy Elsayed</option>
+                <option value="Yasmine Mohamed Alsayed Abdelsattar Akila">Yasmine Mohamed Alsayed Abdelsattar Akila</option>
+            </select>
+
+            <div class="train-box-wrapper" id="trainBoxWrapper">
+                <input type="tel" id="trainNumber" class="input-field" placeholder="70.." maxlength="4" inputmode="numeric" pattern="[0-9]*" value="70" autocomplete="off" />
+            </div>
+
+            <div class="counter-badge" id="trainCounter">Saved Trains: 0</div>
+
+            <button class="btn" id="btnArrival" type="button" onclick="handleArrival()">Train Arrival</button>
+            <button class="btn" id="btnDeparture" type="button" onclick="handleDeparture()">Train Departure</button>
+            <button class="btn btn-submit" id="btnSubmit" type="button" onclick="saveRecord()">💾 Save Train</button>
+            <button class="btn btn-download-share" id="btnExportExcel" type="button" onclick="exportAndShareExcel()">📥 Download / Share All (Excel)</button>
+            <button class="btn" style="background:#c62828; color:#fff; width:65%; padding:10px 0; font-size:13px;" type="button" onclick="resetCurrentForm()">🧹 Clear Form</button>
+        </div>
+
+        <!-- SCREEN 3: BREAKS -->
+        <div class="app-screen" id="screenBreaks">
+            <select id="breakUserSelect" class="select-field">
+                <option value="" disabled selected>👤 Select Inspector Name</option>
+                <option value="Fathy Helmy Fattouh Hassan">Fathy Helmy Fattouh Hassan</option>
+                <option value="Karim Gamal Salah Al-Din">Karim Gamal Salah Al-Din</option>
+                <option value="Karim Moustafa Mostafa">Karim Moustafa Mostafa</option>
+                <option value="Khaled Mostafa Abdel Moneim">Khaled Mostafa Abdel Moneim</option>
+                <option value="Mohamed El-Sayed Ibrahim">Mohamed El-Sayed Ibrahim</option>
+                <option value="Shorouk Tarek Taha Yaseen">Shorouk Tarek Taha Yaseen</option>
+                <option value="Mahmoud Taher Mahmoud Zaki">Mahmoud Taher Mahmoud Zaki</option>
+                <option value="Ehab Abdel Kareem">Ehab Abdel Kareem</option>
+                <option value="Nancy Hesham Hassan Abdelrehim">Nancy Hesham Hassan Abdelrehim</option>
+                <option value="Nourhan Karam Hanafy Mohamdy">Nourhan Karam Hanafy Mohamdy</option>
+                <option value="Mohamed Emad Imam Mahmoud">Mohamed Emad Imam Mahmoud</option>
+                <option value="Ehab Shabaan Fahmy Elsayed">Ehab Shabaan Fahmy Elsayed</option>
+                <option value="Yasmine Mohamed Alsayed Abdelsattar Akila">Yasmine Mohamed Alsayed Abdelsattar Akila</option>
+            </select>
+
+            <select id="breakStationSelect" class="select-field">
+                <option value="" disabled selected>🚉 Select Break Station</option>
+                <option value="Adly Mansour">Adly Mansour</option>
+                <option value="El Haykestep">El Haykestep</option>
+                <option value="Omar Ibn El khattab">Omar Ibn El khattab</option>
+                <option value="Qubaa">Qubaa</option>
+                <option value="Hesham Barakat">Hesham Barakat</option>
+                <option value="El Nozha">El Nozha</option>
+                <option value="El Shams Club">El Shams Club</option>
+                <option value="Alf Maskan">Alf Maskan</option>
+                <option value="Heliopolis">Heliopolis</option>
+                <option value="Haroun">Haroun</option>
+                <option value="El Ahram">El Ahram</option>
+                <option value="Kolleyet El Banat">Kolleyet El Banat</option>
+                <option value="Stadium">Stadium</option>
+                <option value="Fair Zone">Fair Zone</option>
+                <option value="El Abassiya">El Abassiya</option>
+                <option value="Abdou Pasha">Abdou Pasha</option>
+                <option value="El Geish">El Geish</option>
+                <option value="Bab El Shaariya">Bab El Shaariya</option>
+                <option value="Attaba">Attaba</option>
+                <option value="Nasser">Nasser</option>
+                <option value="Maspero">Maspero</option>
+                <option value="Safaa Hegazy">Safaa Hegazy</option>
+                <option value="Kit-kat">Kit-kat</option>
+                <option value="Sudan">Sudan</option>
+                <option value="Imbaba">Imbaba</option>
+                <option value="El-Bohy">El-Bohy</option>
+                <option value="El-Qawmia">El-Qawmia</option>
+                <option value="Ring Road">Ring Road</option>
+                <option value="Rod El Farag Corr.">Rod El Farag Corr.</option>
+                <option value="Tawfikia">Tawfikia</option>
+                <option value="Wadi El Nile">Wadi El Nile</option>
+                <option value="Gamet El Dowel">Gamet El Dowel</option>
+                <option value="Boulak El Dakrour">Boulak El Dakrour</option>
+                <option value="Cairo University">Cairo University</option>
+                <option value="El-Obour">El-Obour</option>
+                <option value="Future">Future</option>
+                <option value="El-Shorouk">El-Shorouk</option>
+                <option value="New Heliopalis">New Heliopalis</option>
+                <option value="Badr">Badr</option>
+                <option value="El-Robaiky">El-Robaiky</option>
+                <option value="Hadayek El-Assema">Hadayek El-Assema</option>
+                <option value="Capital Airport">Capital Airport</option>
+                <option value="Art & Culture City">Art & Culture City</option>
+                <option value="Nativity Cathedral">Nativity Cathedral</option>
+                <option value="The Octagon">The Octagon</option>
+                <option value="International Sport City">International Sport City</option>
+                <option value="Central Capital">Central Capital</option>
+                <option value="Industrial Park">Industrial Park</option>
+                <option value="Knowledge City">Knowledge City</option>
+                <option value="West Of Ramadan">West Of Ramadan</option>
+                <option value="10 Th Of Ramadan">10 Th Of Ramadan</option>
+                <option value="Ramadan City Center">Ramadan City Center</option>
+            </select>
+
+            <div class="timer-box">
+                <div style="font-size: 11px; color:#ffd54f; font-weight:bold; text-transform:uppercase;">Live Break Timer</div>
+                <div class="timer-val" id="liveBreakTimer">00:00:00</div>
+            </div>
+
+            <div id="gpsStatusDisplay" style="font-size:12px; color:#a7f3d0; text-align:center;">
+                <span>📍 GPS check mandatory to start/end break</span>
+            </div>
+
+            <button class="btn btn-start-break" id="btnStartBreak" type="button" onclick="handleStartBreak()">🟢 Start Break</button>
+            <button class="btn btn-end-break" id="btnEndBreak" type="button" onclick="handleEndBreak()">🔴 End Break</button>
+        </div>
+
+        <!-- SCREEN 4: SUPERVISOR -->
+        <div class="app-screen" id="screenSupervisor">
+            <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+                <div class="counter-badge" id="supervisorTotalBadge">Total Breaks: 0</div>
+                <button class="btn-back" style="background:#0284c7; padding:4px 10px;" type="button" onclick="loadBreaksFromCloud()">🔄 Refresh Cloud</button>
+            </div>
+
+            <button class="btn btn-download-share" type="button" style="width:100%; padding:10px 0; font-size:14px;" onclick="exportSupervisorBreaksExcel()">📥 Export All Breaks (Excel)</button>
+
+            <div id="supervisorLogContainer" style="width:100%; max-height:480px; overflow-y:auto; margin-top:8px;">
+                <!-- Logs injected dynamically -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="status-msg" id="statusMessage">Select a module...</div>
+            <div>v1.3</div>
+        </div>
     </div>
-  </div>
 
-  <div class="app-screen" id="screenRegularity">
-    <select id="userSelect" class="select-field"><option value="" disabled selected>👤 Select Inspector Name</option></select>
-    <div class="train-box-wrapper"><input type="tel" id="trainNumber" class="input-field" placeholder="70.." maxlength="4" inputmode="numeric" pattern="[0-9]*" value="70" autocomplete="off"></div>
-    <div class="counter-badge" id="trainCounter">Saved Trains: 0</div>
-    <button class="btn" id="btnArrival" type="button" onclick="handleArrival()">Train Arrival</button>
-    <button class="btn" id="btnDeparture" type="button" onclick="handleDeparture()">Train Departure</button>
-    <button class="btn btn-submit" type="button" onclick="saveRecord()">💾 Save Train</button>
-    <button class="btn btn-download-share" type="button" onclick="exportAndShareExcel()">📥 Download / Share All (Excel)</button>
-    <button class="btn" style="background:#c62828;color:#fff;width:65%;padding:10px 0;font-size:13px" type="button" onclick="resetCurrentForm()">🧹 Clear Form</button>
-  </div>
+    <!-- TOAST -->
+    <div class="toast" id="toastMessage">Action Completed</div>
 
-  <div class="app-screen" id="screenBreaks">
-    <select id="breakUserSelect" class="select-field"><option value="" disabled selected>👤 Select Inspector Name</option></select>
-    <select id="breakStationSelect" class="select-field"><option value="" disabled selected>🚉 Select Break Station</option></select>
-    <div class="timer-box"><div style="font-size:11px;color:#ffd54f;font-weight:bold;text-transform:uppercase">Live Break Timer</div><div class="timer-val" id="liveBreakTimer">00:00:00</div></div>
-    <div id="gpsStatusDisplay" style="font-size:12px;color:#a7f3d0;text-align:center"><span>📍 GPS check mandatory to start/end break</span></div>
-    <button class="btn btn-start-break" id="btnStartBreak" type="button" onclick="handleStartBreak()">🟢 Start Break</button>
-    <button class="btn btn-end-break" id="btnEndBreak" type="button" onclick="handleEndBreak()">🔴 End Break</button>
-  </div>
+    <!-- PIN MODAL -->
+    <div class="modal-overlay" id="pinModal">
+        <div class="modal-card">
+            <div style="font-size: 32px;">🔒</div>
+            <div style="font-size: 16px; font-weight: bold; color: #004d66;">Please enter the PIN</div>
+            <input type="password" id="supervisorPinInput" class="pin-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" autocomplete="off" />
+            <button class="btn" style="background:#e0e0e0; color:#333; width:100%; padding:8px 0;" type="button" onclick="closeSupervisorPinModal()">Cancel</button>
+        </div>
+    </div>
 
-  <div class="app-screen" id="screenSupervisor">
-    <div style="width:100%;display:flex;justify-content:space-between;align-items:center"><div class="counter-badge" id="supervisorTotalBadge">Total Breaks: 0</div><button class="btn-back" style="background:#0284c7;padding:4px 10px" type="button" onclick="loadBreaksFromCloud()">🔄 Refresh Cloud</button></div>
-    <button class="btn btn-download-share" type="button" style="width:100%;padding:10px 0;font-size:14px" onclick="exportSupervisorBreaksExcel()">📥 Export All Breaks (Excel)</button>
-    <div id="supervisorLogContainer" style="width:100%;max-height:480px;overflow-y:auto;margin-top:8px"></div>
-  </div>
+    <!-- DURATION MODAL -->
+    <div class="modal-overlay" id="breakSummaryModal">
+        <div class="modal-card" style="border: 2px solid #ff9100;">
+            <div style="font-size: 36px;">⏱️</div>
+            <div style="font-size: 18px; color: #004d66; font-weight: bold;">Break Completed</div>
 
-  <div class="footer"><div class="status-msg" id="statusMessage">Select a module...</div><div id="appVersion"></div></div>
-</div>
-<div class="toast" id="toastMessage">Action Completed</div>
-<div class="modal-overlay" id="pinModal"><div class="modal-card"><div style="font-size:32px">🔒</div><div style="font-size:16px;font-weight:bold;color:#004d66">Please enter the PIN</div><input type="password" id="supervisorPinInput" class="pin-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" autocomplete="off"><button class="btn" style="background:#e0e0e0;color:#333;width:100%;padding:8px 0" type="button" onclick="closeSupervisorPinModal()">Cancel</button></div></div>
-<div class="modal-overlay" id="breakSummaryModal"><div class="modal-card" style="border:2px solid #ff9100"><div style="font-size:36px">⏱️</div><div style="font-size:18px;color:#004d66;font-weight:bold">Break Completed</div><div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:8px;padding:10px"><div style="font-size:11px;color:#166534;font-weight:bold">TOTAL DURATION</div><div id="modalDurationText" style="font-size:22px;font-weight:900;color:#15803d">0 Hours & 0 Mins</div></div><div style="background:#f8fafc;border-radius:6px;padding:8px;font-size:12px;text-align:left;color:#334155"><div><strong>👤 Inspector:</strong> <span id="modalSummaryUser">--</span></div><div><strong>🚉 Station:</strong> <span id="modalSummaryStation">--</span></div><div><strong>⏱️ Time:</strong> <span id="modalSummaryTime">-- ➔ --</span></div></div><button class="btn btn-download-share" style="width:100%;padding:10px 0" type="button" onclick="closeBreakSummaryModal()">OK / Done</button></div></div>
-
-<script>
-const APP_VERSION="1.2.2";
-const CLOUD_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxZCFVNqqDgpJpfLLyGnYH5et7bYU_ZRqyIsNp3vvbtYwwDpdhrTVTlrHEr1ZppaIMh7A/exec";
-const SUPERVISOR_PIN="1234";
-const INSPECTORS=["Fathy Helmy Fattouh Hassan","Karim Gamal Salah Al-Din","Karim Moustafa Mostafa","Khaled Mostafa Abdel Moneim","Mohamed El-Sayed Ibrahim","Shorouk Tarek Taha Yaseen","Mahmoud Taher Mahmoud Zaki","Ehab Abdel Kareem","Nancy Hesham Hassan Abdelrehim","Nourhan Karam Hanafy Mohamdy","Mohamed Emad Imam Mahmoud","Ehab Shabaan Fahmy Elsayed","Yasmine Mohamed Alsayed Abdelsattar Akila"];
-const STATIONS=["Adly Mansour","El Haykestep","Omar Ibn El khattab","Qubaa","Hesham Barakat","El Nozha","El Shams Club","Alf Maskan","Heliopolis","Haroun","El Ahram","Kolleyet El Banat","Stadium","Fair Zone","El Abassiya","Abdou Pasha","El Geish","Bab El Shaariya","Attaba","Nasser","Maspero","Safaa Hegazy","Kit-kat","Sudan","Imbaba","El-Bohy","El-Qawmia","Ring Road","Rod El Farag Corr.","Tawfikia","Wadi El Nile","Gamet El Dowel","Boulak El Dakrour","Cairo University","El-Obour","Future","El-Shorouk","New Heliopalis","Badr","El-Robaiky","Hadayek El-Assema","Capital Airport","Art & Culture City","Nativity Cathedral","The Octagon","International Sport City","Central Capital","Industrial Park","Knowledge City","West Of Ramadan","10 Th Of Ramadan","Ramadan City Center"];
-
-document.getElementById("appVersion").innerText="v"+APP_VERSION;
-function fillSelect(id,items){const s=document.getElementById(id);items.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;s.appendChild(o)})}
-fillSelect("userSelect",INSPECTORS);fillSelect("breakUserSelect",INSPECTORS);fillSelect("breakStationSelect",STATIONS);
-const today=new Date(),months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const formattedDate=`${String(today.getDate()).padStart(2,"0")}-${months[today.getMonth()]}-${today.getFullYear()}`;document.getElementById("currentDate").innerText=formattedDate;
-function navigateTo(screenId){document.querySelectorAll(".app-screen").forEach(s=>s.classList.remove("active-screen"));document.getElementById(screenId)?.classList.add("active-screen");const c=document.getElementById("appContainer"),n=document.getElementById("navBackBar"),t=document.getElementById("pageTitle");c.classList.toggle("break-theme",screenId==="screenBreaks");n.style.display=screenId==="screenHub"?"none":"flex";const names={screenHub:"Quality Operations Hub",screenRegularity:"Regularity Measurement",screenBreaks:"Quality Investigator Breaks",screenSupervisor:"Supervisor Live Monitor"};t.innerText=names[screenId]||names.screenHub;if(screenId==="screenBreaks")restoreActiveBreakSession();if(screenId==="screenSupervisor")loadBreaksFromCloud()}
-function showToast(text){const t=document.getElementById("toastMessage");t.innerText=text;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2000)}
-function get24HourTime(){const n=new Date();return `${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}:${String(n.getSeconds()).padStart(2,"0")}`}
-function escapeHtml(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
-
-let arrivalTime="",departureTime="",savedRecords=JSON.parse(localStorage.getItem("train_records")||"[]");
-const userSelect=document.getElementById("userSelect"),trainInput=document.getElementById("trainNumber"),arrivalBtn=document.getElementById("btnArrival"),departureBtn=document.getElementById("btnDeparture");
-function updateTrainCounter(){document.getElementById("trainCounter").innerText="Saved Trains: "+savedRecords.length}updateTrainCounter();
-trainInput.addEventListener("focus",function(){if(this.value==="70")this.setSelectionRange(2,2)});trainInput.addEventListener("keydown",function(e){if(this.selectionStart<=2&&(e.key==="Backspace"||e.key==="Delete")&&this.value.length<=2)e.preventDefault()});trainInput.addEventListener("input",function(){this.classList.remove("error-highlight");let d=this.value.replace(/[^0-9]/g,"");if(!d.startsWith("70"))d="70"+d.replace(/^70*/,"");this.value=d.slice(0,4);if(this.value.length===4){this.blur();arrivalBtn.scrollIntoView({behavior:"smooth",block:"center"})}});
-function handleArrival(){arrivalTime=get24HourTime();arrivalBtn.innerText="Arrival: "+arrivalTime;arrivalBtn.classList.remove("error-highlight");arrivalBtn.classList.add("recorded")}
-function handleDeparture(){departureTime=get24HourTime();departureBtn.innerText="Departure: "+departureTime;departureBtn.classList.remove("error-highlight");departureBtn.classList.add("recorded")}
-function resetCurrentForm(){trainInput.value="70";userSelect.selectedIndex=0;arrivalTime=departureTime="";arrivalBtn.innerText="Train Arrival";arrivalBtn.classList.remove("recorded","error-highlight");departureBtn.innerText="Train Departure";departureBtn.classList.remove("recorded","error-highlight");showToast("🧹 Form Cleared!")}
-function saveRecord(){const user=userSelect.value,trainNo=trainInput.value.trim();if(!user){userSelect.classList.add("error-highlight");alert("⚠️ Select Inspector Name!");return}if(trainNo.length<4){trainInput.classList.add("error-highlight");alert("⚠️ Enter 4 digits!");return}if(!arrivalTime){arrivalBtn.classList.add("error-highlight");alert("⚠️ Tap Train Arrival!");return}if(!departureTime){departureBtn.classList.add("error-highlight");alert("⚠️ Tap Train Departure!");return}savedRecords.push({date:formattedDate,user,trainNumber:trainNo,arrival:arrivalTime,departure:departureTime});localStorage.setItem("train_records",JSON.stringify(savedRecords));updateTrainCounter();if(typeof html2canvas!=="undefined")html2canvas(document.getElementById("appContainer"),{scale:2}).then(canvas=>{const l=document.createElement("a");l.download=`Train_${trainNo}_${formattedDate}.png`;l.href=canvas.toDataURL("image/png");l.click()});showToast(`✅ Train ${trainNo} Saved!`);resetCurrentForm()}
-function downloadCsv(csv,name){const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
-function exportAndShareExcel(){if(!savedRecords.length){alert("⚠️ No saved trains yet!");return}let csv="\uFEFFDate,Inspector / User,Train Number,Arrival Time,Departure Time\n";savedRecords.forEach(r=>csv+=`"${r.date}","${r.user}","${r.trainNumber}","${r.arrival}","${r.departure}"\n`);downloadCsv(csv,`Regularity_${formattedDate}.csv`)}
-
-let breakStartTime="",breakEndTime="",breakTimerInterval=null,breakGpsCoords="",breakGpsMapsUrl="",activeBreakId="";
-const breakUserSelect=document.getElementById("breakUserSelect"),breakStationSelect=document.getElementById("breakStationSelect"),btnStartBreak=document.getElementById("btnStartBreak"),btnEndBreak=document.getElementById("btnEndBreak"),gpsStatusDisplay=document.getElementById("gpsStatusDisplay"),liveBreakTimer=document.getElementById("liveBreakTimer");
-function startTimerEngine(startMs){clearInterval(breakTimerInterval);const tick=()=>{const diff=Math.max(0,Date.now()-startMs),s=Math.floor(diff/1000%60),m=Math.floor(diff/60000%60),h=Math.floor(diff/3600000);liveBreakTimer.innerText=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`};tick();breakTimerInterval=setInterval(tick,1000)}
-function restoreActiveBreakSession(){const savedMs=localStorage.getItem("active_break_start_ms");if(savedMs){activeBreakId=localStorage.getItem("active_break_id")||"";breakUserSelect.value=localStorage.getItem("active_break_user")||"";breakStationSelect.value=localStorage.getItem("active_break_station")||"";breakUserSelect.disabled=breakStationSelect.disabled=true;breakStartTime=localStorage.getItem("active_break_start_str")||"";btnStartBreak.innerText="🟢 Break Active: "+breakStartTime;btnStartBreak.classList.add("recorded");btnStartBreak.disabled=true;gpsStatusDisplay.innerHTML="<span>🟢 Break is currently active</span>";startTimerEngine(Number(savedMs))}else{btnStartBreak.disabled=false;btnStartBreak.innerText="🟢 Start Break"}}
-function requestGpsLocation(onSuccess,onError){if(!navigator.geolocation){onError("GPS not supported");return}gpsStatusDisplay.innerHTML="<span>📡 Checking GPS location...</span>";navigator.geolocation.getCurrentPosition(pos=>{const lat=pos.coords.latitude.toFixed(5),lon=pos.coords.longitude.toFixed(5);breakGpsCoords=`${lat}, ${lon}`;breakGpsMapsUrl=`https://maps.google.com/?q=${lat},${lon}`;gpsStatusDisplay.innerHTML="<span>📍 GPS Verified</span>";onSuccess(breakGpsCoords)},err=>{gpsStatusDisplay.innerHTML="<span>⚠️ GPS Location required!</span>";onError(err.message||"GPS permission denied")},{enableHighAccuracy:true,timeout:12000,maximumAge:0})}
-function generateBreakId(){return `BRK-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`}
-function sendCloud(payload){return fetch(CLOUD_SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})}
-function handleStartBreak(){if(localStorage.getItem("active_break_start_ms")){alert("⚠️ Break already running!");return}const u=breakUserSelect.value,st=breakStationSelect.value;if(!u||!st){alert("⚠️ Select Inspector & Station first!");return}btnStartBreak.disabled=true;btnStartBreak.innerText="⏳ Checking GPS...";requestGpsLocation(coords=>{const now=Date.now();activeBreakId=generateBreakId();breakStartTime=get24HourTime();localStorage.setItem("active_break_id",activeBreakId);localStorage.setItem("active_break_start_ms",String(now));localStorage.setItem("active_break_start_str",breakStartTime);localStorage.setItem("active_break_user",u);localStorage.setItem("active_break_station",st);breakUserSelect.disabled=breakStationSelect.disabled=true;btnStartBreak.innerText="🟢 Break Active: "+breakStartTime;btnStartBreak.classList.add("recorded");gpsStatusDisplay.innerHTML="<span>🟢 Break is currently active</span>";startTimerEngine(now);sendCloud({action:"START_BREAK",breakId:activeBreakId,status:"ACTIVE",date:formattedDate,user:u,station:st,startTime:breakStartTime,startTimestamp:now,endTime:"",duration:"",gps:coords,mapsUrl:breakGpsMapsUrl,appVersion:APP_VERSION}).catch(console.error);showToast("🟢 Break Started & Live Monitor Updated!")},()=>{btnStartBreak.disabled=false;btnStartBreak.innerText="🟢 Start Break";alert("❌ GPS Required to start break! Please enable location on your phone.")})}
-function handleEndBreak(){const startMs=localStorage.getItem("active_break_start_ms");if(!startMs){alert("⚠️ Tap Start Break first!");return}const u=localStorage.getItem("active_break_user")||breakUserSelect.value,st=localStorage.getItem("active_break_station")||breakStationSelect.value;btnEndBreak.disabled=true;btnEndBreak.innerText="⏳ Verifying GPS...";requestGpsLocation(coords=>{btnEndBreak.disabled=false;btnEndBreak.innerText="🔴 End Break";breakEndTime=get24HourTime();const diffMs=Date.now()-Number(startMs),totalMins=Math.max(1,Math.round(diffMs/60000)),hours=Math.floor(totalMins/60),mins=totalMins%60;activeBreakId=localStorage.getItem("active_break_id")||activeBreakId;sendCloud({action:"END_BREAK",breakId:activeBreakId,status:"COMPLETED",date:formattedDate,user:u,station:st,startTime:breakStartTime||localStorage.getItem("active_break_start_str")||"",startTimestamp:Number(startMs),endTime:breakEndTime,endTimestamp:Date.now(),duration:String(totalMins),gps:coords,mapsUrl:breakGpsMapsUrl,appVersion:APP_VERSION}).catch(console.error);document.getElementById("modalDurationText").innerText=`${hours} Hours & ${mins} Mins`;document.getElementById("modalSummaryUser").innerText=u;document.getElementById("modalSummaryStation").innerText=st;document.getElementById("modalSummaryTime").innerText=`${breakStartTime||localStorage.getItem("active_break_start_str")} ➔ ${breakEndTime}`;document.getElementById("breakSummaryModal").style.display="flex";clearInterval(breakTimerInterval);liveBreakTimer.innerText="00:00:00";["active_break_id","active_break_start_ms","active_break_start_str","active_break_user","active_break_station"].forEach(k=>localStorage.removeItem(k));activeBreakId="";breakUserSelect.disabled=breakStationSelect.disabled=false;btnStartBreak.disabled=false;btnStartBreak.innerText="🟢 Start Break";btnStartBreak.classList.remove("recorded");gpsStatusDisplay.innerHTML="<span>📍 GPS check mandatory to start/end break</span>"},()=>{btnEndBreak.disabled=false;btnEndBreak.innerText="🔴 End Break";alert("❌ GPS Required to end break! Please enable location on your phone.")})}
-function closeBreakSummaryModal(){document.getElementById("breakSummaryModal").style.display="none"}
-
-let cloudBreaksData=[],supervisorLiveTimerInterval=null;
-function openSupervisorPinModal(){document.getElementById("supervisorPinInput").value="";document.getElementById("pinModal").style.display="flex";setTimeout(()=>document.getElementById("supervisorPinInput").focus(),200)}
-function closeSupervisorPinModal(){document.getElementById("pinModal").style.display="none"}
-document.getElementById("supervisorPinInput").addEventListener("input",function(){if(this.value===SUPERVISOR_PIN){closeSupervisorPinModal();navigateTo("screenSupervisor")}});
-function normalizeBreak(b){return {breakId:b.breakId||b.breakID||b[0]||"",status:b.status||b[1]||"",date:b.date||b[2]||"",user:b.user||b[3]||"",station:b.station||b[4]||"",startTime:b.startTime||b[5]||"",startTimestamp:b.startTimestamp||b[6]||"",endTime:b.endTime||b[7]||"",duration:b.duration||b[8]||"",gps:b.gps||b[9]||"",mapsUrl:b.mapsUrl||b[10]||"",appVersion:b.appVersion||b[11]||""}}
-function isBreakActive(b){return String(b.status||"").toUpperCase()==="ACTIVE"||(!b.endTime&&String(b.status||"").toUpperCase()!=="COMPLETED")}
-function formatCloudDate(value){
-  if(!value)return "--";
-  const text=String(value).trim();
-  const already=text.match(/^(\d{2})-([A-Za-z]{3})-(\d{4})$/);
-  if(already)return `${already[1]}-${already[2][0].toUpperCase()+already[2].slice(1).toLowerCase()}-${already[3]}`;
-  const d=new Date(value);
-  if(Number.isNaN(d.getTime()))return text;
-  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return `${String(d.getUTCDate()).padStart(2,"0")}-${months[d.getUTCMonth()]}-${d.getUTCFullYear()}`;
-}
-function formatCloudTime(value){
-  if(!value)return "--";
-  const text=String(value).trim();
-  let hours,minutes;
-  const plain=text.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?$/i);
-  if(plain){
-    hours=Number(plain[1]);minutes=Number(plain[2]);
-    if(plain[3]){const ap=plain[3].toUpperCase();if(ap==="PM"&&hours<12)hours+=12;if(ap==="AM"&&hours===12)hours=0;}
-  }else{
-    const d=new Date(value);
-    if(Number.isNaN(d.getTime()))return text;
-    hours=d.getUTCHours();minutes=d.getUTCMinutes();
-  }
-  const period=hours>=12?"PM":"AM";
-  const h12=hours%12||12;
-  return `${String(h12).padStart(2,"0")}:${String(minutes).padStart(2,"0")} ${period}`;
-}
-function getStartMilliseconds(ts,dateValue,timeValue){
-  const numeric=Number(ts);
-  if(Number.isFinite(numeric)&&numeric>100000000000)return numeric;
-  const parsed=Date.parse(ts);
-  if(Number.isFinite(parsed)&&parsed>0)return parsed;
-  const dateText=formatCloudDate(dateValue);
-  const timeText=formatCloudTime(timeValue);
-  const parts=dateText.match(/^(\d{2})-([A-Za-z]{3})-(\d{4})$/);
-  const timeParts=timeText.match(/^(\d{2}):(\d{2}) (AM|PM)$/);
-  if(!parts||!timeParts)return 0;
-  const months={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
-  let h=Number(timeParts[1]);if(timeParts[3]==="PM"&&h<12)h+=12;if(timeParts[3]==="AM"&&h===12)h=0;
-  return new Date(Number(parts[3]),months[parts[2]],Number(parts[1]),h,Number(timeParts[2]),0).getTime();
-}
-function getLiveBreakDuration(ts,dateValue,timeValue){const start=getStartMilliseconds(ts,dateValue,timeValue);if(!start)return "In progress";const sec=Math.floor(Math.max(0,Date.now()-start)/1000),h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
-function startSupervisorLiveTimers(){clearInterval(supervisorLiveTimerInterval);const tick=()=>document.querySelectorAll("[data-live-start]").forEach(el=>el.innerText="Live Duration: "+getLiveBreakDuration(el.dataset.liveStart,el.dataset.liveDate,el.dataset.liveTime));tick();supervisorLiveTimerInterval=setInterval(tick,1000)}
-function renderSupervisorBreaks(){const container=document.getElementById("supervisorLogContainer");document.getElementById("supervisorTotalBadge").innerText="Total Breaks: "+cloudBreaksData.length;if(!cloudBreaksData.length){container.innerHTML="<div style='text-align:center;padding:20px;color:#fff'>No breaks recorded yet.</div>";return}container.innerHTML=cloudBreaksData.map(b=>{const active=isBreakActive(b),status=active?`<div class="break-live-status"><span class="break-live-lamp"></span><span>Still On Break</span></div>`:`<div class="break-completed-status"><span>✅</span><span>Break Completed</span></div>`,time=active?`<div style="color:#333"><strong>⏱️ Started:</strong> ${escapeHtml(formatCloudTime(b.startTime))}</div><div class="live-break-duration" data-live-start="${escapeHtml(b.startTimestamp)}" data-live-date="${escapeHtml(b.date)}" data-live-time="${escapeHtml(b.startTime)}">Live Duration: ${getLiveBreakDuration(b.startTimestamp,b.date,b.startTime)}</div>`:`<div style="color:#333"><strong>⏱️ Time:</strong> ${escapeHtml(formatCloudTime(b.startTime))} ➔ ${escapeHtml(formatCloudTime(b.endTime))} (${escapeHtml(b.duration||"--")} mins)</div>`,map=b.mapsUrl?`<a href="${escapeHtml(b.mapsUrl)}" target="_blank" rel="noopener noreferrer" class="map-link-btn">🗺️ View on Google Maps</a>`:"";return `<div class="supervisor-log-item ${active?"active-break-card":""}">${status}<div class="user-title">👤 ${escapeHtml(b.user||"Unknown Inspector")} &bull; <span style="font-size:13px;font-weight:600;color:#555">${escapeHtml(b.station||"--")}</span></div><div style="margin-top:2px;color:#333"><strong>📅 Date:</strong> ${escapeHtml(formatCloudDate(b.date))}</div>${time}${map}</div>`}).join("");startSupervisorLiveTimers()}
-function loadBreaksFromCloud(){const container=document.getElementById("supervisorLogContainer");container.innerHTML="<div style='text-align:center;padding:20px;color:#ffd54f'>📡 Loading from Google Sheet...</div>";fetch(CLOUD_SCRIPT_URL,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(data=>{const rows=Array.isArray(data)?data:(Array.isArray(data.data)?data.data:[]);cloudBreaksData=rows.map(normalizeBreak).reverse();renderSupervisorBreaks()}).catch(()=>container.innerHTML="<div style='text-align:center;padding:20px;color:#ff8a80'>⚠️ Error fetching from cloud. Tap Refresh Cloud to retry.</div>")}
-function exportSupervisorBreaksExcel(){if(!cloudBreaksData.length){alert("⚠️ No records to export!");return}let csv="\uFEFFBreak ID,Status,Date,Inspector,Station,Start Time,End Time,Duration (Mins),GPS,Google Maps Link,App Version\n";cloudBreaksData.forEach(b=>csv+=`"${b.breakId}","${b.status}","${b.date}","${b.user}","${b.station}","${b.startTime}","${b.endTime}","${b.duration}","${b.gps}","${b.mapsUrl}","${b.appVersion}"\n`);downloadCsv(csv,`Breaks_Report_${formattedDate}.csv`)}
-</script>
-</body>
-</html>
+            <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 8px; padding: 10px;">
+                <div style="font-size: 11px; color: #166534; font-weight: bold;">TOTAL DURATION</div>
+                <div id="modalDurationText" style="font-size: 22px; font-weight: 900;
