@@ -359,12 +359,15 @@
             background: #ffffff;
             color: #222;
             border-radius: 10px;
-            padding: 12px;
+            padding: 12px 14px;
             margin-bottom: 10px;
             text-align: left;
             font-size: 13px;
-            border-left: 4px solid #ff9100;
+            border-left: 5px solid #ff9100;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .supervisor-log-item .user-title {
@@ -377,19 +380,20 @@
             display: inline-block;
             background: #0284c7;
             color: #fff;
-            padding: 4px 10px;
-            border-radius: 4px;
+            padding: 5px 12px;
+            border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
             font-size: 11px;
-            margin-top: 6px;
+            margin-top: 4px;
+            align-self: flex-start;
         }
     </style>
 </head>
 <body>
 
     <div class="container" id="appContainer">
-        
+
         <!-- Top Navigation -->
         <div class="nav-back-bar" id="navBackBar" style="display: none;">
             <button class="btn-back" type="button" onclick="navigateTo('screenHub')">⬅ Hub Menu</button>
@@ -567,7 +571,7 @@
         <!-- Footer -->
         <div class="footer">
             <div class="status-msg" id="statusMessage">Select a module...</div>
-            <div>Ver 1.0</div>
+            <div>v1.1</div>
         </div>
     </div>
 
@@ -589,7 +593,7 @@
         <div class="modal-card" style="border: 2px solid #ff9100;">
             <div style="font-size: 36px;">⏱️</div>
             <div style="font-size: 18px; color: #004d66; font-weight: bold;">Break Completed</div>
-            
+
             <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 8px; padding: 10px;">
                 <div style="font-size: 11px; color: #166534; font-weight: bold;">TOTAL DURATION</div>
                 <div id="modalDurationText" style="font-size: 22px; font-weight: 900; color: #15803d;">0 Hours & 0 Mins</div>
@@ -807,7 +811,7 @@
                     const lon = pos.coords.longitude.toFixed(5);
                     breakGpsCoords = `${lat}, ${lon}`;
                     breakGpsMapsUrl = `https://maps.google.com/?q=${lat},${lon}`;
-                    gpsStatusDisplay.innerHTML = `<span>📍 GPS Verified: ${breakGpsCoords}</span>`;
+                    gpsStatusDisplay.innerHTML = `<span>📍 GPS Verified</span>`;
                     onSuccess(breakGpsCoords);
                 },
                 err => {
@@ -956,10 +960,9 @@
                     cloudBreaksData.forEach(b => {
                         html += `
                             <div class="supervisor-log-item">
-                                <div class="user-title">👤 ${b.user}</div>
-                                <div><strong>🚉 Station:</strong> ${b.station}</div>
-                                <div><strong>⏱️ Time:</strong> ${b.startTime} ➔ ${b.endTime} (${b.duration} mins)</div>
-                                <div><strong>📍 GPS:</strong> ${b.gps || 'Logged'}</div>
+                                <div class="user-title">👤 ${b.user} &bull; <span style="font-size:13px; font-weight:600; color:#555;">${b.station}</span></div>
+                                <div style="margin-top:2px; color:#333;"><strong>📅 Date:</strong> ${b.date}</div>
+                                <div style="color:#333;"><strong>⏱️ Time:</strong> ${b.startTime} ➔ ${b.endTime} (${b.duration} mins)</div>
                                 ${b.mapsUrl ? `<a href="${b.mapsUrl}" target="_blank" class="map-link-btn">🗺️ View on Google Maps</a>` : ''}
                             </div>
                         `;
