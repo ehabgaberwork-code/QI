@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,769 +19,772 @@
             --break-bg: linear-gradient(135deg, #0d222d 0%, #16394c 100%);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-        .container {
-            width: 100%;
-            max-width: 420px;
-            min-height: 100vh;
-            padding: 16px 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            background-color: var(--bg-color);
-            transition: background 0.3s ease;
-        }
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
 
-        .container.break-theme {
-            background: var(--break-bg);
-        }
+    .container {
+        width: 100%;
+        max-width: 420px;
+        min-height: 100vh;
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        background-color: var(--bg-color);
+        transition: background 0.3s ease;
+    }
 
-        /* Top Navigation & Header */
-        .top-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            margin-bottom: 8px;
-        }
+    .container.break-theme {
+        background: var(--break-bg);
+    }
 
-        .btn-nav-back {
-            background: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
+    /* Top Navigation & Header */
+    .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 8px;
+    }
 
-        .btn-nav-back:active {
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(0.96);
-        }
+    .btn-nav-back {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
 
-        .header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            width: 100%;
-            text-align: center;
-        }
+    .btn-nav-back:active {
+        background: rgba(255, 255, 255, 0.4);
+        transform: scale(0.96);
+    }
 
-        .header-title {
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-        }
+    .header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        text-align: center;
+    }
 
-        .date-display {
-            font-size: 14px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.95);
-            background: rgba(0, 0, 0, 0.25);
-            padding: 4px 14px;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-        }
+    .header-title {
+        font-size: 22px;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+    }
 
-        .content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 10px;
-            flex-grow: 1;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-        }
+    .date-display {
+        font-size: 14px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.95);
+        background: rgba(0, 0, 0, 0.25);
+        padding: 4px 14px;
+        border-radius: 20px;
+        letter-spacing: 0.5px;
+    }
 
-        /* HUB SCREEN CARDS */
-        .hub-card {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.12);
-            border: 2px solid rgba(255, 255, 255, 0.25);
-            border-radius: 14px;
-            padding: 18px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
+    .content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+        flex-grow: 1;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
 
-        .hub-card:active {
-            transform: translateY(-2px) scale(0.98);
-            background: rgba(255, 255, 255, 0.22);
-            border-color: #ffffff;
-        }
+    /* HUB SCREEN CARDS */
+    .hub-card {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.12);
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        border-radius: 14px;
+        padding: 18px 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+    }
 
-        .hub-card.break-hub-card {
-            background: rgba(255, 145, 0, 0.15);
-            border-color: rgba(255, 145, 0, 0.4);
-        }
+    .hub-card:active {
+        transform: translateY(-2px) scale(0.98);
+        background: rgba(255, 255, 255, 0.22);
+        border-color: #ffffff;
+    }
 
-        .hub-card.supervisor-card {
-            background: rgba(255, 213, 79, 0.15);
-            border-color: rgba(255, 213, 79, 0.4);
-        }
+    .hub-card.break-hub-card {
+        background: rgba(255, 145, 0, 0.15);
+        border-color: rgba(255, 145, 0, 0.4);
+    }
 
-        .hub-card-icon {
-            font-size: 36px;
-        }
+    .hub-card.supervisor-card {
+        background: rgba(255, 213, 79, 0.15);
+        border-color: rgba(255, 213, 79, 0.4);
+    }
 
-        .hub-card-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffffff;
-        }
+    .hub-card-icon {
+        font-size: 36px;
+    }
 
-        .hub-card-desc {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.85);
-            line-height: 1.3;
-        }
+    .hub-card-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #ffffff;
+    }
 
-        /* FORM ELEMENTS */
-        .select-field {
-            width: 100%;
-            padding: 12px;
-            font-size: 15px;
-            border: 2px solid transparent;
-            border-radius: 6px;
-            text-align: center;
-            box-sizing: border-box;
-            background-color: #ffffff;
-            color: #004d66;
-            font-weight: bold;
-            cursor: pointer;
-            outline: none;
-            transition: all 0.2s ease;
-        }
+    .hub-card-desc {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.3;
+    }
 
-        .select-field:disabled {
-            background-color: #e2e8f0;
-            color: #64748b;
-            cursor: not-allowed;
-            opacity: 0.9;
-        }
+    /* FORM ELEMENTS */
+    .select-field {
+        width: 100%;
+        padding: 12px;
+        font-size: 15px;
+        border: 2px solid transparent;
+        border-radius: 6px;
+        text-align: center;
+        box-sizing: border-box;
+        background-color: #ffffff;
+        color: #004d66;
+        font-weight: bold;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.2s ease;
+    }
 
-        .train-box-wrapper {
-            width: 100%;
-            position: relative;
-        }
+    .select-field:disabled {
+        background-color: #e2e8f0;
+        color: #64748b;
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
 
-        .input-field {
-            width: 100%;
-            padding: 12px 10px;
-            font-size: 26px;
-            line-height: 1.3;
-            border: 2px solid transparent;
-            border-radius: 6px;
-            text-align: center;
-            box-sizing: border-box;
-            background-color: #ffffff;
-            color: #004d66;
-            letter-spacing: 4px;
-            font-weight: bold;
-            outline: none;
-        }
+    .train-box-wrapper {
+        width: 100%;
+        position: relative;
+    }
 
-        .btn {
-            width: 100%;
-            background-color: var(--btn-bg);
-            color: var(--btn-text);
-            border: 2px solid transparent;
-            border-radius: 6px;
-            padding: 13px 0;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-            transition: all 0.2s ease;
-            text-align: center;
-            display: block;
-        }
+    .input-field {
+        width: 100%;
+        padding: 12px 10px;
+        font-size: 26px;
+        line-height: 1.3;
+        border: 2px solid transparent;
+        border-radius: 6px;
+        text-align: center;
+        box-sizing: border-box;
+        background-color: #ffffff;
+        color: #004d66;
+        letter-spacing: 4px;
+        font-weight: bold;
+        outline: none;
+    }
 
-        .btn:active {
-            transform: scale(0.98);
-        }
+    .btn {
+        width: 100%;
+        background-color: var(--btn-bg);
+        color: var(--btn-text);
+        border: 2px solid transparent;
+        border-radius: 6px;
+        padding: 13px 0;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s ease;
+        text-align: center;
+        display: block;
+    }
 
-        .btn.recorded {
-            background-color: #e8f5e9 !important;
-            color: #1b5e20 !important;
-            border: 2px solid #81c784 !important;
-        }
+    .btn:active {
+        transform: scale(0.98);
+    }
 
-        .btn-start-break {
-            background-color: #2e7d32;
-            color: #ffffff;
-            font-size: 17px;
-        }
+    .btn.recorded {
+        background-color: #e8f5e9 !important;
+        color: #1b5e20 !important;
+        border: 2px solid #81c784 !important;
+    }
 
-        .btn-end-break {
-            background-color: #c62828;
-            color: #ffffff;
-            font-size: 17px;
-        }
+    .btn-start-break {
+        background-color: #2e7d32;
+        color: #ffffff;
+        font-size: 17px;
+    }
 
-        .btn-submit {
-            background-color: #00796b;
-            color: #ffffff;
-            margin-top: 3px;
-        }
+    .btn-end-break {
+        background-color: #c62828;
+        color: #ffffff;
+        font-size: 17px;
+    }
 
-        .btn-download-share {
-            background: linear-gradient(135deg, #ff9100 0%, #e65100 100%);
-            color: #ffffff;
-            font-size: 16px;
-            padding: 13px 0;
-            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-        }
+    .btn-submit {
+        background-color: #00796b;
+        color: #ffffff;
+        margin-top: 3px;
+    }
 
-        /* Persistent Live Timer Box */
-        .break-timer-card {
-            display: none;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            border: 2px solid #ffd54f;
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-            box-shadow: 0 0 16px rgba(255, 213, 79, 0.35);
-            animation: pulse-glow 2s infinite ease-in-out;
-        }
+    .btn-download-share {
+        background: linear-gradient(135deg, #ff9100 0%, #e65100 100%);
+        color: #ffffff;
+        font-size: 16px;
+        padding: 13px 0;
+        box-shadow: 0 4px 15px rgba(230, 81, 0, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    }
 
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 12px rgba(255, 213, 79, 0.25); }
-            50% { box-shadow: 0 0 20px rgba(255, 213, 79, 0.55); }
-        }
+    /* Persistent Live Timer Box */
+    .break-timer-card {
+        display: none;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.45);
+        border: 2px solid #ffd54f;
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+        box-shadow: 0 0 16px rgba(255, 213, 79, 0.35);
+        animation: pulse-glow 2s infinite ease-in-out;
+    }
 
-        .break-timer-title {
-            font-size: 12px;
-            color: #ffd54f;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 2px;
-        }
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 12px rgba(255, 213, 79, 0.25); }
+        50% { box-shadow: 0 0 20px rgba(255, 213, 79, 0.55); }
+    }
 
-        .break-timer-digits {
-            font-size: 34px;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 3px;
-            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-        }
+    .break-timer-title {
+        font-size: 12px;
+        color: #ffd54f;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 2px;
+    }
 
-        /* GPS Status Box */
-        .gps-status-card {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 8px;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 12px;
-            color: #ffd54f;
-            font-weight: 600;
-        }
+    .break-timer-digits {
+        font-size: 34px;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: 3px;
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    }
 
-        .error-highlight {
-            border: 2px solid #ff5252 !important;
-            background-color: #ffebee !important;
-            color: #c62828 !important;
-            animation: shake 0.3s ease-in-out;
-        }
+    /* GPS Status Box */
+    .gps-status-card {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #ffd54f;
+        font-weight: 600;
+    }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
-        }
+    .error-highlight {
+        border: 2px solid #ff5252 !important;
+        background-color: #ffebee !important;
+        color: #c62828 !important;
+        animation: shake 0.3s ease-in-out;
+    }
 
-        .action-row {
-            display: flex;
-            width: 100%;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 2px;
-        }
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-6px); }
+        75% { transform: translateX(6px); }
+    }
 
-        .btn-clear {
-            background-color: #d32f2f;
-            color: #ffffff;
-            font-size: 13px;
-            padding: 9px 0;
-            flex: 1;
-        }
+    .action-row {
+        display: flex;
+        width: 100%;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 2px;
+    }
 
-        .btn-clear-all {
-            background-color: #455a64;
-            color: #ffffff;
-            font-size: 13px;
-            padding: 9px 0;
-            flex: 1;
-        }
+    .btn-clear {
+        background-color: #d32f2f;
+        color: #ffffff;
+        font-size: 13px;
+        padding: 9px 0;
+        flex: 1;
+    }
 
-        .counter-badge {
-            background: rgba(0, 0, 0, 0.25);
-            padding: 4px 14px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #ffd54f;
-        }
+    .btn-clear-all {
+        background-color: #455a64;
+        color: #ffffff;
+        font-size: 13px;
+        padding: 9px 0;
+        flex: 1;
+    }
 
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.85);
-            margin-top: 12px;
-        }
+    .counter-badge {
+        background: rgba(0, 0, 0, 0.25);
+        padding: 4px 14px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: bold;
+        color: #ffd54f;
+    }
 
-        .status-msg {
-            font-size: 13px;
-            color: #ffd54f;
-            font-weight: 500;
-            min-height: 18px;
-            text-align: left;
-        }
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.85);
+        margin-top: 12px;
+    }
 
-        /* SUPERVISOR LOG STYLES */
-        .log-container {
-            width: 100%;
-            max-height: 420px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 4px 0;
-        }
+    .status-msg {
+        font-size: 13px;
+        color: #ffd54f;
+        font-weight: 500;
+        min-height: 18px;
+        text-align: left;
+    }
 
-        .log-card {
-            background: #ffffff;
-            color: #004d66;
-            border-radius: 8px;
-            padding: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            font-size: 13px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            text-align: left;
-        }
+    /* SUPERVISOR LOG STYLES */
+    .log-container {
+        width: 100%;
+        max-height: 420px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 4px 0;
+    }
 
-        .log-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 4px;
-            font-size: 14px;
-            color: #005a79;
-        }
+    .log-card {
+        background: #ffffff;
+        color: #004d66;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        font-size: 13px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        text-align: left;
+    }
 
-        .log-map-link {
-            display: inline-block;
-            color: #e65100;
-            font-weight: bold;
-            text-decoration: underline;
-            margin-top: 2px;
-        }
+    .log-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 4px;
+        font-size: 14px;
+        color: #005a79;
+    }
 
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background-color: #1b5e20;
-            color: #ffffff;
-            padding: 12px 24px;
-            border-radius: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            font-size: 15px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            opacity: 0;
-            transition: all 0.4s ease;
-            z-index: 1000;
-            pointer-events: none;
-        }
+    .log-map-link {
+        display: inline-block;
+        color: #e65100;
+        font-weight: bold;
+        text-decoration: underline;
+        margin-top: 2px;
+    }
 
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
+    .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background-color: #1b5e20;
+        color: #ffffff;
+        padding: 12px 24px;
+        border-radius: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        font-size: 15px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        opacity: 0;
+        transition: all 0.4s ease;
+        z-index: 1000;
+        pointer-events: none;
+    }
 
-        /* PIN MODAL (NUMERIC KEYPAD ONLY) */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
 
-        .modal-card {
-            background: #ffffff;
-            color: #004d66;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 320px;
-            padding: 20px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-        }
+    /* PIN MODAL (NUMERIC KEYPAD ONLY) */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
 
-        .modal-title {
-            font-size: 17px;
-            font-weight: bold;
-            color: #005a79;
-        }
+    .modal-card {
+        background: #ffffff;
+        color: #004d66;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 320px;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
 
-        .pin-input {
-            width: 100%;
-            padding: 12px;
-            font-size: 26px;
-            text-align: center;
-            border: 2px solid #005a79;
-            border-radius: 8px;
-            letter-spacing: 10px;
-            outline: none;
-            font-weight: bold;
-        }
+    .modal-title {
+        font-size: 17px;
+        font-weight: bold;
+        color: #005a79;
+    }
 
-        .modal-btns-row {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-        }
+    .pin-input {
+        width: 100%;
+        padding: 12px;
+        font-size: 26px;
+        text-align: center;
+        border: 2px solid #005a79;
+        border-radius: 8px;
+        letter-spacing: 10px;
+        outline: none;
+        font-weight: bold;
+    }
 
-        .modal-btn {
-            flex: 1;
-            padding: 12px 0;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .modal-btns-row {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+    }
 
-        .modal-btn-confirm {
-            background: #00796b;
-            color: #ffffff;
-        }
+    .modal-btn {
+        flex: 1;
+        padding: 12px 0;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        .modal-btn-cancel {
-            background: #e0e0e0;
-            color: #333333;
-        }
-    </style>
+    .modal-btn-confirm {
+        background: #00796b;
+        color: #ffffff;
+    }
+
+    .modal-btn-cancel {
+        background: #e0e0e0;
+        color: #333333;
+    }
+</style>
+
+
 </head>
 <body>
 
-<div class="container" id="appMainWrapper">
 
-    <!-- ==================== SCREEN 1: HUB ==================== -->
-    <div id="screenHub" style="display: flex; flex-direction: column; width: 100%; height: 100%; justify-content: space-between; flex-grow: 1;">
-        <div class="header" style="margin-top: 10px;">
-            <div class="header-title">Quality Operations Hub</div>
-            <div style="font-size: 13px; opacity: 0.9;">Main Dashboard</div>
-            <div class="date-display" id="hubDateDisplay"></div>
+<!-- ==================== SCREEN 1: HUB ==================== -->
+<div id="screenHub" style="display: flex; flex-direction: column; width: 100%; height: 100%; justify-content: space-between; flex-grow: 1;">
+    <div class="header" style="margin-top: 10px;">
+        <div class="header-title">Quality Operations Hub</div>
+        <div style="font-size: 13px; opacity: 0.9;">Main Dashboard</div>
+        <div class="date-display" id="hubDateDisplay"></div>
+    </div>
+
+    <div class="content" style="gap: 12px;">
+        <!-- Option 1: Regularity -->
+        <div class="hub-card" onclick="navigateTo('screenRegularity')">
+            <div class="hub-card-icon">🚆</div>
+            <div class="hub-card-title">Regularity Measurement</div>
+            <div class="hub-card-desc">Log train arrival and departure times with direct screenshot capture and Excel export</div>
         </div>
 
-        <div class="content" style="gap: 12px;">
-            <!-- Option 1: Regularity -->
-            <div class="hub-card" onclick="navigateTo('screenRegularity')">
-                <div class="hub-card-icon">🚆</div>
-                <div class="hub-card-title">Regularity Measurement</div>
-                <div class="hub-card-desc">Log train arrival and departure times with direct screenshot capture and Excel export</div>
-            </div>
-
-            <!-- Option 2: Quality Investigator Breaks -->
-            <div class="hub-card break-hub-card" onclick="navigateTo('screenBreaks')">
-                <div class="hub-card-icon">☕</div>
-                <div class="hub-card-title">Quality Investigator Breaks</div>
-                <div class="hub-card-desc">Log break start and end with station selection, live timer & auto GPS saving</div>
-            </div>
-
-            <!-- Option 3: Supervisor Monitor -->
-            <div class="hub-card supervisor-card" onclick="openPinModal()">
-                <div class="hub-card-icon">🔒</div>
-                <div class="hub-card-title">Supervisor Live Monitor</div>
-                <div class="hub-card-desc">Protected view to track inspector break times, stations, GPS locations & Excel export</div>
-            </div>
+        <!-- Option 2: Quality Investigator Breaks -->
+        <div class="hub-card break-hub-card" onclick="navigateTo('screenBreaks')">
+            <div class="hub-card-icon">☕</div>
+            <div class="hub-card-title">Quality Investigator Breaks</div>
+            <div class="hub-card-desc">Log break start and end with station selection, live timer & mandatory GPS check</div>
         </div>
 
-        <div class="footer">
-            <div class="status-msg">Select a module to continue...</div>
-            <div>Ver 101</div>
+        <!-- Option 3: Supervisor Monitor -->
+        <div class="hub-card supervisor-card" onclick="openPinModal()">
+            <div class="hub-card-icon">🔒</div>
+            <div class="hub-card-title">Supervisor Live Monitor</div>
+            <div class="hub-card-desc">Protected view to track inspector break times, stations, GPS locations & Excel export</div>
         </div>
     </div>
 
-
-    <!-- ==================== SCREEN 2: REGULARITY MEASUREMENT ==================== -->
-    <div id="screenRegularity" style="display: none; flex-direction: column; width: 100%; flex-grow: 1;">
-        <div class="top-nav">
-            <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
-            <div class="date-display" id="regDateDisplay"></div>
-        </div>
-
-        <div class="header">
-            <div class="header-title">Regularity Measurement</div>
-        </div>
-
-        <div class="content">
-            <!-- Inspector Dropdown -->
-            <select id="userSelect" class="select-field">
-                <option value="" disabled selected>👤 Select Inspector Name</option>
-                <option value="Fathy Helmy Fattouh Hassan">Fathy Helmy Fattouh Hassan</option>
-                <option value="Karim Gamal Salah Al-Din">Karim Gamal Salah Al-Din</option>
-                <option value="Karim Moustafa Mostafa">Karim Moustafa Mostafa</option>
-                <option value="Khaled Mostafa Abdel Moneim">Khaled Mostafa Abdel Moneim</option>
-                <option value="Mohamed El-Sayed Ibrahim">Mohamed El-Sayed Ibrahim</option>
-                <option value="Shorouk Tarek Taha Yaseen">Shorouk Tarek Taha Yaseen</option>
-                <option value="Mahmoud Taher Mahmoud Zaki">Mahmoud Taher Mahmoud Zaki</option>
-                <option value="Ehab Abdel Kareem">Ehab Abdel Kareem</option>
-                <option value="Nancy Hesham Hassan Abdelrehim">Nancy Hesham Hassan Abdelrehim</option>
-                <option value="Nourhan Karam Hanafy Mohamdy">Nourhan Karam Hanafy Mohamdy</option>
-                <option value="Mohamed Emad Imam Mahmoud">Mohamed Emad Imam Mahmoud</option>
-                <option value="Ehab Shabaan Fahmy Elsayed">Ehab Shabaan Fahmy Elsayed</option>
-                <option value="Yasmine Mohamed Alsayed Abdelsattar Akila">Yasmine Mohamed Alsayed Abdelsattar Akila</option>
-            </select>
-
-            <!-- Train Box -->
-            <div class="train-box-wrapper" id="trainBoxWrapper">
-                <input 
-                    type="tel" 
-                    id="trainNumber" 
-                    class="input-field" 
-                    value="70"
-                    placeholder="70.." 
-                    maxlength="4" 
-                    inputmode="numeric" 
-                    pattern="[0-9]*" 
-                    autocomplete="off"
-                />
-            </div>
-
-            <div class="counter-badge" id="trainCounter">Saved Trains: 0</div>
-
-            <!-- Buttons -->
-            <button class="btn" id="btnArrival" type="button" onclick="handleArrival()">Train Arrival</button>
-            <button class="btn" id="btnDeparture" type="button" onclick="handleDeparture()">Train Departure</button>
-            <button class="btn btn-submit" id="btnSubmit" type="button" onclick="saveRecord()">💾 Save Train</button>
-            <button class="btn btn-download-share" id="btnExportCsv" type="button" onclick="exportAndShareExcel()">📥 Download / Share All (Excel)</button>
-
-            <!-- Clear Action Buttons -->
-            <div class="action-row">
-                <button class="btn btn-clear" type="button" onclick="resetCurrentForm(true)">🧹 Clear Form</button>
-                <button class="btn btn-clear-all" type="button" onclick="clearAllRecords()">🗑️ Clear All Saved</button>
-            </div>
-        </div>
-
-        <div class="footer">
-            <div class="status-msg" id="statusMessage">Enter 2 digits & tap buttons...</div>
-            <div>Ver 101</div>
-        </div>
+    <div class="footer">
+        <div class="status-msg">Select a module to continue...</div>
+        <div>Ver 102</div>
     </div>
-
-
-    <!-- ==================== SCREEN 3: QUALITY INVESTIGATOR BREAKS ==================== -->
-    <div id="screenBreaks" style="display: none; flex-direction: column; width: 100%; flex-grow: 1;">
-        <div class="top-nav">
-            <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
-            <div class="date-display" id="breakDateDisplay"></div>
-        </div>
-
-        <div class="header">
-            <div class="header-title">Quality Investigator Breaks</div>
-        </div>
-
-        <div class="content">
-            <!-- Break User Dropdown -->
-            <select id="breakUserSelect" class="select-field">
-                <option value="" disabled selected>👤 Select Inspector Name</option>
-                <option value="Fathy Helmy Fattouh Hassan">Fathy Helmy Fattouh Hassan</option>
-                <option value="Karim Gamal Salah Al-Din">Karim Gamal Salah Al-Din</option>
-                <option value="Karim Moustafa Mostafa">Karim Moustafa Mostafa</option>
-                <option value="Khaled Mostafa Abdel Moneim">Khaled Mostafa Abdel Moneim</option>
-                <option value="Mohamed El-Sayed Ibrahim">Mohamed El-Sayed Ibrahim</option>
-                <option value="Shorouk Tarek Taha Yaseen">Shorouk Tarek Taha Yaseen</option>
-                <option value="Mahmoud Taher Mahmoud Zaki">Mahmoud Taher Mahmoud Zaki</option>
-                <option value="Ehab Abdel Kareem">Ehab Abdel Kareem</option>
-                <option value="Nancy Hesham Hassan Abdelrehim">Nancy Hesham Hassan Abdelrehim</option>
-                <option value="Nourhan Karam Hanafy Mohamdy">Nourhan Karam Hanafy Mohamdy</option>
-                <option value="Mohamed Emad Imam Mahmoud">Mohamed Emad Imam Mahmoud</option>
-                <option value="Ehab Shabaan Fahmy Elsayed">Ehab Shabaan Fahmy Elsayed</option>
-                <option value="Yasmine Mohamed Alsayed Abdelsattar Akila">Yasmine Mohamed Alsayed Abdelsattar Akila</option>
-            </select>
-
-            <!-- Station Dropdown (45 Stations) -->
-            <select id="breakStationSelect" class="select-field">
-                <option value="" disabled selected>🚉 Select Break Station</option>
-                <option value="Adly Mansour">Adly Mansour</option>
-                <option value="El Haykestep">El Haykestep</option>
-                <option value="Omar Ibn El khattab">Omar Ibn El khattab</option>
-                <option value="Qubaa">Qubaa</option>
-                <option value="Hesham Barakat">Hesham Barakat</option>
-                <option value="El Nozha">El Nozha</option>
-                <option value="El Shams Club">El Shams Club</option>
-                <option value="Alf Maskan">Alf Maskan</option>
-                <option value="Heliopolis">Heliopolis</option>
-                <option value="Haroun">Haroun</option>
-                <option value="El Ahram">El Ahram</option>
-                <option value="Kolleyet El Banat">Kolleyet El Banat</option>
-                <option value="Stadium">Stadium</option>
-                <option value="Fair Zone">Fair Zone</option>
-                <option value="El Abassiya">El Abassiya</option>
-                <option value="Abdou Pasha">Abdou Pasha</option>
-                <option value="El Geish">El Geish</option>
-                <option value="Bab El Shaariya">Bab El Shaariya</option>
-                <option value="Attaba">Attaba</option>
-                <option value="Nasser">Nasser</option>
-                <option value="Maspero">Maspero</option>
-                <option value="Safaa Hegazy">Safaa Hegazy</option>
-                <option value="Kit-kat">Kit-kat</option>
-                <option value="Sudan">Sudan</option>
-                <option value="Imbaba">Imbaba</option>
-                <option value="El-Bohy">El-Bohy</option>
-                <option value="El-Qawmia">El-Qawmia</option>
-                <option value="Ring Road">Ring Road</option>
-                <option value="Rod El Farag Corr.">Rod El Farag Corr.</option>
-                <option value="Tawfikia">Tawfikia</option>
-                <option value="Wadi El Nile">Wadi El Nile</option>
-                <option value="Gamet El Dowel">Gamet El Dowel</option>
-                <option value="Boulak El Dakrour">Boulak El Dakrour</option>
-                <option value="Cairo University">Cairo University</option>
-                <option value="El-Obour">El-Obour</option>
-                <option value="Future">Future</option>
-                <option value="El-Shorouk">El-Shorouk</option>
-                <option value="New Heliopalis">New Heliopalis</option>
-                <option value="Badr">Badr</option>
-                <option value="El-Robaiky">El-Robaiky</option>
-                <option value="Hadayek El-Assema">Hadayek El-Assema</option>
-                <option value="Capital Airport">Capital Airport</option>
-                <option value="Art & Culture City">Art & Culture City</option>
-                <option value="Nativity Cathedral">Nativity Cathedral</option>
-                <option value="The Octagon">The Octagon</option>
-                <option value="International Sport City">International Sport City</option>
-                <option value="Central Capital">Central Capital</option>
-                <option value="Industrial Park">Industrial Park</option>
-                <option value="Knowledge City">Knowledge City</option>
-                <option value="West Of Ramadan">West Of Ramadan</option>
-                <option value="10 Th Of Ramadan">10 Th Of Ramadan</option>
-                <option value="Ramadan City Center">Ramadan City Center</option>
-            </select>
-
-            <!-- Persistent Live Timer Card -->
-            <div class="break-timer-card" id="breakTimerCard">
-                <div class="break-timer-title">⏱️ ACTIVE BREAK TIMER</div>
-                <div class="break-timer-digits" id="breakTimerDigits">00:00:00</div>
-            </div>
-
-            <!-- GPS Live Card -->
-            <div class="gps-status-card" id="gpsStatusDisplay">
-                <span>📍 Location: Tap 'Start Break' to acquire GPS</span>
-            </div>
-
-            <div class="counter-badge" id="breakCounter">Saved Breaks: 0</div>
-
-            <!-- Action Buttons for Break (in English - Auto Save on End) -->
-            <button class="btn btn-start-break" id="btnStartBreak" type="button" onclick="handleStartBreak()">🟢 Start Break</button>
-            <button class="btn btn-end-break" id="btnEndBreak" type="button" onclick="handleEndBreak()">🔴 End Break</button>
-
-            <!-- Clear Action Buttons -->
-            <div class="action-row">
-                <button class="btn btn-clear" type="button" onclick="resetBreakForm(true)">🧹 Clear Form</button>
-                <button class="btn btn-clear-all" type="button" onclick="clearAllBreakRecords()">🗑️ Clear All Breaks</button>
-            </div>
-        </div>
-
-        <div class="footer">
-            <div class="status-msg" id="breakStatusMessage">Select station & tap Start Break...</div>
-            <div>Ver 101</div>
-        </div>
-    </div>
-
-
-    <!-- ==================== SCREEN 4: SUPERVISOR LIVE MONITOR ==================== -->
-    <div id="screenSupervisor" style="display: none; flex-direction: column; width: 100%; flex-grow: 1;">
-        <div class="top-nav">
-            <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
-            <div class="date-display" id="supDateDisplay"></div>
-        </div>
-
-        <div class="header">
-            <div class="header-title" style="color: var(--supervisor-gold);">🔒 Supervisor Monitor</div>
-            <div style="font-size: 13px; opacity: 0.9;">Inspector Breaks & GPS Log</div>
-        </div>
-
-        <div class="content" style="justify-content: flex-start; margin-top: 10px;">
-            <div class="action-row" style="margin-bottom: 6px;">
-                <button class="btn btn-submit" style="margin: 0; padding: 10px 0; font-size: 14px;" type="button" onclick="renderSupervisorLogs()">🔄 Refresh List</button>
-                <button class="btn btn-download-share" style="padding: 10px 0; font-size: 14px;" type="button" onclick="exportBreaksExcel()">📥 Export Excel</button>
-            </div>
-
-            <!-- Scrollable Log Cards -->
-            <div class="log-container" id="supervisorLogContainer">
-                <!-- Cards will render here -->
-            </div>
-        </div>
-
-        <div class="footer">
-            <div class="status-msg" id="supStatusMsg">Viewing logged breaks...</div>
-            <div>Ver 101</div>
-        </div>
-    </div>
-
 </div>
 
+
+<!-- ==================== SCREEN 2: REGULARITY MEASUREMENT ==================== -->
+<div id="screenRegularity" style="display: none; flex-direction: column; width: 100%; flex-grow: 1;">
+    <div class="top-nav">
+        <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
+        <div class="date-display" id="regDateDisplay"></div>
+    </div>
+
+    <div class="header">
+        <div class="header-title">Regularity Measurement</div>
+    </div>
+
+    <div class="content">
+        <!-- Inspector Dropdown -->
+        <select id="userSelect" class="select-field">
+            <option value="" disabled selected>👤 Select Inspector Name</option>
+            <option value="Fathy Helmy Fattouh Hassan">Fathy Helmy Fattouh Hassan</option>
+            <option value="Karim Gamal Salah Al-Din">Karim Gamal Salah Al-Din</option>
+            <option value="Karim Moustafa Mostafa">Karim Moustafa Mostafa</option>
+            <option value="Khaled Mostafa Abdel Moneim">Khaled Mostafa Abdel Moneim</option>
+            <option value="Mohamed El-Sayed Ibrahim">Mohamed El-Sayed Ibrahim</option>
+            <option value="Shorouk Tarek Taha Yaseen">Shorouk Tarek Taha Yaseen</option>
+            <option value="Mahmoud Taher Mahmoud Zaki">Mahmoud Taher Mahmoud Zaki</option>
+            <option value="Ehab Abdel Kareem">Ehab Abdel Kareem</option>
+            <option value="Nancy Hesham Hassan Abdelrehim">Nancy Hesham Hassan Abdelrehim</option>
+            <option value="Nourhan Karam Hanafy Mohamdy">Nourhan Karam Hanafy Mohamdy</option>
+            <option value="Mohamed Emad Imam Mahmoud">Mohamed Emad Imam Mahmoud</option>
+            <option value="Ehab Shabaan Fahmy Elsayed">Ehab Shabaan Fahmy Elsayed</option>
+            <option value="Yasmine Mohamed Alsayed Abdelsattar Akila">Yasmine Mohamed Alsayed Abdelsattar Akila</option>
+        </select>
+
+        <!-- Train Box -->
+        <div class="train-box-wrapper" id="trainBoxWrapper">
+            <input 
+                type="tel" 
+                id="trainNumber" 
+                class="input-field" 
+                value="70"
+                placeholder="70.." 
+                maxlength="4" 
+                inputmode="numeric" 
+                pattern="[0-9]*" 
+                autocomplete="off"
+            />
+        </div>
+
+        <div class="counter-badge" id="trainCounter">Saved Trains: 0</div>
+
+        <!-- Buttons -->
+        <button class="btn" id="btnArrival" type="button" onclick="handleArrival()">Train Arrival</button>
+        <button class="btn" id="btnDeparture" type="button" onclick="handleDeparture()">Train Departure</button>
+        <button class="btn btn-submit" id="btnSubmit" type="button" onclick="saveRecord()">💾 Save Train</button>
+        <button class="btn btn-download-share" id="btnExportCsv" type="button" onclick="exportAndShareExcel()">📥 Download / Share All (Excel)</button>
+
+        <!-- Clear Action Buttons -->
+        <div class="action-row">
+            <button class="btn btn-clear" type="button" onclick="resetCurrentForm(true)">🧹 Clear Form</button>
+            <button class="btn btn-clear-all" type="button" onclick="clearAllRecords()">🗑️ Clear All Saved</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="status-msg" id="statusMessage">Enter 2 digits & tap buttons...</div>
+        <div>Ver 102</div>
+    </div>
+</div>
+
+
+<!-- ==================== SCREEN 3: QUALITY INVESTIGATOR BREAKS ==================== -->
+<div id="screenBreaks" style="display: none; flex-direction: column; width: 100%; flex-grow: 1;">
+    <div class="top-nav">
+        <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
+        <div class="date-display" id="breakDateDisplay"></div>
+    </div>
+
+    <div class="header">
+        <div class="header-title">Quality Investigator Breaks</div>
+    </div>
+
+    <div class="content">
+        <!-- Break User Dropdown -->
+        <select id="breakUserSelect" class="select-field">
+            <option value="" disabled selected>👤 Select Inspector Name</option>
+            <option value="Fathy Helmy Fattouh Hassan">Fathy Helmy Fattouh Hassan</option>
+            <option value="Karim Gamal Salah Al-Din">Karim Gamal Salah Al-Din</option>
+            <option value="Karim Moustafa Mostafa">Karim Moustafa Mostafa</option>
+            <option value="Khaled Mostafa Abdel Moneim">Khaled Mostafa Abdel Moneim</option>
+            <option value="Mohamed El-Sayed Ibrahim">Mohamed El-Sayed Ibrahim</option>
+            <option value="Shorouk Tarek Taha Yaseen">Shorouk Tarek Taha Yaseen</option>
+            <option value="Mahmoud Taher Mahmoud Zaki">Mahmoud Taher Mahmoud Zaki</option>
+            <option value="Ehab Abdel Kareem">Ehab Abdel Kareem</option>
+            <option value="Nancy Hesham Hassan Abdelrehim">Nancy Hesham Hassan Abdelrehim</option>
+            <option value="Nourhan Karam Hanafy Mohamdy">Nourhan Karam Hanafy Mohamdy</option>
+            <option value="Mohamed Emad Imam Mahmoud">Mohamed Emad Imam Mahmoud</option>
+            <option value="Ehab Shabaan Fahmy Elsayed">Ehab Shabaan Fahmy Elsayed</option>
+            <option value="Yasmine Mohamed Alsayed Abdelsattar Akila">Yasmine Mohamed Alsayed Abdelsattar Akila</option>
+        </select>
+
+        <!-- Station Dropdown (45 Stations) -->
+        <select id="breakStationSelect" class="select-field">
+            <option value="" disabled selected>🚉 Select Break Station</option>
+            <option value="Adly Mansour">Adly Mansour</option>
+            <option value="El Haykestep">El Haykestep</option>
+            <option value="Omar Ibn El khattab">Omar Ibn El khattab</option>
+            <option value="Qubaa">Qubaa</option>
+            <option value="Hesham Barakat">Hesham Barakat</option>
+            <option value="El Nozha">El Nozha</option>
+            <option value="El Shams Club">El Shams Club</option>
+            <option value="Alf Maskan">Alf Maskan</option>
+            <option value="Heliopolis">Heliopolis</option>
+            <option value="Haroun">Haroun</option>
+            <option value="El Ahram">El Ahram</option>
+            <option value="Kolleyet El Banat">Kolleyet El Banat</option>
+            <option value="Stadium">Stadium</option>
+            <option value="Fair Zone">Fair Zone</option>
+            <option value="El Abassiya">El Abassiya</option>
+            <option value="Abdou Pasha">Abdou Pasha</option>
+            <option value="El Geish">El Geish</option>
+            <option value="Bab El Shaariya">Bab El Shaariya</option>
+            <option value="Attaba">Attaba</option>
+            <option value="Nasser">Nasser</option>
+            <option value="Maspero">Maspero</option>
+            <option value="Safaa Hegazy">Safaa Hegazy</option>
+            <option value="Kit-kat">Kit-kat</option>
+            <option value="Sudan">Sudan</option>
+            <option value="Imbaba">Imbaba</option>
+            <option value="El-Bohy">El-Bohy</option>
+            <option value="El-Qawmia">El-Qawmia</option>
+            <option value="Ring Road">Ring Road</option>
+            <option value="Rod El Farag Corr.">Rod El Farag Corr.</option>
+            <option value="Tawfikia">Tawfikia</option>
+            <option value="Wadi El Nile">Wadi El Nile</option>
+            <option value="Gamet El Dowel">Gamet El Dowel</option>
+            <option value="Boulak El Dakrour">Boulak El Dakrour</option>
+            <option value="Cairo University">Cairo University</option>
+            <option value="El-Obour">El-Obour</option>
+            <option value="Future">Future</option>
+            <option value="El-Shorouk">El-Shorouk</option>
+            <option value="New Heliopalis">New Heliopalis</option>
+            <option value="Badr">Badr</option>
+            <option value="El-Robaiky">El-Robaiky</option>
+            <option value="Hadayek El-Assema">Hadayek El-Assema</option>
+            <option value="Capital Airport">Capital Airport</option>
+            <option value="Art & Culture City">Art & Culture City</option>
+            <option value="Nativity Cathedral">Nativity Cathedral</option>
+            <option value="The Octagon">The Octagon</option>
+            <option value="International Sport City">International Sport City</option>
+            <option value="Central Capital">Central Capital</option>
+            <option value="Industrial Park">Industrial Park</option>
+            <option value="Knowledge City">Knowledge City</option>
+            <option value="West Of Ramadan">West Of Ramadan</option>
+            <option value="10 Th Of Ramadan">10 Th Of Ramadan</option>
+            <option value="Ramadan City Center">Ramadan City Center</option>
+        </select>
+
+        <!-- Persistent Live Timer Card -->
+        <div class="break-timer-card" id="breakTimerCard">
+            <div class="break-timer-title">⏱️ ACTIVE BREAK TIMER</div>
+            <div class="break-timer-digits" id="breakTimerDigits">00:00:00</div>
+        </div>
+
+        <!-- GPS Live Card -->
+        <div class="gps-status-card" id="gpsStatusDisplay">
+            <span>📍 Location: GPS is required to start break</span>
+        </div>
+
+        <div class="counter-badge" id="breakCounter">Saved Breaks: 0</div>
+
+        <!-- Action Buttons for Break (in English - Auto Save on End) -->
+        <button class="btn btn-start-break" id="btnStartBreak" type="button" onclick="handleStartBreak()">🟢 Start Break</button>
+        <button class="btn btn-end-break" id="btnEndBreak" type="button" onclick="handleEndBreak()">🔴 End Break</button>
+
+        <!-- Clear Action Buttons -->
+        <div class="action-row">
+            <button class="btn btn-clear" type="button" onclick="resetBreakForm(true)">🧹 Clear Form</button>
+            <button class="btn btn-clear-all" type="button" onclick="clearAllBreakRecords()">🗑️ Clear All Breaks</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="status-msg" id="breakStatusMessage">Select station & tap Start Break...</div>
+        <div>Ver 102</div>
+    </div>
+</div>
+
+
+<!-- ==================== SCREEN 4: SUPERVISOR LIVE MONITOR ==================== -->
+<div id="screenSupervisor" style="display: none; flex-direction: column; width: 100%; flex-grow: 1;">
+    <div class="top-nav">
+        <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
+        <div class="date-display" id="supDateDisplay"></div>
+    </div>
+
+    <div class="header">
+        <div class="header-title" style="color: var(--supervisor-gold);">🔒 Supervisor Monitor</div>
+        <div style="font-size: 13px; opacity: 0.9;">Inspector Breaks & GPS Log</div>
+    </div>
+
+    <div class="content" style="justify-content: flex-start; margin-top: 10px;">
+        <div class="action-row" style="margin-bottom: 6px;">
+            <button class="btn btn-submit" style="margin: 0; padding: 10px 0; font-size: 14px;" type="button" onclick="renderSupervisorLogs()">🔄 Refresh List</button>
+            <button class="btn btn-download-share" style="padding: 10px 0; font-size: 14px;" type="button" onclick="exportBreaksExcel()">📥 Export Excel</button>
+        </div>
+
+        <!-- Scrollable Log Cards -->
+        <div class="log-container" id="supervisorLogContainer">
+            <!-- Cards will render here -->
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="status-msg" id="supStatusMsg">Viewing logged breaks...</div>
+        <div>Ver 102</div>
+    </div>
+</div>
+
+
 <!-- PIN MODAL (NUMERIC KEYPAD ONLY) -->
+
+
 <div class="modal-overlay" id="pinModal">
     <div class="modal-card">
         <div class="modal-title">🔒 Please enter the PIN</div>
@@ -800,8 +805,12 @@
     </div>
 </div>
 
+
 <!-- Quick Toast -->
+
+
 <div class="toast" id="toastMessage">✅ Saved Successfully!</div>
+
 
 <script>
     // 1. DATE FORMATTING (DD-MMM-YYYY)
@@ -1132,7 +1141,7 @@
 
 
     // ==========================================
-    // MODULE 2: QUALITY INVESTIGATOR BREAKS (PERSISTENT TIMER & GPS)
+    // MODULE 2: QUALITY INVESTIGATOR BREAKS (MANDATORY GPS ENFORCEMENT & PERSISTENT TIMER)
     // ==========================================
     let breakStartTime = "";
     let breakEndTime = "";
@@ -1228,21 +1237,21 @@
             startTimerEngine(parseInt(activeStartMs, 10));
             document.getElementById('breakStatusMessage').innerText = "⏳ Break in progress! Timer running continuously...";
             if (activeGps && activeGps !== 'Not Acquired') {
-                gpsStatusDisplay.innerHTML = `<span>📍 GPS Acquired: ${activeGps}</span>`;
+                gpsStatusDisplay.innerHTML = `<span>📍 GPS Verified: ${activeGps}</span>`;
             }
         }
     }
     checkActiveBreakSession();
 
-    // Fetch GPS coordinates
-    function requestGpsLocation(callback) {
+    // Fetch GPS coordinates with strict error enforcement
+    function requestGpsLocation(onSuccess, onError) {
         if (!navigator.geolocation) {
             gpsStatusDisplay.innerHTML = "<span>⚠️ GPS not supported by browser</span>";
-            if (callback) callback(null);
+            if (onError) onError("GPS not supported by your browser");
             return;
         }
 
-        gpsStatusDisplay.innerHTML = "<span>📡 Acquiring GPS coordinates...</span>";
+        gpsStatusDisplay.innerHTML = "<span>📡 Verifying GPS location...</span>";
 
         navigator.geolocation.getCurrentPosition(
             function(position) {
@@ -1253,21 +1262,21 @@
                 gpsStatusDisplay.innerHTML = `<span>📍 GPS Acquired: ${breakGpsCoords}</span>`;
                 localStorage.setItem('active_break_gps', breakGpsCoords);
                 localStorage.setItem('active_break_maps', breakGpsMapsUrl);
-                if (callback) callback(breakGpsCoords);
+                if (onSuccess) onSuccess(breakGpsCoords);
             },
             function(error) {
-                let errorMsg = "Unable to fetch GPS";
-                if (error.code === 1) errorMsg = "GPS permission denied";
-                else if (error.code === 2) errorMsg = "GPS signal unavailable";
-                else if (error.code === 3) errorMsg = "GPS request timed out";
+                let errorMsg = "Please turn on GPS/Location on your phone!";
+                if (error.code === 1) errorMsg = "Location permission denied! Please allow GPS access in your browser.";
+                else if (error.code === 2) errorMsg = "GPS signal unavailable! Please enable phone Location (GPS).";
+                else if (error.code === 3) errorMsg = "GPS timed out! Ensure your GPS is turned on and try again.";
                 gpsStatusDisplay.innerHTML = `<span>⚠️ ${errorMsg}</span>`;
-                if (callback) callback(null);
+                if (onError) onError(errorMsg);
             },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
         );
     }
 
-    // Handle Start Break
+    // Handle Start Break (STRICT: GPS MUST BE ACTIVELY VERIFIED)
     function handleStartBreak() {
         const activeStartMs = localStorage.getItem('active_break_start_ms');
         if (activeStartMs) {
@@ -1292,29 +1301,42 @@
             return;
         }
 
-        const nowMs = Date.now();
-        breakStartTime = get24HourTime();
+        btnStartBreak.disabled = true;
+        btnStartBreak.innerText = "⏳ Checking GPS...";
+        gpsStatusDisplay.innerHTML = "<span>📡 Checking location... GPS is mandatory to start break.</span>";
 
-        // Save active session state in storage
-        localStorage.setItem('active_break_start_ms', String(nowMs));
-        localStorage.setItem('active_break_start_str', breakStartTime);
-        localStorage.setItem('active_break_user', user);
-        localStorage.setItem('active_break_station', station);
+        requestGpsLocation(
+            function(coords) {
+                btnStartBreak.disabled = false;
+                const nowMs = Date.now();
+                breakStartTime = get24HourTime();
 
-        // Lock selects
-        breakUserSelect.disabled = true;
-        breakStationSelect.disabled = true;
+                // Save active session state in storage
+                localStorage.setItem('active_break_start_ms', String(nowMs));
+                localStorage.setItem('active_break_start_str', breakStartTime);
+                localStorage.setItem('active_break_user', user);
+                localStorage.setItem('active_break_station', station);
 
-        btnStartBreak.innerText = "Started: " + breakStartTime;
-        btnStartBreak.classList.remove('error-highlight');
-        btnStartBreak.classList.add('recorded');
+                // Lock selects
+                breakUserSelect.disabled = true;
+                breakStationSelect.disabled = true;
 
-        startTimerEngine(nowMs);
-        showToast("⏱️ Break Started & Timer Running!");
+                btnStartBreak.innerText = "Started: " + breakStartTime;
+                btnStartBreak.classList.remove('error-highlight');
+                btnStartBreak.classList.add('recorded');
 
-        requestGpsLocation(function() {
-            document.getElementById('breakStatusMessage').innerText = "Break started at " + breakStartTime + ". Tap 'End Break' to finish & auto-save.";
-        });
+                startTimerEngine(nowMs);
+                showToast("⏱️ Break Started & GPS Verified!");
+                document.getElementById('breakStatusMessage').innerText = "Break started at " + breakStartTime + " with GPS verified. Tap 'End Break' when finished.";
+            },
+            function(errorMsg) {
+                btnStartBreak.disabled = false;
+                btnStartBreak.innerText = "🟢 Start Break";
+                btnStartBreak.classList.add('error-highlight');
+                alert("❌ Cannot start break without Location (GPS)!\n\n" + errorMsg + "\n\nPlease turn on Location / GPS on your phone and allow browser permission, then tap 'Start Break' again.");
+                document.getElementById('breakStatusMessage').innerText = "⚠️ Location is required to start break. Please enable GPS.";
+            }
+        );
     }
 
     // Handle End Break with AUTOMATIC SAVE
@@ -1342,7 +1364,7 @@
         }
 
         breakEndTime = get24HourTime();
-        
+
         // Accurate duration calculation via milliseconds
         let durationMinutes = "0";
         if (activeStartMs) {
@@ -1424,7 +1446,7 @@
         btnStartBreak.classList.remove('recorded', 'error-highlight');
         btnEndBreak.innerText = "🔴 End Break";
         btnEndBreak.classList.remove('recorded', 'error-highlight');
-        gpsStatusDisplay.innerHTML = "<span>📍 Location: Tap 'Start Break' to acquire GPS</span>";
+        gpsStatusDisplay.innerHTML = "<span>📍 Location: GPS is required to start break</span>";
         breakStationSelect.selectedIndex = 0;
         breakStationSelect.classList.remove('error-highlight');
 
@@ -1517,7 +1539,7 @@
 
 
     // ==========================================
-    // MODULE 3: SUPERVISOR PROTECTED MONITOR
+    // MODULE 3: SUPERVISOR PROTECTED MONITOR (AUTO-UNLOCK ON PIN)
     // ==========================================
     const SUPERVISOR_PIN = "1234";
 
@@ -1549,7 +1571,25 @@
         }
     }
 
-    document.getElementById('supervisorPinInput').addEventListener('keydown', function(e) {
+    // Auto-unlock on 4th digit & enter key support
+    const pinInputElement = document.getElementById('supervisorPinInput');
+    pinInputElement.addEventListener('input', function() {
+        const val = this.value.trim();
+        if (val.length === 4) {
+            if (val === SUPERVISOR_PIN) {
+                closePinModal();
+                navigateTo('screenSupervisor');
+                renderSupervisorLogs();
+                showToast("🔓 Access Granted!");
+            } else {
+                alert("❌ Incorrect PIN code! Access denied.");
+                this.value = "";
+                this.focus();
+            }
+        }
+    });
+
+    pinInputElement.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             verifySupervisorPin();
         }
@@ -1588,13 +1628,14 @@
                     <span style="font-size: 12px; color: #d32f2f;">⏳ ${item.duration} Mins</span>
                 </div>
                 <div><strong>🚉 Station:</strong> ${item.station || 'N/A'}</div>
-                <div><strong>⏱️ Timing:</strong> ${item.startTime} ➔ ${item.endTime}</div>
+                <div><strong>⏱️ Timing:</strong> \${item.startTime} ➔ \${item.endTime}</div>
                 <div>${mapHtml}</div>
             `;
             container.appendChild(card);
         }
     }
 </script>
+
 
 </body>
 </html>
