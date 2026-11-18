@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#005a79">
-  <title>Quality Operations Hub</title>
+  <title>Quality Investigator App</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root{--bg-color:#005a79;--text-color:#fff;--btn-bg:#fff;--btn-text:#004d66;--accent-orange:#ff9100;--accent-dark-orange:#e65100}
@@ -44,7 +44,7 @@
 <body>
 <div class="container" id="appContainer">
   <div class="nav-back-bar" id="navBackBar" style="display:none"><button class="btn-back" type="button" onclick="navigateTo('screenHub')">⬅ Hub Menu</button></div>
-  <div class="header"><div class="header-title" id="pageTitle">Quality Operations Hub</div><div class="date-display" id="currentDate"></div></div>
+  <div class="header"><div class="header-title" id="pageTitle">Quality Investigator App</div><div class="date-display" id="currentDate"></div></div>
 
   <div class="app-screen active-screen" id="screenHub">
     <div class="hub-cards-container">
@@ -103,7 +103,7 @@ function fillSelect(id,items){const s=document.getElementById(id);items.forEach(
 fillSelect("userSelect",INSPECTORS);fillSelect("breakUserSelect",INSPECTORS);fillSelect("breakStationSelect",STATIONS);
 const today=new Date(),months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const formattedDate=`${String(today.getDate()).padStart(2,"0")}-${months[today.getMonth()]}-${today.getFullYear()}`;document.getElementById("currentDate").innerText=formattedDate;
-function navigateTo(screenId){const validScreens=["screenHub","screenRegularity","screenBreaks","screenSupervisor"];if(!validScreens.includes(screenId))screenId="screenHub";localStorage.setItem("quality_hub_last_screen",screenId);document.querySelectorAll(".app-screen").forEach(s=>s.classList.remove("active-screen"));document.getElementById(screenId)?.classList.add("active-screen");const c=document.getElementById("appContainer"),n=document.getElementById("navBackBar"),t=document.getElementById("pageTitle");c.classList.toggle("break-theme",screenId==="screenBreaks");n.style.display=screenId==="screenHub"?"none":"flex";const names={screenHub:"Quality Operations Hub",screenRegularity:"Regularity Measurement",screenBreaks:"Quality Investigator Breaks",screenSupervisor:"Supervisor Live Monitor"};t.innerText=names[screenId]||names.screenHub;if(screenId==="screenBreaks")restoreActiveBreakSession();if(screenId==="screenSupervisor"){loadBreaksFromCloud();startSupervisorAutoRefresh()}else{stopSupervisorAutoRefresh()}}
+function navigateTo(screenId){const validScreens=["screenHub","screenRegularity","screenBreaks","screenSupervisor"];if(!validScreens.includes(screenId))screenId="screenHub";localStorage.setItem("quality_hub_last_screen",screenId);document.querySelectorAll(".app-screen").forEach(s=>s.classList.remove("active-screen"));document.getElementById(screenId)?.classList.add("active-screen");const c=document.getElementById("appContainer"),n=document.getElementById("navBackBar"),t=document.getElementById("pageTitle");c.classList.toggle("break-theme",screenId==="screenBreaks");n.style.display=screenId==="screenHub"?"none":"flex";const names={screenHub:"Quality Investigator App",screenRegularity:"Regularity Measurement",screenBreaks:"Quality Investigator Breaks",screenSupervisor:"Supervisor Live Monitor"};t.innerText=names[screenId]||names.screenHub;if(screenId==="screenBreaks")restoreActiveBreakSession();if(screenId==="screenSupervisor"){loadBreaksFromCloud();startSupervisorAutoRefresh()}else{stopSupervisorAutoRefresh()}}
 function showToast(text){const t=document.getElementById("toastMessage");t.innerText=text;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2000)}
 function get24HourTime(){const n=new Date();return `${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}:${String(n.getSeconds()).padStart(2,"0")}`}
 function escapeHtml(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
