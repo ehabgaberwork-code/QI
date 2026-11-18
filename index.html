@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quality Operations Hub</title>
-    <!-- HTML2Canvas Library for Mobile Screenshots -->
+    <!-- html2canvas library for screenshot generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -13,87 +13,61 @@
             --btn-bg: #ffffff;
             --btn-text: #004d66;
             --accent-orange: #ff9100;
-            --supervisor-gold: #ffd54f;
-            --break-bg: linear-gradient(135deg, #0d222d 0%, #16394c 100%);
+            --accent-dark-orange: #e65100;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            padding: 0;
         }
 
         .container {
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             min-height: 100vh;
-            padding: 16px 20px 30px 20px;
+            padding: 16px 20px;
             display: flex;
             flex-direction: column;
+            justify-content: flex-start;
             position: relative;
             background-color: var(--bg-color);
             transition: background 0.3s ease;
         }
 
         .container.break-theme {
-            background: var(--break-bg);
+            background: linear-gradient(135deg, #0d222d 0%, #16394c 100%);
         }
 
-        /* Screen Wrapper */
-        .app-screen {
-            display: none;
-            width: 100%;
-            flex-direction: column;
-            animation: fadeIn 0.25s ease-in-out;
-        }
-
-        .app-screen.active-screen {
-            display: flex !important;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Top Navigation & Header */
-        .top-nav {
+        .nav-back-bar {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            margin-bottom: 12px;
+            justify-content: flex-start;
+            margin-bottom: 10px;
         }
 
-        .btn-nav-back {
+        .btn-back {
             background: rgba(255, 255, 255, 0.2);
             color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            padding: 6px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 20px;
+            padding: 6px 14px;
             font-size: 13px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-        }
-
-        .btn-nav-back:active {
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(0.96);
+            gap: 6px;
         }
 
         .header {
@@ -101,21 +75,22 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            width: 100%;
-            text-align: center;
+            gap: 4px;
+            margin-top: 4px;
             margin-bottom: 14px;
+            width: 100%;
         }
 
         .header-title {
             font-size: 22px;
-            font-weight: bold;
+            font-weight: 800;
+            text-align: center;
             letter-spacing: 0.5px;
         }
 
         .date-display {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             color: rgba(255, 255, 255, 0.95);
             background: rgba(0, 0, 0, 0.25);
             padding: 4px 14px;
@@ -123,118 +98,117 @@
             letter-spacing: 0.5px;
         }
 
-        .screen-content {
-            display: flex;
+        .app-screen {
+            display: none;
+            width: 100%;
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            width: 100%;
         }
 
-        /* HUB SCREEN CARDS */
-        .hub-card {
+        .app-screen.active-screen {
+            display: flex;
+        }
+
+        .hub-cards-container {
             width: 100%;
-            background: rgba(255, 255, 255, 0.12);
-            border: 2px solid rgba(255, 255, 255, 0.25);
-            border-radius: 14px;
-            padding: 18px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .hub-card {
+            background: #ffffff;
+            color: #004d66;
+            border-radius: 14px;
+            padding: 20px 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 16px;
+            transition: all 0.2s ease;
+            border-left: 6px solid #005a79;
+        }
+
+        .hub-card-break {
+            border-left-color: #ff9100;
+        }
+
+        .hub-card-supervisor {
+            border-left-color: #ffd54f;
+            background: #fffdf7;
         }
 
         .hub-card:active {
-            transform: translateY(-2px) scale(0.98);
-            background: rgba(255, 255, 255, 0.22);
-            border-color: #ffffff;
-        }
-
-        .hub-card.break-hub-card {
-            background: rgba(255, 145, 0, 0.15);
-            border-color: rgba(255, 145, 0, 0.4);
-        }
-
-        .hub-card.supervisor-card {
-            background: rgba(255, 213, 79, 0.15);
-            border-color: rgba(255, 213, 79, 0.4);
+            transform: scale(0.98);
         }
 
         .hub-card-icon {
-            font-size: 36px;
+            font-size: 34px;
+            line-height: 1;
         }
 
         .hub-card-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffffff;
+            font-size: 17px;
+            font-weight: 800;
         }
 
         .hub-card-desc {
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.85);
-            line-height: 1.3;
+            color: #555555;
+            margin-top: 3px;
         }
 
-        /* FORM ELEMENTS */
         .select-field {
             width: 100%;
-            padding: 13px;
+            padding: 12px 14px;
             font-size: 15px;
             border: 2px solid transparent;
             border-radius: 8px;
             text-align: center;
+            box-sizing: border-box;
             background-color: #ffffff;
             color: #004d66;
             font-weight: bold;
             cursor: pointer;
             outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .select-field:disabled {
-            background-color: #e2e8f0;
-            color: #64748b;
-            cursor: not-allowed;
-            opacity: 0.9;
         }
 
         .train-box-wrapper {
             width: 100%;
-            position: relative;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
         .input-field {
             width: 100%;
-            padding: 12px 10px;
-            font-size: 26px;
-            line-height: 1.3;
+            padding: 10px;
+            font-size: 24px;
             border: 2px solid transparent;
             border-radius: 8px;
             text-align: center;
             background-color: #ffffff;
             color: #004d66;
             letter-spacing: 4px;
-            font-weight: bold;
+            font-weight: 800;
             outline: none;
+            display: block;
         }
 
         .btn {
-            width: 100%;
+            width: 95%;
             background-color: var(--btn-bg);
             color: var(--btn-text);
             border: 2px solid transparent;
             border-radius: 8px;
             padding: 13px 0;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-            transition: all 0.2s ease;
             text-align: center;
             display: block;
         }
@@ -244,218 +218,97 @@
         }
 
         .btn.recorded {
-            background-color: #e8f5e9 !important;
-            color: #1b5e20 !important;
-            border: 2px solid #81c784 !important;
-        }
-
-        .btn-start-break {
-            background-color: #2e7d32;
-            color: #ffffff;
-            font-size: 17px;
-        }
-
-        .btn-end-break {
-            background-color: #c62828;
-            color: #ffffff;
-            font-size: 17px;
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            border: 2px solid #81c784;
         }
 
         .btn-submit {
-            background-color: #00796b;
+            background-color: #2e7d32;
             color: #ffffff;
         }
 
         .btn-download-share {
             background: linear-gradient(135deg, #ff9100 0%, #e65100 100%);
             color: #ffffff;
-            font-size: 16px;
-            padding: 13px 0;
-            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 4px 12px rgba(230, 81, 0, 0.35);
         }
 
-        /* Persistent Live Timer Box */
-        .break-timer-card {
-            display: none;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            border: 2px solid #ffd54f;
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-            box-shadow: 0 0 16px rgba(255, 213, 79, 0.35);
-            animation: pulse-glow 2s infinite ease-in-out;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 12px rgba(255, 213, 79, 0.25); }
-            50% { box-shadow: 0 0 20px rgba(255, 213, 79, 0.55); }
-        }
-
-        .break-timer-title {
-            font-size: 12px;
-            color: #ffd54f;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 2px;
-        }
-
-        .break-timer-digits {
-            font-size: 34px;
-            font-weight: 800;
+        .btn-start-break {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: #ffffff;
-            letter-spacing: 3px;
-            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
         }
 
-        /* GPS Status Box */
-        .gps-status-card {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 8px;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 12px;
-            color: #ffd54f;
-            font-weight: 600;
+        .btn-end-break {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: #ffffff;
+        }
+
+        .timer-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 2px solid #ff9100;
+            border-radius: 12px;
+            padding: 10px;
+            width: 95%;
             text-align: center;
         }
 
-        .error-highlight {
-            border: 2px solid #ff5252 !important;
-            background-color: #ffebee !important;
-            color: #c62828 !important;
-            animation: shake 0.3s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
-        }
-
-        .action-row {
-            display: flex;
-            width: 100%;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 2px;
-        }
-
-        .btn-clear {
-            background-color: #d32f2f;
-            color: #ffffff;
-            font-size: 13px;
-            padding: 10px 0;
-            flex: 1;
-        }
-
-        .btn-clear-all {
-            background-color: #455a64;
-            color: #ffffff;
-            font-size: 13px;
-            padding: 10px 0;
-            flex: 1;
+        .timer-val {
+            font-size: 32px;
+            font-weight: 900;
+            color: #ffd54f;
+            font-family: monospace;
+            letter-spacing: 2px;
         }
 
         .counter-badge {
             background: rgba(0, 0, 0, 0.25);
-            padding: 4px 14px;
+            padding: 4px 12px;
             border-radius: 12px;
             font-size: 13px;
             font-weight: bold;
             color: #ffd54f;
         }
 
+        .error-highlight {
+            border: 2px solid #ff5252 !important;
+            background-color: #ffebee !important;
+            color: #c62828 !important;
+        }
+
         .footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+            font-size: 12px;
             color: rgba(255, 255, 255, 0.85);
             margin-top: 20px;
             width: 100%;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-            padding-top: 10px;
         }
 
         .status-msg {
-            font-size: 13px;
+            font-size: 12px;
             color: #ffd54f;
             font-weight: 500;
             min-height: 18px;
-            text-align: left;
-        }
-
-        /* SUPERVISOR LOG STYLES */
-        .log-container {
-            width: 100%;
-            max-height: 480px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 4px 0;
-        }
-
-        .log-card {
-            background: #ffffff;
-            color: #004d66;
-            border-radius: 8px;
-            padding: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            font-size: 13px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            text-align: left;
-        }
-
-        .log-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 4px;
-            font-size: 14px;
-            color: #005a79;
-        }
-
-        .log-map-link {
-            display: inline-block;
-            color: #e65100;
-            font-weight: bold;
-            text-decoration: underline;
-            margin-top: 2px;
         }
 
         .toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background-color: #1b5e20;
             color: #ffffff;
-            padding: 14px 24px;
-            border-radius: 30px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
-            font-size: 15px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
             opacity: 0;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
             z-index: 1000;
             pointer-events: none;
-            text-align: center;
-            max-width: 90%;
+            white-space: nowrap;
         }
 
         .toast.show {
@@ -463,7 +316,6 @@
             opacity: 1;
         }
 
-        /* MODALS (CENTER SCREEN OVERLAY) */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -471,8 +323,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.78);
-            z-index: 2100;
+            background: rgba(0,0,0,0.75);
+            z-index: 999;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -480,129 +332,106 @@
 
         .modal-card {
             background: #ffffff;
-            color: #004d66;
-            border-radius: 14px;
+            color: #333333;
+            border-radius: 12px;
             width: 100%;
-            max-width: 340px;
+            max-width: 320px;
             padding: 22px 18px;
-            text-align: center;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            animation: modalPop 0.25s ease-out;
-        }
-
-        @keyframes modalPop {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #005a79;
+            text-align: center;
         }
 
         .pin-input {
             width: 100%;
             padding: 12px;
-            font-size: 26px;
+            font-size: 24px;
             text-align: center;
+            letter-spacing: 8px;
             border: 2px solid #005a79;
             border-radius: 8px;
-            letter-spacing: 10px;
-            outline: none;
             font-weight: bold;
+            outline: none;
         }
 
-        .modal-btns-row {
-            display: flex;
-            gap: 10px;
-            width: 100%;
+        .supervisor-log-item {
+            background: #ffffff;
+            color: #222;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 13px;
+            border-left: 4px solid #ff9100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        .modal-btn {
-            flex: 1;
-            padding: 12px 0;
-            border: none;
-            border-radius: 8px;
+        .supervisor-log-item .user-title {
             font-size: 15px;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            color: #005a79;
         }
 
-        .modal-btn:active {
-            transform: scale(0.97);
-        }
-
-        .modal-btn-confirm {
-            background: #00796b;
-            color: #ffffff;
-        }
-
-        .modal-btn-cancel {
-            background: #e0e0e0;
-            color: #333333;
+        .map-link-btn {
+            display: inline-block;
+            background: #0284c7;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 11px;
+            margin-top: 6px;
         }
     </style>
 </head>
 <body>
 
-<div class="container" id="appMainWrapper">
+    <div class="container" id="appContainer">
+        
+        <!-- Top Navigation -->
+        <div class="nav-back-bar" id="navBackBar" style="display: none;">
+            <button class="btn-back" type="button" onclick="navigateTo('screenHub')">⬅ Hub Menu</button>
+        </div>
 
-    <!-- ==================== SCREEN 1: HUB ==================== -->
-    <div id="screenHub" class="app-screen active-screen">
+        <!-- Header -->
         <div class="header">
-            <div class="header-title">Quality Operations Hub</div>
-            <div style="font-size: 13px; opacity: 0.9;">Main Dashboard</div>
-            <div class="date-display" id="hubDateDisplay"></div>
+            <div class="header-title" id="pageTitle">Quality Operations Hub</div>
+            <div class="date-display" id="currentDate"></div>
         </div>
 
-        <div class="screen-content">
-            <!-- Option 1: Regularity -->
-            <div class="hub-card" onclick="navigateTo('screenRegularity')">
-                <div class="hub-card-icon">🚆</div>
-                <div class="hub-card-title">Regularity Measurement</div>
-                <div class="hub-card-desc">Log train arrival and departure times with direct screenshot capture and Excel export</div>
+        <!-- SCREEN 1: HUB MENU -->
+        <div class="app-screen active-screen" id="screenHub">
+            <div class="hub-cards-container">
+                <div class="hub-card" onclick="navigateTo('screenRegularity')">
+                    <div class="hub-card-icon">⏱️</div>
+                    <div>
+                        <div class="hub-card-title">Regularity Measurement</div>
+                        <div class="hub-card-desc">Log train arrivals and departures with CSV export</div>
+                    </div>
+                </div>
+
+                <div class="hub-card hub-card-break" onclick="navigateTo('screenBreaks')">
+                    <div class="hub-card-icon">☕</div>
+                    <div>
+                        <div class="hub-card-title">Quality Investigator Breaks</div>
+                        <div class="hub-card-desc">Live persistent break timer with mandatory GPS sync</div>
+                    </div>
+                </div>
+
+                <div class="hub-card hub-card-supervisor" onclick="openSupervisorPinModal()">
+                    <div class="hub-card-icon">🔒</div>
+                    <div>
+                        <div class="hub-card-title">Supervisor Live Monitor</div>
+                        <div class="hub-card-desc">Live cloud sync for all team breaks & Google Maps links</div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Option 2: Quality Investigator Breaks -->
-            <div class="hub-card break-hub-card" onclick="navigateTo('screenBreaks')">
-                <div class="hub-card-icon">☕</div>
-                <div class="hub-card-title">Quality Investigator Breaks</div>
-                <div class="hub-card-desc">Log break start and end with station selection, live timer & mandatory GPS check</div>
-            </div>
-
-            <!-- Option 3: Supervisor Monitor -->
-            <div class="hub-card supervisor-card" onclick="openPinModal()">
-                <div class="hub-card-icon">🔒</div>
-                <div class="hub-card-title">Supervisor Live Monitor</div>
-                <div class="hub-card-desc">Protected view to track inspector break times, stations, GPS locations & Excel export</div>
-            </div>
         </div>
 
-        <div class="footer">
-            <div class="status-msg">Select a module to continue...</div>
-            <div>Ver 1.0</div>
-        </div>
-    </div>
-
-
-    <!-- ==================== SCREEN 2: REGULARITY MEASUREMENT ==================== -->
-    <div id="screenRegularity" class="app-screen">
-        <div class="top-nav">
-            <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
-            <div class="date-display" id="regDateDisplay"></div>
-        </div>
-
-        <div class="header">
-            <div class="header-title">Regularity Measurement</div>
-        </div>
-
-        <div class="screen-content">
-            <!-- Inspector Dropdown -->
+        <!-- SCREEN 2: REGULARITY MEASUREMENT -->
+        <div class="app-screen" id="screenRegularity">
             <select id="userSelect" class="select-field">
                 <option value="" disabled selected>👤 Select Inspector Name</option>
                 <option value="Fathy Helmy Fattouh Hassan">Fathy Helmy Fattouh Hassan</option>
@@ -620,56 +449,21 @@
                 <option value="Yasmine Mohamed Alsayed Abdelsattar Akila">Yasmine Mohamed Alsayed Abdelsattar Akila</option>
             </select>
 
-            <!-- Train Box -->
             <div class="train-box-wrapper" id="trainBoxWrapper">
-                <input 
-                    type="tel" 
-                    id="trainNumber" 
-                    class="input-field" 
-                    value="70"
-                    placeholder="70.." 
-                    maxlength="4" 
-                    inputmode="numeric" 
-                    pattern="[0-9]*" 
-                    autocomplete="off"
-                />
+                <input type="tel" id="trainNumber" class="input-field" placeholder="70.." maxlength="4" inputmode="numeric" pattern="[0-9]*" value="70" autocomplete="off" />
             </div>
 
             <div class="counter-badge" id="trainCounter">Saved Trains: 0</div>
 
-            <!-- Buttons -->
             <button class="btn" id="btnArrival" type="button" onclick="handleArrival()">Train Arrival</button>
             <button class="btn" id="btnDeparture" type="button" onclick="handleDeparture()">Train Departure</button>
             <button class="btn btn-submit" id="btnSubmit" type="button" onclick="saveRecord()">💾 Save Train</button>
-            <button class="btn btn-download-share" id="btnExportCsv" type="button" onclick="exportAndShareExcel()">📥 Download / Share All (Excel)</button>
-
-            <!-- Clear Action Buttons -->
-            <div class="action-row">
-                <button class="btn btn-clear" type="button" onclick="resetCurrentForm(true)">🧹 Clear Form</button>
-                <button class="btn btn-clear-all" type="button" onclick="clearAllRecords()">🗑️ Clear All Saved</button>
-            </div>
+            <button class="btn btn-download-share" id="btnExportExcel" type="button" onclick="exportAndShareExcel()">📥 Download / Share All (Excel)</button>
+            <button class="btn" style="background:#c62828; color:#fff; width:65%; padding:10px 0; font-size:13px;" type="button" onclick="resetCurrentForm()">🧹 Clear Form</button>
         </div>
 
-        <div class="footer">
-            <div class="status-msg" id="statusMessage">Enter 2 digits & tap buttons...</div>
-            <div>Ver 1.0</div>
-        </div>
-    </div>
-
-
-    <!-- ==================== SCREEN 3: QUALITY INVESTIGATOR BREAKS ==================== -->
-    <div id="screenBreaks" class="app-screen">
-        <div class="top-nav">
-            <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
-            <div class="date-display" id="breakDateDisplay"></div>
-        </div>
-
-        <div class="header">
-            <div class="header-title">Quality Investigator Breaks</div>
-        </div>
-
-        <div class="screen-content">
-            <!-- Break User Dropdown -->
+        <!-- SCREEN 3: BREAKS -->
+        <div class="app-screen" id="screenBreaks">
             <select id="breakUserSelect" class="select-field">
                 <option value="" disabled selected>👤 Select Inspector Name</option>
                 <option value="Fathy Helmy Fattouh Hassan">Fathy Helmy Fattouh Hassan</option>
@@ -687,7 +481,6 @@
                 <option value="Yasmine Mohamed Alsayed Abdelsattar Akila">Yasmine Mohamed Alsayed Abdelsattar Akila</option>
             </select>
 
-            <!-- Station Dropdown (45 Stations) -->
             <select id="breakStationSelect" class="select-field">
                 <option value="" disabled selected>🚉 Select Break Station</option>
                 <option value="Adly Mansour">Adly Mansour</option>
@@ -744,975 +537,452 @@
                 <option value="Ramadan City Center">Ramadan City Center</option>
             </select>
 
-            <!-- Persistent Live Timer Card -->
-            <div class="break-timer-card" id="breakTimerCard">
-                <div class="break-timer-title">⏱️ ACTIVE BREAK TIMER</div>
-                <div class="break-timer-digits" id="breakTimerDigits">00:00:00</div>
+            <div class="timer-box">
+                <div style="font-size: 11px; color:#ffd54f; font-weight:bold; text-transform:uppercase;">Live Break Timer</div>
+                <div class="timer-val" id="liveBreakTimer">00:00:00</div>
             </div>
 
-            <!-- GPS Live Card -->
-            <div class="gps-status-card" id="gpsStatusDisplay">
-                <span>📍 Location: GPS is required to start break</span>
+            <div id="gpsStatusDisplay" style="font-size:12px; color:#a7f3d0; text-align:center;">
+                <span>📍 GPS check mandatory to start/end break</span>
             </div>
 
-            <div class="counter-badge" id="breakCounter">Saved Breaks: 0</div>
-
-            <!-- Action Buttons for Break -->
             <button class="btn btn-start-break" id="btnStartBreak" type="button" onclick="handleStartBreak()">🟢 Start Break</button>
             <button class="btn btn-end-break" id="btnEndBreak" type="button" onclick="handleEndBreak()">🔴 End Break</button>
+        </div>
 
-            <!-- Clear Action Buttons -->
-            <div class="action-row">
-                <button class="btn btn-clear" type="button" onclick="resetBreakForm(true)">🧹 Clear Form</button>
-                <button class="btn btn-clear-all" type="button" onclick="clearAllBreakRecords()">🗑️ Clear All Breaks</button>
+        <!-- SCREEN 4: SUPERVISOR -->
+        <div class="app-screen" id="screenSupervisor">
+            <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+                <div class="counter-badge" id="supervisorTotalBadge">Total Breaks: 0</div>
+                <button class="btn-back" style="background:#0284c7; padding:4px 10px;" type="button" onclick="loadBreaksFromCloud()">🔄 Refresh Cloud</button>
+            </div>
+
+            <button class="btn btn-download-share" type="button" style="width:100%; padding:10px 0; font-size:14px;" onclick="exportSupervisorBreaksExcel()">📥 Export All Breaks (Excel)</button>
+
+            <div id="supervisorLogContainer" style="width:100%; max-height:480px; overflow-y:auto; margin-top:8px;">
+                <!-- Logs injected dynamically -->
             </div>
         </div>
 
+        <!-- Footer -->
         <div class="footer">
-            <div class="status-msg" id="breakStatusMessage">Select station & tap Start Break...</div>
+            <div class="status-msg" id="statusMessage">Select a module...</div>
             <div>Ver 1.0</div>
         </div>
     </div>
 
+    <!-- TOAST -->
+    <div class="toast" id="toastMessage">Action Completed</div>
 
-    <!-- ==================== SCREEN 4: SUPERVISOR LIVE MONITOR ==================== -->
-    <div id="screenSupervisor" class="app-screen">
-        <div class="top-nav">
-            <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
-            <div class="date-display" id="supDateDisplay"></div>
+    <!-- PIN MODAL -->
+    <div class="modal-overlay" id="pinModal">
+        <div class="modal-card">
+            <div style="font-size: 32px;">🔒</div>
+            <div style="font-size: 16px; font-weight: bold; color: #004d66;">Please enter the PIN</div>
+            <input type="password" id="supervisorPinInput" class="pin-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" autocomplete="off" />
+            <button class="btn" style="background:#e0e0e0; color:#333; width:100%; padding:8px 0;" type="button" onclick="closeSupervisorPinModal()">Cancel</button>
         </div>
+    </div>
 
-        <div class="header">
-            <div class="header-title" style="color: var(--supervisor-gold);">🔒 Supervisor Monitor</div>
-            <div style="font-size: 13px; opacity: 0.9;">Inspector Breaks & GPS Log</div>
-        </div>
-
-        <div class="screen-content">
-            <div class="action-row" style="margin-bottom: 6px;">
-                <button class="btn btn-submit" style="margin: 0; padding: 10px 0; font-size: 14px;" type="button" onclick="renderSupervisorLogs()">🔄 Refresh List</button>
-                <button class="btn btn-download-share" style="padding: 10px 0; font-size: 14px;" type="button" onclick="exportBreaksExcel()">📥 Export Excel</button>
+    <!-- DURATION MODAL -->
+    <div class="modal-overlay" id="breakSummaryModal">
+        <div class="modal-card" style="border: 2px solid #ff9100;">
+            <div style="font-size: 36px;">⏱️</div>
+            <div style="font-size: 18px; color: #004d66; font-weight: bold;">Break Completed</div>
+            
+            <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 8px; padding: 10px;">
+                <div style="font-size: 11px; color: #166534; font-weight: bold;">TOTAL DURATION</div>
+                <div id="modalDurationText" style="font-size: 22px; font-weight: 900; color: #15803d;">0 Hours & 0 Mins</div>
             </div>
 
-            <!-- Scrollable Log Cards -->
-            <div class="log-container" id="supervisorLogContainer">
-                <!-- Cards will render here -->
+            <div style="background: #f8fafc; border-radius: 6px; padding: 8px; font-size: 12px; text-align: left; color: #334155;">
+                <div><strong>👤 Inspector:</strong> <span id="modalSummaryUser">--</span></div>
+                <div><strong>🚉 Station:</strong> <span id="modalSummaryStation">--</span></div>
+                <div><strong>⏱️ Time:</strong> <span id="modalSummaryTime">-- ➔ --</span></div>
             </div>
-        </div>
 
-        <div class="footer">
-            <div class="status-msg" id="supStatusMsg">Viewing logged breaks...</div>
-            <div>Ver 1.0</div>
+            <button class="btn btn-download-share" style="width:100%; padding:10px 0;" type="button" onclick="closeBreakSummaryModal()">OK / Done</button>
         </div>
     </div>
 
-</div>
+    <script>
+        // ================= CONFIG & CLOUD INTEGRATION =================
+        const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZCFVNqqDgpJpfLLyGnYH5et7bYU_ZRqyIsNp3vvbtYwwDpdhrTVTlrHEr1ZppaIMh7A/exec";
+        const SUPERVISOR_PIN = "1234";
 
-<!-- BREAK SUMMARY POPUP MODAL (CLEAR CENTER SCREEN DISPLAY) -->
-<div class="modal-overlay" id="breakSummaryModal">
-    <div class="modal-card" style="max-width: 330px; padding: 24px 18px; border: 2px solid #ff9100;">
-        <div style="font-size: 42px; line-height: 1; margin-bottom: 2px;">⏱️</div>
-        <div class="modal-title" style="font-size: 19px; color: #004d66; font-weight: 800;">Break Completed</div>
-        <div style="font-size: 12px; color: #555; margin-top: -6px;">Quality Investigator Breaks</div>
-        
-        <!-- Big Highlighted Duration Badge -->
-        <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 10px; padding: 14px 10px; margin: 4px 0;">
-            <div style="font-size: 12px; color: #166534; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Total Duration</div>
-            <div id="modalDurationText" style="font-size: 25px; font-weight: 900; color: #15803d; margin-top: 4px; letter-spacing: 0.5px;">0 Hours & 0 Mins</div>
-        </div>
+        // Date in DD-MMM-YYYY
+        const today = new Date();
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const formattedDate = `${String(today.getDate()).padStart(2, '0')}-${months[today.getMonth()]}-${today.getFullYear()}`;
+        document.getElementById('currentDate').innerText = formattedDate;
 
-        <!-- Inspector & Station Details -->
-        <div style="background: #f8fafc; border-radius: 8px; padding: 10px; font-size: 13px; text-align: left; color: #334155; display: flex; flex-direction: column; gap: 4px; border: 1px solid #e2e8f0;">
-            <div><strong>👤 Inspector:</strong> <span id="modalSummaryUser">--</span></div>
-            <div><strong>🚉 Station:</strong> <span id="modalSummaryStation">--</span></div>
-            <div><strong>⏱️ Timing:</strong> <span id="modalSummaryTime">-- ➔ --</span></div>
-        </div>
+        // Navigation Engine
+        function navigateTo(screenId) {
+            document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active-screen'));
+            const target = document.getElementById(screenId);
+            if (target) target.classList.add('active-screen');
 
-        <button class="modal-btn modal-btn-confirm" style="background: #e65100; margin-top: 4px; padding: 13px; font-size: 16px;" onclick="closeBreakSummaryModal()">✅ OK / Done</button>
-    </div>
-</div>
+            const container = document.getElementById('appContainer');
+            const navBack = document.getElementById('navBackBar');
+            const title = document.getElementById('pageTitle');
 
-<!-- PIN MODAL (NUMERIC KEYPAD ONLY) -->
-<div class="modal-overlay" id="pinModal">
-    <div class="modal-card">
-        <div class="modal-title">🔒 Please enter the PIN</div>
-        <input 
-            type="password" 
-            id="supervisorPinInput" 
-            class="pin-input" 
-            maxlength="4" 
-            inputmode="numeric" 
-            pattern="[0-9]*" 
-            placeholder="••••"
-            autocomplete="off"
-        />
-        <div class="modal-btns-row">
-            <button class="modal-btn modal-btn-confirm" onclick="verifySupervisorPin()">Unlock</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closePinModal()">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Toast -->
-<div class="toast" id="toastMessage">✅ Saved Successfully!</div>
-
-<script>
-    // 1. DATE FORMATTING (DD-MMM-YYYY)
-    const today = new Date();
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = months[today.getMonth()];
-    const year = today.getFullYear();
-    const formattedDate = `${day}-${month}-${year}`;
-
-    document.getElementById('hubDateDisplay').innerText = formattedDate;
-    document.getElementById('regDateDisplay').innerText = formattedDate;
-    document.getElementById('breakDateDisplay').innerText = formattedDate;
-    document.getElementById('supDateDisplay').innerText = formattedDate;
-
-    // NAVIGATION SYSTEM
-    function navigateTo(screenId) {
-        // Hide all screens
-        const screens = document.querySelectorAll('.app-screen');
-        screens.forEach(s => s.classList.remove('active-screen'));
-
-        const wrapper = document.getElementById('appMainWrapper');
-        if (screenId === 'screenBreaks') {
-            wrapper.classList.add('break-theme');
-        } else {
-            wrapper.classList.remove('break-theme');
-        }
-
-        const target = document.getElementById(screenId);
-        if (target) {
-            target.classList.add('active-screen');
-        }
-        window.scrollTo(0, 0);
-    }
-
-    function showToast(text, duration = 2000) {
-        const toast = document.getElementById('toastMessage');
-        toast.innerText = text;
-        toast.classList.add('show');
-        setTimeout(function() {
-            toast.classList.remove('show');
-        }, duration);
-    }
-
-    function get24HourTime() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2, '0');
-        const m = String(now.getMinutes()).padStart(2, '0');
-        const s = String(now.getSeconds()).padStart(2, '0');
-        return h + ':' + m + ':' + s;
-    }
-
-    // ==========================================
-    // MODULE 1: REGULARITY MEASUREMENT
-    // ==========================================
-    let arrivalTime = "";
-    let departureTime = "";
-    let savedRecords = [];
-
-    try {
-        savedRecords = JSON.parse(localStorage.getItem('train_records') || '[]');
-    } catch(e) {
-        savedRecords = [];
-    }
-
-    const userSelect = document.getElementById('userSelect');
-    const trainInput = document.getElementById('trainNumber');
-    const arrivalBtn = document.getElementById('btnArrival');
-    const departureBtn = document.getElementById('btnDeparture');
-
-    const savedUser = localStorage.getItem('selected_user') || '';
-    if (savedUser) {
-        userSelect.value = savedUser;
-    }
-
-    userSelect.addEventListener('change', function() {
-        this.classList.remove('error-highlight');
-        localStorage.setItem('selected_user', this.value);
-        document.getElementById('breakUserSelect').value = this.value;
-    });
-
-    function updateRegCounter() {
-        document.getElementById('trainCounter').innerText = "Saved Trains: " + savedRecords.length;
-    }
-    updateRegCounter();
-
-    trainInput.addEventListener('focus', function() {
-        if (!this.value.startsWith('70')) {
-            this.value = '70';
-        }
-        const len = this.value.length;
-        this.setSelectionRange(len, len);
-    });
-
-    trainInput.addEventListener('keydown', function(e) {
-        if ((e.key === 'Backspace' || e.key === 'Delete') && this.selectionStart <= 2 && this.selectionEnd <= 2) {
-            e.preventDefault();
-        }
-    });
-
-    trainInput.addEventListener('input', function() {
-        this.classList.remove('error-highlight');
-        let numbersOnly = this.value.replace(/[^0-9]/g, '');
-
-        if (!numbersOnly.startsWith('70')) {
-            const tail = numbersOnly.replace(/^7?0?/, '');
-            numbersOnly = '70' + tail;
-        }
-
-        this.value = numbersOnly.slice(0, 4);
-        const val = this.value.trim();
-
-        if (val.length === 4) {
-            document.getElementById('statusMessage').innerText = "Train " + val + " ready. Tap 'Train Arrival'.";
-            this.blur();
-            arrivalBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else {
-            document.getElementById('statusMessage').innerText = "Enter remaining 2 digits...";
-        }
-    });
-
-    function handleArrival() {
-        arrivalTime = get24HourTime();
-        arrivalBtn.innerText = "Arrival: " + arrivalTime;
-        arrivalBtn.classList.remove('error-highlight');
-        arrivalBtn.classList.add('recorded');
-        document.getElementById('statusMessage').innerText = "Arrival logged at " + arrivalTime + ". Tap 'Train Departure'.";
-    }
-
-    function handleDeparture() {
-        departureTime = get24HourTime();
-        departureBtn.innerText = "Departure: " + departureTime;
-        departureBtn.classList.remove('error-highlight');
-        departureBtn.classList.add('recorded');
-        document.getElementById('statusMessage').innerText = "Departure logged at " + departureTime + ". Tap 'Save Train'.";
-    }
-
-    function resetCurrentForm(clearUser = false) {
-        trainInput.value = "70";
-        trainInput.classList.remove('error-highlight');
-        arrivalTime = "";
-        departureTime = "";
-
-        arrivalBtn.innerText = "Train Arrival";
-        arrivalBtn.classList.remove('recorded', 'error-highlight');
-        departureBtn.innerText = "Train Departure";
-        departureBtn.classList.remove('recorded', 'error-highlight');
-
-        if (clearUser) {
-            userSelect.selectedIndex = 0;
-            userSelect.classList.remove('error-highlight');
-            localStorage.removeItem('selected_user');
-            showToast("🧹 Form Cleared!", 2000);
-            document.getElementById('statusMessage').innerText = "Form cleared. Select inspector & enter train...";
-        } else {
-            document.getElementById('statusMessage').innerText = "Train saved! Enter next 2 digits...";
-        }
-    }
-
-    function clearAllRecords() {
-        if (savedRecords.length === 0) {
-            alert("ℹ️ No saved trains to clear.");
-            return;
-        }
-
-        if (confirm("⚠️ Are you sure you want to clear all " + savedRecords.length + " trains for this shift?")) {
-            savedRecords = [];
-            localStorage.removeItem('train_records');
-            updateRegCounter();
-            resetCurrentForm(false);
-            showToast("🗑️ All trains cleared!", 2000);
-            document.getElementById('statusMessage').innerText = "All records cleared for new shift.";
-        }
-    }
-
-    async function captureAndDirectDownload(trainNo) {
-        try {
-            const captureArea = document.getElementById('screenRegularity');
-            if (typeof html2canvas === 'function') {
-                const canvas = await html2canvas(captureArea, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#005a79',
-                    onclone: function(clonedDoc) {
-                        const wrapper = clonedDoc.getElementById('trainBoxWrapper');
-                        if (wrapper) {
-                            wrapper.innerHTML = `
-                                <div style="
-                                    width: 100%;
-                                    box-sizing: border-box;
-                                    padding: 10px 0;
-                                    background: #ffffff;
-                                    color: #004d66;
-                                    font-size: 26px;
-                                    font-weight: bold;
-                                    letter-spacing: 5px;
-                                    text-align: center;
-                                    border-radius: 6px;
-                                    line-height: 1.2;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                ">${trainNo}</div>
-                            `;
-                        }
-                    }
-                });
-
-                const image = canvas.toDataURL("image/png");
-                const downloadLink = document.createElement("a");
-                const cleanDate = formattedDate.replace(/\//g, '-');
-                downloadLink.download = `Train_${trainNo}_${cleanDate}_${Date.now()}.png`;
-                downloadLink.href = image;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
+            if (screenId === 'screenHub') {
+                container.classList.remove('break-theme');
+                navBack.style.display = 'none';
+                title.innerText = "Quality Operations Hub";
+            } else if (screenId === 'screenRegularity') {
+                container.classList.remove('break-theme');
+                navBack.style.display = 'flex';
+                title.innerText = "Regularity Measurement";
+            } else if (screenId === 'screenBreaks') {
+                container.classList.add('break-theme');
+                navBack.style.display = 'flex';
+                title.innerText = "Quality Investigator Breaks";
+                restoreActiveBreakSession();
+            } else if (screenId === 'screenSupervisor') {
+                container.classList.remove('break-theme');
+                navBack.style.display = 'flex';
+                title.innerText = "Supervisor Live Monitor";
+                loadBreaksFromCloud();
             }
-        } catch (err) {
-            console.error("Screenshot error:", err);
-        }
-    }
-
-    async function saveRecord() {
-        const user = userSelect.value;
-        const trainNo = trainInput.value.trim();
-
-        if (!user) {
-            userSelect.classList.add('error-highlight');
-            userSelect.focus();
-            alert("⚠️ Please select Inspector Name first!");
-            return;
         }
 
-        if (!trainNo || trainNo.length < 4) {
-            trainInput.classList.add('error-highlight');
-            trainInput.focus();
-            alert("⚠️ Please enter complete 4-digit Train Number (70xx)!");
-            return;
+        function showToast(text) {
+            const toast = document.getElementById('toastMessage');
+            toast.innerText = text;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
-        if (!arrivalTime) {
-            arrivalBtn.classList.add('error-highlight');
-            alert("⚠️ Please log Train Arrival time first!");
-            return;
+        function get24HourTime() {
+            const now = new Date();
+            return String(now.getHours()).padStart(2, '0') + ':' +
+                   String(now.getMinutes()).padStart(2, '0') + ':' +
+                   String(now.getSeconds()).padStart(2, '0');
         }
 
-        if (!departureTime) {
-            departureBtn.classList.add('error-highlight');
-            alert("⚠️ Please log Train Departure time first!");
-            return;
+        // ================= REGULARITY ENGINE =================
+        let arrivalTime = "", departureTime = "";
+        let savedRecords = JSON.parse(localStorage.getItem('train_records') || '[]');
+        const userSelect = document.getElementById('userSelect');
+        const trainInput = document.getElementById('trainNumber');
+        const arrivalBtn = document.getElementById('btnArrival');
+        const departureBtn = document.getElementById('btnDeparture');
+
+        function updateTrainCounter() {
+            document.getElementById('trainCounter').innerText = "Saved Trains: " + savedRecords.length;
         }
+        updateTrainCounter();
 
-        const newRecord = {
-            date: formattedDate,
-            user: user,
-            trainNumber: trainNo,
-            arrival: arrivalTime,
-            departure: departureTime
-        };
-
-        savedRecords.push(newRecord);
-        try {
-            localStorage.setItem('train_records', JSON.stringify(savedRecords));
-        } catch(e) {}
-
-        updateRegCounter();
-        await captureAndDirectDownload(trainNo);
-        showToast("✅ Train " + trainNo + " & Screenshot Saved!", 2000);
-        resetCurrentForm(false);
-    }
-
-    async function exportAndShareExcel() {
-        if (savedRecords.length === 0) {
-            alert("⚠️ No saved trains to export!");
-            return;
-        }
-
-        let csvContent = "\uFEFF";
-        csvContent += "Date,Inspector / User,Train Number,Arrival Time,Departure Time\n";
-
-        savedRecords.forEach(function(item) {
-            const userSafe = '"' + (item.user || '').replace(/"/g, '""') + '"';
-            const row = [
-                `"${item.date}"`,
-                userSafe,
-                `"${item.trainNumber}"`,
-                `"${item.arrival}"`,
-                `"${item.departure}"`
-            ].join(",");
-            csvContent += row + "\n";
+        trainInput.addEventListener('focus', function() {
+            if (this.value === '70') this.setSelectionRange(2, 2);
         });
 
-        const fileName = "Regularity_" + formattedDate.replace(/\//g, '-') + ".csv";
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
-        if (navigator.canShare && navigator.share) {
-            try {
-                const file = new File([blob], fileName, { type: "text/csv" });
-                if (navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: "Regularity Excel Report",
-                        text: "Regularity Excel Data for " + formattedDate
-                    });
-                    return;
-                }
-            } catch(e) {
-                if (e.name === 'AbortError') return;
+        trainInput.addEventListener('keydown', function(e) {
+            if ((this.selectionStart <= 2 && (e.key === 'Backspace' || e.key === 'Delete')) && this.value.length <= 2) {
+                e.preventDefault();
             }
+        });
+
+        trainInput.addEventListener('input', function() {
+            this.classList.remove('error-highlight');
+            let digits = this.value.replace(/[^0-9]/g, '');
+            if (!digits.startsWith('70')) digits = '70' + digits.replace(/^70*/, '');
+            this.value = digits.slice(0, 4);
+
+            if (this.value.length === 4) {
+                this.blur();
+                arrivalBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+
+        function handleArrival() {
+            arrivalTime = get24HourTime();
+            arrivalBtn.innerText = "Arrival: " + arrivalTime;
+            arrivalBtn.classList.remove('error-highlight');
+            arrivalBtn.classList.add('recorded');
         }
 
-        try {
+        function handleDeparture() {
+            departureTime = get24HourTime();
+            departureBtn.innerText = "Departure: " + departureTime;
+            departureBtn.classList.remove('error-highlight');
+            departureBtn.classList.add('recorded');
+        }
+
+        function resetCurrentForm() {
+            trainInput.value = "70";
+            userSelect.selectedIndex = 0;
+            arrivalTime = "";
+            departureTime = "";
+            arrivalBtn.innerText = "Train Arrival";
+            arrivalBtn.classList.remove('recorded', 'error-highlight');
+            departureBtn.innerText = "Train Departure";
+            departureBtn.classList.remove('recorded', 'error-highlight');
+            showToast("🧹 Form Cleared!");
+        }
+
+        function saveRecord() {
+            const user = userSelect.value;
+            const trainNo = trainInput.value.trim();
+
+            if (!user) { userSelect.classList.add('error-highlight'); alert("⚠️ Select Inspector Name!"); return; }
+            if (trainNo.length < 4) { trainInput.classList.add('error-highlight'); alert("⚠️ Enter 4 digits!"); return; }
+            if (!arrivalTime) { arrivalBtn.classList.add('error-highlight'); alert("⚠️ Tap Train Arrival!"); return; }
+            if (!departureTime) { departureBtn.classList.add('error-highlight'); alert("⚠️ Tap Train Departure!"); return; }
+
+            const newRecord = { date: formattedDate, user: user, trainNumber: trainNo, arrival: arrivalTime, departure: departureTime };
+            savedRecords.push(newRecord);
+            localStorage.setItem('train_records', JSON.stringify(savedRecords));
+            updateTrainCounter();
+
+            // Direct screenshot capture
+            if (typeof html2canvas !== 'undefined') {
+                html2canvas(document.getElementById('appContainer'), { scale: 2 }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `Train_${trainNo}_${formattedDate}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            }
+
+            showToast(`✅ Train ${trainNo} Saved!`);
+            resetCurrentForm();
+        }
+
+        function exportAndShareExcel() {
+            if (savedRecords.length === 0) { alert("⚠️ No saved trains yet!"); return; }
+            let csv = "\uFEFFDate,Inspector / User,Train Number,Arrival Time,Departure Time\n";
+            savedRecords.forEach(r => {
+                csv += `"${r.date}","${r.user}","${r.trainNumber}","${r.arrival}","${r.departure}"\n`;
+            });
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", fileName);
-            link.style.display = "none";
-            document.body.appendChild(link);
+            link.href = URL.createObjectURL(blob);
+            link.download = `Regularity_${formattedDate}.csv`;
             link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            showToast("📥 Excel downloaded successfully!", 2000);
-        } catch (err) {
-            alert("Download failed. Please check browser permissions.");
-        }
-    }
-
-
-    // ==========================================
-    // MODULE 2: QUALITY INVESTIGATOR BREAKS
-    // ==========================================
-    let breakStartTime = "";
-    let breakEndTime = "";
-    let breakGpsCoords = "Not Acquired";
-    let breakGpsMapsUrl = "";
-    let savedBreaks = [];
-    let breakTimerInterval = null;
-
-    try {
-        savedBreaks = JSON.parse(localStorage.getItem('break_records') || '[]');
-    } catch(e) {
-        savedBreaks = [];
-    }
-
-    const breakUserSelect = document.getElementById('breakUserSelect');
-    const breakStationSelect = document.getElementById('breakStationSelect');
-    const btnStartBreak = document.getElementById('btnStartBreak');
-    const btnEndBreak = document.getElementById('btnEndBreak');
-    const gpsStatusDisplay = document.getElementById('gpsStatusDisplay');
-    const breakTimerCard = document.getElementById('breakTimerCard');
-    const breakTimerDigits = document.getElementById('breakTimerDigits');
-
-    if (savedUser) {
-        breakUserSelect.value = savedUser;
-    }
-
-    breakUserSelect.addEventListener('change', function() {
-        this.classList.remove('error-highlight');
-        localStorage.setItem('selected_user', this.value);
-        document.getElementById('userSelect').value = this.value;
-    });
-
-    breakStationSelect.addEventListener('change', function() {
-        this.classList.remove('error-highlight');
-    });
-
-    function updateBreakCounter() {
-        document.getElementById('breakCounter').innerText = "Saved Breaks: " + savedBreaks.length;
-    }
-    updateBreakCounter();
-
-    function startTimerEngine(startTimestampMs) {
-        breakTimerCard.style.display = 'block';
-        if (breakTimerInterval) clearInterval(breakTimerInterval);
-
-        function updateDisplay() {
-            const now = Date.now();
-            const elapsedTotalSeconds = Math.max(0, Math.floor((now - startTimestampMs) / 1000));
-            const hours = String(Math.floor(elapsedTotalSeconds / 3600)).padStart(2, '0');
-            const minutes = String(Math.floor((elapsedTotalSeconds % 3600) / 60)).padStart(2, '0');
-            const seconds = String(elapsedTotalSeconds % 60).padStart(2, '0');
-            breakTimerDigits.innerText = `${hours}:${minutes}:${seconds}`;
         }
 
-        updateDisplay();
-        breakTimerInterval = setInterval(updateDisplay, 1000);
-    }
+        // ================= BREAK ENGINE =================
+        let breakStartTime = "", breakEndTime = "", breakTimerInterval = null;
+        let breakGpsCoords = "", breakGpsMapsUrl = "";
+        const breakUserSelect = document.getElementById('breakUserSelect');
+        const breakStationSelect = document.getElementById('breakStationSelect');
+        const btnStartBreak = document.getElementById('btnStartBreak');
+        const btnEndBreak = document.getElementById('btnEndBreak');
+        const gpsStatusDisplay = document.getElementById('gpsStatusDisplay');
+        const liveBreakTimer = document.getElementById('liveBreakTimer');
 
-    function stopTimerEngine() {
-        if (breakTimerInterval) {
-            clearInterval(breakTimerInterval);
-            breakTimerInterval = null;
-        }
-        breakTimerCard.style.display = 'none';
-        breakTimerDigits.innerText = "00:00:00";
-    }
-
-    function checkActiveBreakSession() {
-        const activeStartMs = localStorage.getItem('active_break_start_ms');
-        const activeUser = localStorage.getItem('active_break_user');
-        const activeStation = localStorage.getItem('active_break_station');
-        const activeTimeStr = localStorage.getItem('active_break_start_str');
-        const activeGps = localStorage.getItem('active_break_gps');
-        const activeMaps = localStorage.getItem('active_break_maps');
-
-        if (activeStartMs && activeTimeStr) {
-            breakStartTime = activeTimeStr;
-            if (activeGps) breakGpsCoords = activeGps;
-            if (activeMaps) breakGpsMapsUrl = activeMaps;
-
-            if (activeUser) breakUserSelect.value = activeUser;
-            if (activeStation) breakStationSelect.value = activeStation;
-
-            breakUserSelect.disabled = true;
-            breakStationSelect.disabled = true;
-
-            btnStartBreak.innerText = "Started: " + breakStartTime;
-            btnStartBreak.classList.add('recorded');
-
-            startTimerEngine(parseInt(activeStartMs, 10));
-            document.getElementById('breakStatusMessage').innerText = "⏳ Break in progress! Timer running...";
-            if (activeGps && activeGps !== 'Not Acquired') {
-                gpsStatusDisplay.innerHTML = `<span>📍 GPS Verified: ${activeGps}</span>`;
-            }
-        }
-    }
-    checkActiveBreakSession();
-
-    function requestGpsLocation(onSuccess, onError) {
-        if (!navigator.geolocation) {
-            gpsStatusDisplay.innerHTML = "<span>⚠️ GPS not supported by browser</span>";
-            if (onError) onError("GPS not supported by your browser");
-            return;
+        function startTimerEngine(startMs) {
+            if (breakTimerInterval) clearInterval(breakTimerInterval);
+            breakTimerInterval = setInterval(() => {
+                const diff = Math.max(0, Date.now() - startMs);
+                const s = Math.floor((diff / 1000) % 60);
+                const m = Math.floor((diff / (1000 * 60)) % 60);
+                const h = Math.floor(diff / (1000 * 60 * 60));
+                liveBreakTimer.innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            }, 1000);
         }
 
-        gpsStatusDisplay.innerHTML = "<span>📡 Verifying GPS location...</span>";
-
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                const lat = position.coords.latitude.toFixed(5);
-                const lon = position.coords.longitude.toFixed(5);
-                breakGpsCoords = `${lat}, ${lon}`;
-                breakGpsMapsUrl = `https://maps.google.com/?q=${lat},${lon}`;
-                gpsStatusDisplay.innerHTML = `<span>📍 GPS Acquired: ${breakGpsCoords}</span>`;
-                localStorage.setItem('active_break_gps', breakGpsCoords);
-                localStorage.setItem('active_break_maps', breakGpsMapsUrl);
-                if (onSuccess) onSuccess(breakGpsCoords);
-            },
-            function(error) {
-                let errorMsg = "Please turn on GPS/Location on your phone!";
-                if (error.code === 1) errorMsg = "Location permission denied! Please allow GPS access in your browser.";
-                else if (error.code === 2) errorMsg = "GPS signal unavailable! Please enable phone Location (GPS).";
-                else if (error.code === 3) errorMsg = "GPS timed out! Ensure your GPS is turned on and try again.";
-                gpsStatusDisplay.innerHTML = `<span>⚠️ ${errorMsg}</span>`;
-                if (onError) onError(errorMsg);
-            },
-            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
-        );
-    }
-
-    function handleStartBreak() {
-        const activeStartMs = localStorage.getItem('active_break_start_ms');
-        if (activeStartMs) {
-            alert("⚠️ A break is already active! Tap 'End Break' when finished.");
-            return;
-        }
-
-        const user = breakUserSelect.value;
-        const station = breakStationSelect.value;
-
-        if (!user) {
-            breakUserSelect.classList.add('error-highlight');
-            breakUserSelect.focus();
-            alert("⚠️ Please select Inspector Name first!");
-            return;
-        }
-
-        if (!station) {
-            breakStationSelect.classList.add('error-highlight');
-            breakStationSelect.focus();
-            alert("⚠️ Please select the Break Station!");
-            return;
-        }
-
-        btnStartBreak.disabled = true;
-        btnStartBreak.innerText = "⏳ Checking GPS...";
-        gpsStatusDisplay.innerHTML = "<span>📡 Checking location... GPS is mandatory to start break.</span>";
-
-        requestGpsLocation(
-            function(coords) {
-                btnStartBreak.disabled = false;
-                const nowMs = Date.now();
-                breakStartTime = get24HourTime();
-
-                localStorage.setItem('active_break_start_ms', String(nowMs));
-                localStorage.setItem('active_break_start_str', breakStartTime);
-                localStorage.setItem('active_break_user', user);
-                localStorage.setItem('active_break_station', station);
-
+        function restoreActiveBreakSession() {
+            const savedMs = localStorage.getItem('active_break_start_ms');
+            if (savedMs) {
+                breakUserSelect.value = localStorage.getItem('active_break_user') || "";
+                breakStationSelect.value = localStorage.getItem('active_break_station') || "";
                 breakUserSelect.disabled = true;
                 breakStationSelect.disabled = true;
-
+                breakStartTime = localStorage.getItem('active_break_start_str') || "";
                 btnStartBreak.innerText = "Started: " + breakStartTime;
-                btnStartBreak.classList.remove('error-highlight');
                 btnStartBreak.classList.add('recorded');
-
-                startTimerEngine(nowMs);
-                showToast("⏱️ Break Started & GPS Verified!", 2000);
-                document.getElementById('breakStatusMessage').innerText = "Break started at " + breakStartTime + " with GPS verified. Tap 'End Break' when finished.";
-            },
-            function(errorMsg) {
-                btnStartBreak.disabled = false;
-                btnStartBreak.innerText = "🟢 Start Break";
-                btnStartBreak.classList.add('error-highlight');
-                alert("❌ Cannot start break without Location (GPS)!\n\n" + errorMsg + "\n\nPlease turn on Location / GPS on your phone and allow browser permission, then tap 'Start Break' again.");
-                document.getElementById('breakStatusMessage').innerText = "⚠️ Location is required to start break. Please enable GPS.";
+                startTimerEngine(parseInt(savedMs, 10));
             }
-        );
-    }
-
-    // Modal Display Function for Break Duration
-    function showBreakSummaryModal(user, station, startTime, endTime, totalMinutes) {
-        const modal = document.getElementById('breakSummaryModal');
-        const durationTextElem = document.getElementById('modalDurationText');
-        const userElem = document.getElementById('modalSummaryUser');
-        const stationElem = document.getElementById('modalSummaryStation');
-        const timeElem = document.getElementById('modalSummaryTime');
-
-        const hrs = Math.floor(totalMinutes / 60);
-        const mins = totalMinutes % 60;
-
-        let formattedDuration = "";
-        if (hrs > 0) {
-            formattedDuration = `${hrs} Hour${hrs > 1 ? 's' : ''} & ${mins} Min${mins !== 1 ? 's' : ''}`;
-        } else {
-            formattedDuration = `0 Hours & ${mins} Mins`;
         }
 
-        durationTextElem.innerText = formattedDuration;
-        userElem.innerText = user;
-        stationElem.innerText = station;
-        timeElem.innerText = `${startTime} ➔ ${endTime}`;
-
-        modal.style.display = 'flex';
-    }
-
-    function closeBreakSummaryModal() {
-        document.getElementById('breakSummaryModal').style.display = 'none';
-    }
-
-    function handleEndBreak() {
-        const activeStartMs = localStorage.getItem('active_break_start_ms');
-        if (!activeStartMs && !breakStartTime) {
-            btnStartBreak.classList.add('error-highlight');
-            alert("⚠️ Please tap '🟢 Start Break' first!");
-            return;
+        function requestGpsLocation(onSuccess, onError) {
+            if (!navigator.geolocation) { onError("GPS not supported"); return; }
+            gpsStatusDisplay.innerHTML = "<span>📡 Checking GPS location...</span>";
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    const lat = pos.coords.latitude.toFixed(5);
+                    const lon = pos.coords.longitude.toFixed(5);
+                    breakGpsCoords = `${lat}, ${lon}`;
+                    breakGpsMapsUrl = `https://maps.google.com/?q=${lat},${lon}`;
+                    gpsStatusDisplay.innerHTML = `<span>📍 GPS Verified: ${breakGpsCoords}</span>`;
+                    onSuccess(breakGpsCoords);
+                },
+                err => {
+                    gpsStatusDisplay.innerHTML = "<span>⚠️ GPS Location required!</span>";
+                    onError(err.message || "GPS permission denied");
+                },
+                { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+            );
         }
 
-        const user = breakUserSelect.value || localStorage.getItem('active_break_user');
-        const station = breakStationSelect.value || localStorage.getItem('active_break_station');
+        function handleStartBreak() {
+            if (localStorage.getItem('active_break_start_ms')) { alert("⚠️ Break already running!"); return; }
+            const u = breakUserSelect.value, st = breakStationSelect.value;
+            if (!u || !st) { alert("⚠️ Select Inspector & Station first!"); return; }
 
-        if (!user) {
-            breakUserSelect.classList.add('error-highlight');
-            alert("⚠️ Please select Inspector Name!");
-            return;
-        }
-
-        if (!station) {
-            breakStationSelect.classList.add('error-highlight');
-            alert("⚠️ Please select Break Station!");
-            return;
-        }
-
-        btnEndBreak.disabled = true;
-        btnEndBreak.innerText = "⏳ Verifying GPS...";
-        gpsStatusDisplay.innerHTML = "<span>📡 Checking location... GPS is mandatory to end break.</span>";
-
-        requestGpsLocation(
-            function(endGpsCoords) {
-                btnEndBreak.disabled = false;
-                btnEndBreak.innerText = "🔴 End Break";
-                breakEndTime = get24HourTime();
-
-                let durationMinutesNum = 1;
-                if (activeStartMs) {
-                    const elapsedMs = Date.now() - parseInt(activeStartMs, 10);
-                    durationMinutesNum = Math.max(1, Math.round(elapsedMs / 60000));
-                } else {
-                    durationMinutesNum = Math.max(1, parseInt(calculateDuration(breakStartTime, breakEndTime), 10) || 1);
+            btnStartBreak.disabled = true;
+            btnStartBreak.innerText = "⏳ Checking GPS...";
+            requestGpsLocation(
+                coords => {
+                    btnStartBreak.disabled = false;
+                    const now = Date.now();
+                    breakStartTime = get24HourTime();
+                    localStorage.setItem('active_break_start_ms', String(now));
+                    localStorage.setItem('active_break_start_str', breakStartTime);
+                    localStorage.setItem('active_break_user', u);
+                    localStorage.setItem('active_break_station', st);
+                    breakUserSelect.disabled = true;
+                    breakStationSelect.disabled = true;
+                    btnStartBreak.innerText = "Started: " + breakStartTime;
+                    btnStartBreak.classList.add('recorded');
+                    startTimerEngine(now);
+                    showToast("⏱️ Break Started & GPS Verified!");
+                },
+                err => {
+                    btnStartBreak.disabled = false;
+                    btnStartBreak.innerText = "🟢 Start Break";
+                    alert("❌ GPS Required to start break! Please enable location on your phone.");
                 }
+            );
+        }
 
-                const durationMinutesStr = String(durationMinutesNum);
+        function handleEndBreak() {
+            const startMs = localStorage.getItem('active_break_start_ms');
+            if (!startMs) { alert("⚠️ Tap Start Break first!"); return; }
+            const u = localStorage.getItem('active_break_user') || breakUserSelect.value;
+            const st = localStorage.getItem('active_break_station') || breakStationSelect.value;
 
-                const newBreak = {
-                    date: formattedDate,
-                    user: user,
-                    station: station,
-                    startTime: breakStartTime,
-                    endTime: breakEndTime,
-                    duration: durationMinutesStr,
-                    gps: endGpsCoords || breakGpsCoords,
-                    mapsUrl: breakGpsMapsUrl,
-                    timestamp: get24HourTime()
-                };
+            btnEndBreak.disabled = true;
+            btnEndBreak.innerText = "⏳ Verifying GPS...";
+            requestGpsLocation(
+                coords => {
+                    btnEndBreak.disabled = false;
+                    btnEndBreak.innerText = "🔴 End Break";
+                    breakEndTime = get24HourTime();
 
-                savedBreaks.push(newBreak);
-                try {
-                    localStorage.setItem('break_records', JSON.stringify(savedBreaks));
-                } catch(e) {}
+                    const diffMs = Date.now() - parseInt(startMs, 10);
+                    const totalMins = Math.max(1, Math.round(diffMs / 60000));
+                    const hours = Math.floor(totalMins / 60);
+                    const mins = totalMins % 60;
 
-                updateBreakCounter();
+                    const breakItem = {
+                        date: formattedDate,
+                        user: u,
+                        station: st,
+                        startTime: breakStartTime,
+                        endTime: breakEndTime,
+                        duration: String(totalMins),
+                        gps: coords,
+                        mapsUrl: breakGpsMapsUrl
+                    };
 
-                // Open Central Popup Modal with Hours & Minutes
-                showBreakSummaryModal(user, station, breakStartTime, breakEndTime, durationMinutesNum);
+                    // Send to Google Sheets Cloud
+                    fetch(CLOUD_SCRIPT_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(breakItem)
+                    }).catch(e => console.log("Cloud send note:", e));
 
-                localStorage.removeItem('active_break_start_ms');
-                localStorage.removeItem('active_break_start_str');
-                localStorage.removeItem('active_break_user');
-                localStorage.removeItem('active_break_station');
-                localStorage.removeItem('active_break_gps');
-                localStorage.removeItem('active_break_maps');
+                    // Show Duration Modal
+                    document.getElementById('modalDurationText').innerText = `${hours} Hours & ${mins} Mins`;
+                    document.getElementById('modalSummaryUser').innerText = u;
+                    document.getElementById('modalSummaryStation').innerText = st;
+                    document.getElementById('modalSummaryTime').innerText = `${breakStartTime} ➔ ${breakEndTime}`;
+                    document.getElementById('breakSummaryModal').style.display = "flex";
 
-                stopTimerEngine();
-                resetBreakForm(false);
-            },
-            function(errorMsg) {
-                btnEndBreak.disabled = false;
-                btnEndBreak.innerText = "🔴 End Break";
-                btnEndBreak.classList.add('error-highlight');
-                alert("❌ Cannot end break without Location (GPS)!\n\n" + errorMsg + "\n\nPlease ensure Location / GPS is turned ON and allowed in your browser, then tap 'End Break' again.");
-                document.getElementById('breakStatusMessage').innerText = "⚠️ Location is required to end break. Please turn on GPS.";
+                    // Reset
+                    clearInterval(breakTimerInterval);
+                    liveBreakTimer.innerText = "00:00:00";
+                    localStorage.removeItem('active_break_start_ms');
+                    localStorage.removeItem('active_break_start_str');
+                    localStorage.removeItem('active_break_user');
+                    localStorage.removeItem('active_break_station');
+                    breakUserSelect.disabled = false;
+                    breakStationSelect.disabled = false;
+                    btnStartBreak.innerText = "🟢 Start Break";
+                    btnStartBreak.classList.remove('recorded');
+                },
+                err => {
+                    btnEndBreak.disabled = false;
+                    btnEndBreak.innerText = "🔴 End Break";
+                    alert("❌ GPS Required to end break! Please enable location on your phone.");
+                }
+            );
+        }
+
+        function closeBreakSummaryModal() {
+            document.getElementById('breakSummaryModal').style.display = "none";
+        }
+
+        // ================= SUPERVISOR ENGINE =================
+        let cloudBreaksData = [];
+
+        function openSupervisorPinModal() {
+            document.getElementById('supervisorPinInput').value = "";
+            document.getElementById('pinModal').style.display = "flex";
+            setTimeout(() => document.getElementById('supervisorPinInput').focus(), 200);
+        }
+
+        function closeSupervisorPinModal() {
+            document.getElementById('pinModal').style.display = "none";
+        }
+
+        document.getElementById('supervisorPinInput').addEventListener('input', function() {
+            if (this.value === SUPERVISOR_PIN) {
+                closeSupervisorPinModal();
+                navigateTo('screenSupervisor');
             }
-        );
-    }
-
-    function calculateDuration(start, end) {
-        if (!start || !end) return "0";
-        try {
-            const [sh, sm, ss] = start.split(':').map(Number);
-            const [eh, em, es] = end.split(':').map(Number);
-            const startSec = sh * 3600 + sm * 60 + ss;
-            const endSec = eh * 3600 + em * 60 + es;
-            let diffSec = endSec - startSec;
-            if (diffSec < 0) diffSec += 24 * 3600;
-            const mins = Math.max(1, Math.round(diffSec / 60));
-            return mins.toString();
-        } catch(e) {
-            return "0";
-        }
-    }
-
-    function resetBreakForm(clearUser = false) {
-        breakStartTime = "";
-        breakEndTime = "";
-        breakGpsCoords = "Not Acquired";
-        breakGpsMapsUrl = "";
-
-        stopTimerEngine();
-        localStorage.removeItem('active_break_start_ms');
-        localStorage.removeItem('active_break_start_str');
-        localStorage.removeItem('active_break_user');
-        localStorage.removeItem('active_break_station');
-        localStorage.removeItem('active_break_gps');
-        localStorage.removeItem('active_break_maps');
-
-        breakUserSelect.disabled = false;
-        breakStationSelect.disabled = false;
-
-        btnStartBreak.innerText = "🟢 Start Break";
-        btnStartBreak.classList.remove('recorded', 'error-highlight');
-        btnEndBreak.innerText = "🔴 End Break";
-        btnEndBreak.classList.remove('recorded', 'error-highlight');
-        gpsStatusDisplay.innerHTML = "<span>📍 Location: GPS is required to start break</span>";
-        breakStationSelect.selectedIndex = 0;
-        breakStationSelect.classList.remove('error-highlight');
-
-        if (clearUser) {
-            breakUserSelect.selectedIndex = 0;
-            breakUserSelect.classList.remove('error-highlight');
-            localStorage.removeItem('selected_user');
-            showToast("🧹 Form Cleared!", 2000);
-            document.getElementById('breakStatusMessage').innerText = "Select inspector, station & tap Start Break...";
-        } else {
-            document.getElementById('breakStatusMessage').innerText = "Saved! Ready for next break...";
-        }
-    }
-
-    async function exportBreaksExcel() {
-        if (savedBreaks.length === 0) {
-            alert("⚠️ No saved breaks to export! Please record at least one break.");
-            return;
-        }
-
-        let csvContent = "\uFEFF";
-        csvContent += "Date,Inspector / User,Station,Start Time,End Time,Duration (Mins),GPS Location,Google Maps Link\n";
-
-        savedBreaks.forEach(function(item) {
-            const userSafe = '"' + (item.user || '').replace(/"/g, '""') + '"';
-            const stationSafe = '"' + (item.station || '').replace(/"/g, '""') + '"';
-            const row = [
-                `"${item.date}"`,
-                userSafe,
-                stationSafe,
-                `"${item.startTime}"`,
-                `"${item.endTime}"`,
-                `"${item.duration}"`,
-                `"${item.gps}"`,
-                `"${item.mapsUrl || ''}"`
-            ].join(",");
-            csvContent += row + "\n";
         });
 
-        const fileName = "Quality_Breaks_" + formattedDate.replace(/\//g, '-') + ".csv";
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        function loadBreaksFromCloud() {
+            const container = document.getElementById('supervisorLogContainer');
+            container.innerHTML = "<div style='text-align:center; padding:20px; color:#ffd54f;'>📡 Loading from Google Sheet...</div>";
 
-        if (navigator.canShare && navigator.share) {
-            try {
-                const file = new File([blob], fileName, { type: "text/csv" });
-                if (navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: "Quality Breaks Excel Report",
-                        text: "Breaks Report for " + formattedDate
+            fetch(CLOUD_SCRIPT_URL)
+                .then(res => res.json())
+                .then(data => {
+                    cloudBreaksData = data.reverse();
+                    document.getElementById('supervisorTotalBadge').innerText = "Total Breaks: " + cloudBreaksData.length;
+                    if (cloudBreaksData.length === 0) {
+                        container.innerHTML = "<div style='text-align:center; padding:20px; color:#fff;'>No breaks recorded yet.</div>";
+                        return;
+                    }
+
+                    let html = "";
+                    cloudBreaksData.forEach(b => {
+                        html += `
+                            <div class="supervisor-log-item">
+                                <div class="user-title">👤 ${b.user}</div>
+                                <div><strong>🚉 Station:</strong> ${b.station}</div>
+                                <div><strong>⏱️ Time:</strong> ${b.startTime} ➔ ${b.endTime} (${b.duration} mins)</div>
+                                <div><strong>📍 GPS:</strong> ${b.gps || 'Logged'}</div>
+                                ${b.mapsUrl ? `<a href="${b.mapsUrl}" target="_blank" class="map-link-btn">🗺️ View on Google Maps</a>` : ''}
+                            </div>
+                        `;
                     });
-                    return;
-                }
-            } catch(e) {
-                if (e.name === 'AbortError') return;
-            }
+                    container.innerHTML = html;
+                })
+                .catch(err => {
+                    container.innerHTML = "<div style='text-align:center; padding:20px; color:#ff8a80;'>⚠️ Error fetching from cloud. Tap 'Refresh Cloud' to retry.</div>";
+                });
         }
 
-        try {
+        function exportSupervisorBreaksExcel() {
+            if (cloudBreaksData.length === 0) { alert("⚠️ No records to export!"); return; }
+            let csv = "\uFEFFDate,Inspector,Station,Start Time,End Time,Duration (Mins),GPS,Google Maps Link\n";
+            cloudBreaksData.forEach(b => {
+                csv += `"${b.date}","${b.user}","${b.station}","${b.startTime}","${b.endTime}","${b.duration}","${b.gps}","${b.mapsUrl}"\n`;
+            });
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", fileName);
-            link.style.display = "none";
-            document.body.appendChild(link);
+            link.href = URL.createObjectURL(blob);
+            link.download = `Breaks_Report_${formattedDate}.csv`;
             link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            showToast("📥 Quality Breaks Excel Downloaded!", 2000);
-        } catch (err) {
-            alert("Download failed. Please check browser permissions.");
         }
-    }
-
-    function clearAllBreakRecords() {
-        if (savedBreaks.length === 0) {
-            alert("ℹ️ No breaks to clear.");
-            return;
-        }
-
-        if (confirm("⚠️ Are you sure you want to clear all " + savedBreaks.length + " breaks for this shift?")) {
-            savedBreaks = [];
-            localStorage.removeItem('break_records');
-            updateBreakCounter();
-            resetBreakForm(false);
-            showToast("🗑️ Breaks log cleared!", 2000);
-        }
-    }
-
-
-    // ==========================================
-    // MODULE 3: SUPERVISOR PROTECTED MONITOR
-    // ==========================================
-    const SUPERVISOR_PIN = "1234";
-
-    function openPinModal() {
-        const modal = document.getElementById('pinModal');
-        const pinInput = document.getElementById('supervisorPinInput');
-        pinInput.value = "";
-        modal.style.display = 'flex';
-        setTimeout(() => pinInput.focus(), 150);
-    }
-
-    function closePinModal() {
-        document.getElementById('pinModal').style.display = 'none';
-    }
-
-    function verifySupervisorPin() {
-        const pinInput = document.getElementById('supervisorPinInput');
-        const val = pinInput.value.trim();
-
-        if (val === SUPERVISOR_PIN) {
-            closePinModal();
-            navigateTo('screenSupervisor');
-            renderSupervisorLogs();
-            showToast("🔓 Access Granted!", 2000);
-        } else {
-            alert("❌ Incorrect PIN code! Access denied.");
-            pinInput.value = "";
-            pinInput.focus();
-        }
-    }
-
-    const pinInputElement = document.getElementById('supervisorPinInput');
-    pinInputElement.addEventListener('input', function() {
-        const val = this.value.trim();
-        if (val.length === 4) {
-            if (val === SUPERVISOR_PIN) {
-                closePinModal();
-                navigateTo('screenSupervisor');
-                renderSupervisorLogs();
-                showToast("🔓 Access Granted!", 2000);
-            } else {
-                alert("❌ Incorrect PIN code! Access denied.");
-                this.value = "";
-                this.focus();
-            }
-        }
-    });
-
-    pinInputElement.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            verifySupervisorPin();
-        }
-    });
-
-    function renderSupervisorLogs() {
-        const container = document.getElementById('supervisorLogContainer');
-        container.innerHTML = "";
-
-        try {
-            savedBreaks = JSON.parse(localStorage.getItem('break_records') || '[]');
-        } catch(e) {
-            savedBreaks = [];
-        }
-
-        if (savedBreaks.length === 0) {
-            container.innerHTML = `
-                <div style="background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; text-align: center; color: #ffd54f;">
-                    ℹ️ No breaks recorded yet for today's shift.
-                </div>
-            `;
-            return;
-        }
-
-        for (let i = savedBreaks.length - 1; i >= 0; i--) {
-            const item = savedBreaks[i];
-            const mapHtml = item.mapsUrl 
-                ? `<a class="log-map-link" href="${item.mapsUrl}" target="_blank">📍 View on Google Maps (${item.gps})</a>`
-                : `<span style="color:#888;">📍 GPS: ${item.gps}</span>`;
-
-            const card = document.createElement('div');
-            card.className = 'log-card';
-            card.innerHTML = `
-                <div class="log-card-header">
-                    <span>👤 ${item.user}</span>
-                    <span style="font-size: 12px; color: #d32f2f;">⏳ ${item.duration} Mins</span>
-                </div>
-                <div><strong>🚉 Station:</strong> ${item.station || 'N/A'}</div>
-                <div><strong>⏱️ Timing:</strong> ${item.startTime} ➔ ${item.endTime}</div>
-                <div>${mapHtml}</div>
-            `;
-            container.appendChild(card);
-        }
-    }
-</script>
-
+    </script>
 </body>
 </html>
