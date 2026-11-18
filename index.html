@@ -442,9 +442,9 @@
             transform: translateX(-50%) translateY(100px);
             background-color: #1b5e20;
             color: #ffffff;
-            padding: 12px 24px;
+            padding: 14px 24px;
             border-radius: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
             font-size: 15px;
             font-weight: bold;
             display: flex;
@@ -454,6 +454,8 @@
             transition: all 0.4s ease;
             z-index: 1000;
             pointer-events: none;
+            text-align: center;
+            max-width: 90%;
         }
 
         .toast.show {
@@ -852,13 +854,13 @@
         window.scrollTo(0, 0);
     }
 
-    function showToast(text) {
+    function showToast(text, duration = 2000) {
         const toast = document.getElementById('toastMessage');
         toast.innerText = text;
         toast.classList.add('show');
         setTimeout(function() {
             toast.classList.remove('show');
-        }, 2500);
+        }, duration);
     }
 
     function get24HourTime() {
@@ -969,7 +971,7 @@
             userSelect.selectedIndex = 0;
             userSelect.classList.remove('error-highlight');
             localStorage.removeItem('selected_user');
-            showToast("🧹 Form Cleared!");
+            showToast("🧹 Form Cleared!", 2000);
             document.getElementById('statusMessage').innerText = "Form cleared. Select inspector & enter train...";
         } else {
             document.getElementById('statusMessage').innerText = "Train saved! Enter next 2 digits...";
@@ -987,7 +989,7 @@
             localStorage.removeItem('train_records');
             updateRegCounter();
             resetCurrentForm(false);
-            showToast("🗑️ All trains cleared!");
+            showToast("🗑️ All trains cleared!", 2000);
             document.getElementById('statusMessage').innerText = "All records cleared for new shift.";
         }
     }
@@ -1084,7 +1086,7 @@
 
         updateRegCounter();
         await captureAndDirectDownload(trainNo);
-        showToast("✅ Train " + trainNo + " & Screenshot Saved!");
+        showToast("✅ Train " + trainNo + " & Screenshot Saved!", 2000);
         resetCurrentForm(false);
     }
 
@@ -1138,7 +1140,7 @@
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            showToast("📥 Excel downloaded successfully!");
+            showToast("📥 Excel downloaded successfully!", 2000);
         } catch (err) {
             alert("Download failed. Please check browser permissions.");
         }
@@ -1324,7 +1326,7 @@
                 btnStartBreak.classList.add('recorded');
 
                 startTimerEngine(nowMs);
-                showToast("⏱️ Break Started & GPS Verified!");
+                showToast("⏱️ Break Started & GPS Verified!", 2000);
                 document.getElementById('breakStatusMessage').innerText = "Break started at " + breakStartTime + " with GPS verified. Tap 'End Break' when finished.";
             },
             function(errorMsg) {
@@ -1396,7 +1398,9 @@
                 } catch(e) {}
 
                 updateBreakCounter();
-                showToast("✅ Break auto-saved! (" + durationMinutes + " mins at " + station + ")");
+
+                // Show toast notification for 2 seconds (2000ms) with break duration & timing
+                showToast("⏱️ Break Duration: " + durationMinutes + " Mins (" + breakStartTime + " ➔ " + breakEndTime + ")", 2000);
 
                 localStorage.removeItem('active_break_start_ms');
                 localStorage.removeItem('active_break_start_str');
@@ -1463,7 +1467,7 @@
             breakUserSelect.selectedIndex = 0;
             breakUserSelect.classList.remove('error-highlight');
             localStorage.removeItem('selected_user');
-            showToast("🧹 Form Cleared!");
+            showToast("🧹 Form Cleared!", 2000);
             document.getElementById('breakStatusMessage').innerText = "Select inspector, station & tap Start Break...";
         } else {
             document.getElementById('breakStatusMessage').innerText = "Saved! Ready for next break...";
@@ -1524,7 +1528,7 @@
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            showToast("📥 Quality Breaks Excel Downloaded!");
+            showToast("📥 Quality Breaks Excel Downloaded!", 2000);
         } catch (err) {
             alert("Download failed. Please check browser permissions.");
         }
@@ -1541,7 +1545,7 @@
             localStorage.removeItem('break_records');
             updateBreakCounter();
             resetBreakForm(false);
-            showToast("🗑️ Breaks log cleared!");
+            showToast("🗑️ Breaks log cleared!", 2000);
         }
     }
 
@@ -1571,7 +1575,7 @@
             closePinModal();
             navigateTo('screenSupervisor');
             renderSupervisorLogs();
-            showToast("🔓 Access Granted!");
+            showToast("🔓 Access Granted!", 2000);
         } else {
             alert("❌ Incorrect PIN code! Access denied.");
             pinInput.value = "";
@@ -1587,7 +1591,7 @@
                 closePinModal();
                 navigateTo('screenSupervisor');
                 renderSupervisorLogs();
-                showToast("🔓 Access Granted!");
+                showToast("🔓 Access Granted!", 2000);
             } else {
                 alert("❌ Incorrect PIN code! Access denied.");
                 this.value = "";
