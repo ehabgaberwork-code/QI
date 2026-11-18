@@ -86,7 +86,7 @@
 <div class="modal-overlay" id="breakSummaryModal"><div class="modal-card" style="border:2px solid #ff9100"><div style="font-size:36px">⏱️</div><div style="font-size:18px;color:#004d66;font-weight:bold">Break Completed</div><div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:8px;padding:10px"><div style="font-size:11px;color:#166534;font-weight:bold">TOTAL DURATION</div><div id="modalDurationText" style="font-size:22px;font-weight:900;color:#15803d">0 Hours & 0 Mins</div></div><div style="background:#f8fafc;border-radius:6px;padding:8px;font-size:12px;text-align:left;color:#334155"><div><strong>👤 Inspector:</strong> <span id="modalSummaryUser">--</span></div><div><strong>🚉 Station:</strong> <span id="modalSummaryStation">--</span></div><div><strong>⏱️ Time:</strong> <span id="modalSummaryTime">-- ➔ --</span></div></div><button class="btn btn-download-share" style="width:100%;padding:10px 0" type="button" onclick="closeBreakSummaryModal()">OK / Done</button></div></div>
 
 <script>
-const APP_VERSION="1.2.2";
+const APP_VERSION="1.2.3";
 const CLOUD_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxZCFVNqqDgpJpfLLyGnYH5et7bYU_ZRqyIsNp3vvbtYwwDpdhrTVTlrHEr1ZppaIMh7A/exec";
 const SUPERVISOR_PIN="1234";
 const INSPECTORS=["Fathy Helmy Fattouh Hassan","Karim Gamal Salah Al-Din","Karim Moustafa Mostafa","Khaled Mostafa Abdel Moneim","Mohamed El-Sayed Ibrahim","Shorouk Tarek Taha Yaseen","Mahmoud Taher Mahmoud Zaki","Ehab Abdel Kareem","Nancy Hesham Hassan Abdelrehim","Nourhan Karam Hanafy Mohamdy","Mohamed Emad Imam Mahmoud","Ehab Shabaan Fahmy Elsayed","Yasmine Mohamed Alsayed Abdelsattar Akila"];
@@ -105,11 +105,38 @@ function escapeHtml(v){return String(v??"").replaceAll("&","&amp;").replaceAll("
 let arrivalTime="",departureTime="",savedRecords=JSON.parse(localStorage.getItem("train_records")||"[]");
 const userSelect=document.getElementById("userSelect"),trainInput=document.getElementById("trainNumber"),arrivalBtn=document.getElementById("btnArrival"),departureBtn=document.getElementById("btnDeparture");
 function updateTrainCounter(){document.getElementById("trainCounter").innerText="Saved Trains: "+savedRecords.length}updateTrainCounter();
+userSelect.addEventListener("change",()=>userSelect.classList.remove("error-highlight"));
 trainInput.addEventListener("focus",function(){if(this.value==="70")this.setSelectionRange(2,2)});trainInput.addEventListener("keydown",function(e){if(this.selectionStart<=2&&(e.key==="Backspace"||e.key==="Delete")&&this.value.length<=2)e.preventDefault()});trainInput.addEventListener("input",function(){this.classList.remove("error-highlight");let d=this.value.replace(/[^0-9]/g,"");if(!d.startsWith("70"))d="70"+d.replace(/^70*/,"");this.value=d.slice(0,4);if(this.value.length===4){this.blur();arrivalBtn.scrollIntoView({behavior:"smooth",block:"center"})}});
 function handleArrival(){arrivalTime=get24HourTime();arrivalBtn.innerText="Arrival: "+arrivalTime;arrivalBtn.classList.remove("error-highlight");arrivalBtn.classList.add("recorded")}
 function handleDeparture(){departureTime=get24HourTime();departureBtn.innerText="Departure: "+departureTime;departureBtn.classList.remove("error-highlight");departureBtn.classList.add("recorded")}
 function resetCurrentForm(){trainInput.value="70";userSelect.selectedIndex=0;arrivalTime=departureTime="";arrivalBtn.innerText="Train Arrival";arrivalBtn.classList.remove("recorded","error-highlight");departureBtn.innerText="Train Departure";departureBtn.classList.remove("recorded","error-highlight");showToast("🧹 Form Cleared!")}
-function saveRecord(){const user=userSelect.value,trainNo=trainInput.value.trim();if(!user){userSelect.classList.add("error-highlight");alert("⚠️ Select Inspector Name!");return}if(trainNo.length<4){trainInput.classList.add("error-highlight");alert("⚠️ Enter 4 digits!");return}if(!arrivalTime){arrivalBtn.classList.add("error-highlight");alert("⚠️ Tap Train Arrival!");return}if(!departureTime){departureBtn.classList.add("error-highlight");alert("⚠️ Tap Train Departure!");return}savedRecords.push({date:formattedDate,user,trainNumber:trainNo,arrival:arrivalTime,departure:departureTime});localStorage.setItem("train_records",JSON.stringify(savedRecords));updateTrainCounter();if(typeof html2canvas!=="undefined")html2canvas(document.getElementById("appContainer"),{scale:2}).then(canvas=>{const l=document.createElement("a");l.download=`Train_${trainNo}_${formattedDate}.png`;l.href=canvas.toDataURL("image/png");l.click()});showToast(`✅ Train ${trainNo} Saved!`);resetCurrentForm()}
+function saveRecord(){
+  const user=userSelect.value;
+  const trainNo=trainInput.value.trim();
+  userSelect.classList.remove("error-highlight");
+  trainInput.classList.remove("error-highlight");
+  arrivalBtn.classList.remove("error-highlight");
+  departureBtn.classList.remove("error-highlight");
+  const missing=[];
+  if(!user){userSelect.classList.add("error-highlight");missing.push("Inspector Name")}
+  if(!/^70\d{2}$/.test(trainNo)){trainInput.classList.add("error-highlight");missing.push("4-digit Train Number")}
+  if(!arrivalTime){arrivalBtn.classList.add("error-highlight");missing.push("Arrival Time")}
+  if(!departureTime){departureBtn.classList.add("error-highlight");missing.push("Departure Time")}
+  if(missing.length){
+    const first=document.querySelector("#screenRegularity .error-highlight");
+    if(first){first.scrollIntoView({behavior:"smooth",block:"center"});if(first.tagName==="SELECT"||first.tagName==="INPUT")first.focus()}
+    alert(`⚠️ Complete all required fields before saving:
+
+• ${missing.join("\n• ")}`);
+    return;
+  }
+  savedRecords.push({date:formattedDate,user,trainNumber:trainNo,arrival:arrivalTime,departure:departureTime});
+  localStorage.setItem("train_records",JSON.stringify(savedRecords));
+  updateTrainCounter();
+  if(typeof html2canvas!=="undefined")html2canvas(document.getElementById("appContainer"),{scale:2}).then(canvas=>{const l=document.createElement("a");l.download=`Train_${trainNo}_${formattedDate}.png`;l.href=canvas.toDataURL("image/png");l.click()});
+  showToast(`✅ Train ${trainNo} Saved!`);
+  resetCurrentForm();
+}
 function downloadCsv(csv,name){const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
 function exportAndShareExcel(){if(!savedRecords.length){alert("⚠️ No saved trains yet!");return}let csv="\uFEFFDate,Inspector / User,Train Number,Arrival Time,Departure Time\n";savedRecords.forEach(r=>csv+=`"${r.date}","${r.user}","${r.trainNumber}","${r.arrival}","${r.departure}"\n`);downloadCsv(csv,`Regularity_${formattedDate}.csv`)}
 
