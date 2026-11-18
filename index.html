@@ -29,18 +29,18 @@
             color: var(--text-color);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
+            padding: 0;
         }
 
         .container {
             width: 100%;
             max-width: 420px;
             min-height: 100vh;
-            padding: 16px 20px;
+            padding: 16px 20px 30px 20px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             position: relative;
             background-color: var(--bg-color);
             transition: background 0.3s ease;
@@ -50,13 +50,30 @@
             background: var(--break-bg);
         }
 
+        /* Screen Wrapper */
+        .app-screen {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        .app-screen.active-screen {
+            display: flex !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Top Navigation & Header */
         .top-nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .btn-nav-back {
@@ -69,7 +86,6 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -88,6 +104,7 @@
             gap: 6px;
             width: 100%;
             text-align: center;
+            margin-bottom: 14px;
         }
 
         .header-title {
@@ -106,14 +123,11 @@
             letter-spacing: 0.5px;
         }
 
-        .content {
+        .screen-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 10px;
-            flex-grow: 1;
-            justify-content: center;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
         }
 
@@ -169,12 +183,11 @@
         /* FORM ELEMENTS */
         .select-field {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             font-size: 15px;
             border: 2px solid transparent;
-            border-radius: 6px;
+            border-radius: 8px;
             text-align: center;
-            box-sizing: border-box;
             background-color: #ffffff;
             color: #004d66;
             font-weight: bold;
@@ -201,9 +214,8 @@
             font-size: 26px;
             line-height: 1.3;
             border: 2px solid transparent;
-            border-radius: 6px;
+            border-radius: 8px;
             text-align: center;
-            box-sizing: border-box;
             background-color: #ffffff;
             color: #004d66;
             letter-spacing: 4px;
@@ -216,7 +228,7 @@
             background-color: var(--btn-bg);
             color: var(--btn-text);
             border: 2px solid transparent;
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 13px 0;
             font-size: 16px;
             font-weight: bold;
@@ -252,7 +264,6 @@
         .btn-submit {
             background-color: #00796b;
             color: #ffffff;
-            margin-top: 3px;
         }
 
         .btn-download-share {
@@ -312,6 +323,7 @@
             font-size: 12px;
             color: #ffd54f;
             font-weight: 600;
+            text-align: center;
         }
 
         .error-highlight {
@@ -339,7 +351,7 @@
             background-color: #d32f2f;
             color: #ffffff;
             font-size: 13px;
-            padding: 9px 0;
+            padding: 10px 0;
             flex: 1;
         }
 
@@ -347,7 +359,7 @@
             background-color: #455a64;
             color: #ffffff;
             font-size: 13px;
-            padding: 9px 0;
+            padding: 10px 0;
             flex: 1;
         }
 
@@ -366,7 +378,10 @@
             align-items: center;
             font-size: 13px;
             color: rgba(255, 255, 255, 0.85);
-            margin-top: 12px;
+            margin-top: 20px;
+            width: 100%;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 10px;
         }
 
         .status-msg {
@@ -380,7 +395,7 @@
         /* SUPERVISOR LOG STYLES */
         .log-container {
             width: 100%;
-            max-height: 420px;
+            max-height: 480px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -525,14 +540,14 @@
 <div class="container" id="appMainWrapper">
 
     <!-- ==================== SCREEN 1: HUB ==================== -->
-    <div id="screenHub" style="display: flex; flex-direction: column; width: 100%; height: 100%; justify-content: space-between; flex-grow: 1;">
-        <div class="header" style="margin-top: 10px;">
+    <div id="screenHub" class="app-screen active-screen">
+        <div class="header">
             <div class="header-title">Quality Operations Hub</div>
             <div style="font-size: 13px; opacity: 0.9;">Main Dashboard</div>
             <div class="date-display" id="hubDateDisplay"></div>
         </div>
 
-        <div class="content" style="gap: 12px;">
+        <div class="screen-content">
             <!-- Option 1: Regularity -->
             <div class="hub-card" onclick="navigateTo('screenRegularity')">
                 <div class="hub-card-icon">🚆</div>
@@ -563,7 +578,7 @@
 
 
     <!-- ==================== SCREEN 2: REGULARITY MEASUREMENT ==================== -->
-    <div id="screenRegularity" style="display: none; flex-direction: column; width: 100%; flex-grow: 1;">
+    <div id="screenRegularity" class="app-screen">
         <div class="top-nav">
             <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
             <div class="date-display" id="regDateDisplay"></div>
@@ -573,7 +588,7 @@
             <div class="header-title">Regularity Measurement</div>
         </div>
 
-        <div class="content">
+        <div class="screen-content">
             <!-- Inspector Dropdown -->
             <select id="userSelect" class="select-field">
                 <option value="" disabled selected>👤 Select Inspector Name</option>
@@ -630,7 +645,7 @@
 
 
     <!-- ==================== SCREEN 3: QUALITY INVESTIGATOR BREAKS ==================== -->
-    <div id="screenBreaks" style="display: none; flex-direction: column; width: 100%; flex-grow: 1;">
+    <div id="screenBreaks" class="app-screen">
         <div class="top-nav">
             <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
             <div class="date-display" id="breakDateDisplay"></div>
@@ -640,7 +655,7 @@
             <div class="header-title">Quality Investigator Breaks</div>
         </div>
 
-        <div class="content">
+        <div class="screen-content">
             <!-- Break User Dropdown -->
             <select id="breakUserSelect" class="select-field">
                 <option value="" disabled selected>👤 Select Inspector Name</option>
@@ -729,7 +744,7 @@
 
             <div class="counter-badge" id="breakCounter">Saved Breaks: 0</div>
 
-            <!-- Action Buttons for Break (in English - Auto Save on End with Strict GPS) -->
+            <!-- Action Buttons for Break -->
             <button class="btn btn-start-break" id="btnStartBreak" type="button" onclick="handleStartBreak()">🟢 Start Break</button>
             <button class="btn btn-end-break" id="btnEndBreak" type="button" onclick="handleEndBreak()">🔴 End Break</button>
 
@@ -748,7 +763,7 @@
 
 
     <!-- ==================== SCREEN 4: SUPERVISOR LIVE MONITOR ==================== -->
-    <div id="screenSupervisor" style="display: none; flex-direction: column; width: 100%; flex-grow: 1;">
+    <div id="screenSupervisor" class="app-screen">
         <div class="top-nav">
             <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
             <div class="date-display" id="supDateDisplay"></div>
@@ -759,7 +774,7 @@
             <div style="font-size: 13px; opacity: 0.9;">Inspector Breaks & GPS Log</div>
         </div>
 
-        <div class="content" style="justify-content: flex-start; margin-top: 10px;">
+        <div class="screen-content">
             <div class="action-row" style="margin-bottom: 6px;">
                 <button class="btn btn-submit" style="margin: 0; padding: 10px 0; font-size: 14px;" type="button" onclick="renderSupervisorLogs()">🔄 Refresh List</button>
                 <button class="btn btn-download-share" style="padding: 10px 0; font-size: 14px;" type="button" onclick="exportBreaksExcel()">📥 Export Excel</button>
@@ -819,10 +834,9 @@
 
     // NAVIGATION SYSTEM
     function navigateTo(screenId) {
-        document.getElementById('screenHub').style.display = 'none';
-        document.getElementById('screenRegularity').style.display = 'none';
-        document.getElementById('screenBreaks').style.display = 'none';
-        document.getElementById('screenSupervisor').style.display = 'none';
+        // Hide all screens
+        const screens = document.querySelectorAll('.app-screen');
+        screens.forEach(s => s.classList.remove('active-screen'));
 
         const wrapper = document.getElementById('appMainWrapper');
         if (screenId === 'screenBreaks') {
@@ -833,7 +847,7 @@
 
         const target = document.getElementById(screenId);
         if (target) {
-            target.style.display = 'flex';
+            target.classList.add('active-screen');
         }
         window.scrollTo(0, 0);
     }
@@ -1132,7 +1146,7 @@
 
 
     // ==========================================
-    // MODULE 2: QUALITY INVESTIGATOR BREAKS (MANDATORY GPS ENFORCEMENT & PERSISTENT TIMER)
+    // MODULE 2: QUALITY INVESTIGATOR BREAKS
     // ==========================================
     let breakStartTime = "";
     let breakEndTime = "";
@@ -1174,7 +1188,6 @@
     }
     updateBreakCounter();
 
-    // TIMER ENGINE (PERSISTS EVEN ON PAGE CLOSE / REFRESH)
     function startTimerEngine(startTimestampMs) {
         breakTimerCard.style.display = 'block';
         if (breakTimerInterval) clearInterval(breakTimerInterval);
@@ -1201,7 +1214,6 @@
         breakTimerDigits.innerText = "00:00:00";
     }
 
-    // CHECK FOR RUNNING BREAK SESSION ON LOAD
     function checkActiveBreakSession() {
         const activeStartMs = localStorage.getItem('active_break_start_ms');
         const activeUser = localStorage.getItem('active_break_user');
@@ -1218,7 +1230,6 @@
             if (activeUser) breakUserSelect.value = activeUser;
             if (activeStation) breakStationSelect.value = activeStation;
 
-            // Lock selects during active break
             breakUserSelect.disabled = true;
             breakStationSelect.disabled = true;
 
@@ -1226,7 +1237,7 @@
             btnStartBreak.classList.add('recorded');
 
             startTimerEngine(parseInt(activeStartMs, 10));
-            document.getElementById('breakStatusMessage').innerText = "⏳ Break in progress! Timer running continuously...";
+            document.getElementById('breakStatusMessage').innerText = "⏳ Break in progress! Timer running...";
             if (activeGps && activeGps !== 'Not Acquired') {
                 gpsStatusDisplay.innerHTML = `<span>📍 GPS Verified: ${activeGps}</span>`;
             }
@@ -1234,7 +1245,6 @@
     }
     checkActiveBreakSession();
 
-    // Fetch GPS coordinates with strict error enforcement
     function requestGpsLocation(onSuccess, onError) {
         if (!navigator.geolocation) {
             gpsStatusDisplay.innerHTML = "<span>⚠️ GPS not supported by browser</span>";
@@ -1267,7 +1277,6 @@
         );
     }
 
-    // Handle Start Break (STRICT: GPS MUST BE ACTIVELY VERIFIED)
     function handleStartBreak() {
         const activeStartMs = localStorage.getItem('active_break_start_ms');
         if (activeStartMs) {
@@ -1302,13 +1311,11 @@
                 const nowMs = Date.now();
                 breakStartTime = get24HourTime();
 
-                // Save active session state in storage
                 localStorage.setItem('active_break_start_ms', String(nowMs));
                 localStorage.setItem('active_break_start_str', breakStartTime);
                 localStorage.setItem('active_break_user', user);
                 localStorage.setItem('active_break_station', station);
 
-                // Lock selects
                 breakUserSelect.disabled = true;
                 breakStationSelect.disabled = true;
 
@@ -1330,7 +1337,6 @@
         );
     }
 
-    // Handle End Break with AUTOMATIC SAVE & STRICT GPS ENFORCEMENT
     function handleEndBreak() {
         const activeStartMs = localStorage.getItem('active_break_start_ms');
         if (!activeStartMs && !breakStartTime) {
@@ -1364,7 +1370,6 @@
                 btnEndBreak.innerText = "🔴 End Break";
                 breakEndTime = get24HourTime();
 
-                // Accurate duration calculation via milliseconds
                 let durationMinutes = "0";
                 if (activeStartMs) {
                     const elapsedMs = Date.now() - parseInt(activeStartMs, 10);
@@ -1393,7 +1398,6 @@
                 updateBreakCounter();
                 showToast("✅ Break auto-saved! (" + durationMinutes + " mins at " + station + ")");
 
-                // Clear active session from storage
                 localStorage.removeItem('active_break_start_ms');
                 localStorage.removeItem('active_break_start_str');
                 localStorage.removeItem('active_break_user');
@@ -1414,7 +1418,6 @@
         );
     }
 
-    // Calculate Break Duration in minutes (fallback)
     function calculateDuration(start, end) {
         if (!start || !end) return "0";
         try {
@@ -1437,7 +1440,6 @@
         breakGpsCoords = "Not Acquired";
         breakGpsMapsUrl = "";
 
-        // Stop active timer if any
         stopTimerEngine();
         localStorage.removeItem('active_break_start_ms');
         localStorage.removeItem('active_break_start_str');
@@ -1446,7 +1448,6 @@
         localStorage.removeItem('active_break_gps');
         localStorage.removeItem('active_break_maps');
 
-        // Unlock selects
         breakUserSelect.disabled = false;
         breakStationSelect.disabled = false;
 
@@ -1469,7 +1470,6 @@
         }
     }
 
-    // Export Breaks Excel (Reserved for Supervisor)
     async function exportBreaksExcel() {
         if (savedBreaks.length === 0) {
             alert("⚠️ No saved breaks to export! Please record at least one break.");
@@ -1547,7 +1547,7 @@
 
 
     // ==========================================
-    // MODULE 3: SUPERVISOR PROTECTED MONITOR (AUTO-UNLOCK ON PIN)
+    // MODULE 3: SUPERVISOR PROTECTED MONITOR
     // ==========================================
     const SUPERVISOR_PIN = "1234";
 
@@ -1579,7 +1579,6 @@
         }
     }
 
-    // Auto-unlock on 4th digit & enter key support
     const pinInputElement = document.getElementById('supervisorPinInput');
     pinInputElement.addEventListener('input', function() {
         const val = this.value.trim();
