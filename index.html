@@ -463,7 +463,7 @@
             opacity: 1;
         }
 
-        /* PIN MODAL (NUMERIC KEYPAD ONLY) */
+        /* MODALS (CENTER SCREEN OVERLAY) */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -471,8 +471,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            z-index: 2000;
+            background: rgba(0, 0, 0, 0.78);
+            z-index: 2100;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -481,19 +481,25 @@
         .modal-card {
             background: #ffffff;
             color: #004d66;
-            border-radius: 12px;
+            border-radius: 14px;
             width: 100%;
-            max-width: 320px;
-            padding: 20px;
+            max-width: 340px;
+            padding: 22px 18px;
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: modalPop 0.25s ease-out;
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .modal-title {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: bold;
             color: #005a79;
         }
@@ -520,10 +526,15 @@
             flex: 1;
             padding: 12px 0;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn:active {
+            transform: scale(0.97);
         }
 
         .modal-btn-confirm {
@@ -794,6 +805,30 @@
         </div>
     </div>
 
+</div>
+
+<!-- BREAK SUMMARY POPUP MODAL (CLEAR CENTER SCREEN DISPLAY) -->
+<div class="modal-overlay" id="breakSummaryModal">
+    <div class="modal-card" style="max-width: 330px; padding: 24px 18px; border: 2px solid #ff9100;">
+        <div style="font-size: 42px; line-height: 1; margin-bottom: 2px;">⏱️</div>
+        <div class="modal-title" style="font-size: 19px; color: #004d66; font-weight: 800;">Break Completed</div>
+        <div style="font-size: 12px; color: #555; margin-top: -6px;">Quality Investigator Breaks</div>
+        
+        <!-- Big Highlighted Duration Badge -->
+        <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 10px; padding: 14px 10px; margin: 4px 0;">
+            <div style="font-size: 12px; color: #166534; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Total Duration</div>
+            <div id="modalDurationText" style="font-size: 25px; font-weight: 900; color: #15803d; margin-top: 4px; letter-spacing: 0.5px;">0 Hours & 0 Mins</div>
+        </div>
+
+        <!-- Inspector & Station Details -->
+        <div style="background: #f8fafc; border-radius: 8px; padding: 10px; font-size: 13px; text-align: left; color: #334155; display: flex; flex-direction: column; gap: 4px; border: 1px solid #e2e8f0;">
+            <div><strong>👤 Inspector:</strong> <span id="modalSummaryUser">--</span></div>
+            <div><strong>🚉 Station:</strong> <span id="modalSummaryStation">--</span></div>
+            <div><strong>⏱️ Timing:</strong> <span id="modalSummaryTime">-- ➔ --</span></div>
+        </div>
+
+        <button class="modal-btn modal-btn-confirm" style="background: #e65100; margin-top: 4px; padding: 13px; font-size: 16px;" onclick="closeBreakSummaryModal()">✅ OK / Done</button>
+    </div>
 </div>
 
 <!-- PIN MODAL (NUMERIC KEYPAD ONLY) -->
@@ -1339,6 +1374,36 @@
         );
     }
 
+    // Modal Display Function for Break Duration
+    function showBreakSummaryModal(user, station, startTime, endTime, totalMinutes) {
+        const modal = document.getElementById('breakSummaryModal');
+        const durationTextElem = document.getElementById('modalDurationText');
+        const userElem = document.getElementById('modalSummaryUser');
+        const stationElem = document.getElementById('modalSummaryStation');
+        const timeElem = document.getElementById('modalSummaryTime');
+
+        const hrs = Math.floor(totalMinutes / 60);
+        const mins = totalMinutes % 60;
+
+        let formattedDuration = "";
+        if (hrs > 0) {
+            formattedDuration = `${hrs} Hour${hrs > 1 ? 's' : ''} & ${mins} Min${mins !== 1 ? 's' : ''}`;
+        } else {
+            formattedDuration = `0 Hours & ${mins} Mins`;
+        }
+
+        durationTextElem.innerText = formattedDuration;
+        userElem.innerText = user;
+        stationElem.innerText = station;
+        timeElem.innerText = `${startTime} ➔ ${endTime}`;
+
+        modal.style.display = 'flex';
+    }
+
+    function closeBreakSummaryModal() {
+        document.getElementById('breakSummaryModal').style.display = 'none';
+    }
+
     function handleEndBreak() {
         const activeStartMs = localStorage.getItem('active_break_start_ms');
         if (!activeStartMs && !breakStartTime) {
@@ -1372,13 +1437,15 @@
                 btnEndBreak.innerText = "🔴 End Break";
                 breakEndTime = get24HourTime();
 
-                let durationMinutes = "0";
+                let durationMinutesNum = 1;
                 if (activeStartMs) {
                     const elapsedMs = Date.now() - parseInt(activeStartMs, 10);
-                    durationMinutes = String(Math.max(1, Math.round(elapsedMs / 60000)));
+                    durationMinutesNum = Math.max(1, Math.round(elapsedMs / 60000));
                 } else {
-                    durationMinutes = calculateDuration(breakStartTime, breakEndTime);
+                    durationMinutesNum = Math.max(1, parseInt(calculateDuration(breakStartTime, breakEndTime), 10) || 1);
                 }
+
+                const durationMinutesStr = String(durationMinutesNum);
 
                 const newBreak = {
                     date: formattedDate,
@@ -1386,7 +1453,7 @@
                     station: station,
                     startTime: breakStartTime,
                     endTime: breakEndTime,
-                    duration: durationMinutes,
+                    duration: durationMinutesStr,
                     gps: endGpsCoords || breakGpsCoords,
                     mapsUrl: breakGpsMapsUrl,
                     timestamp: get24HourTime()
@@ -1399,8 +1466,8 @@
 
                 updateBreakCounter();
 
-                // Show toast notification for 2 seconds (2000ms) with break duration & timing
-                showToast("⏱️ Break Duration: " + durationMinutes + " Mins (" + breakStartTime + " ➔ " + breakEndTime + ")", 2000);
+                // Open Central Popup Modal with Hours & Minutes
+                showBreakSummaryModal(user, station, breakStartTime, breakEndTime, durationMinutesNum);
 
                 localStorage.removeItem('active_break_start_ms');
                 localStorage.removeItem('active_break_start_str');
