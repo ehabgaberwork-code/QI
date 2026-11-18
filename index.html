@@ -14,6 +14,7 @@
             --btn-text: #004d66;
             --accent-orange: #ff9100;
             --supervisor-gold: #ffd54f;
+            --break-bg: linear-gradient(135deg, #0d222d 0%, #16394c 100%);
         }
 
         * {
@@ -42,6 +43,11 @@
             justify-content: space-between;
             position: relative;
             background-color: var(--bg-color);
+            transition: background 0.3s ease;
+        }
+
+        .container.break-theme {
+            background: var(--break-bg);
         }
 
         /* Top Navigation & Header */
@@ -132,6 +138,11 @@
             transform: translateY(-2px) scale(0.98);
             background: rgba(255, 255, 255, 0.22);
             border-color: #ffffff;
+        }
+
+        .hub-card.break-hub-card {
+            background: rgba(255, 145, 0, 0.15);
+            border-color: rgba(255, 145, 0, 0.4);
         }
 
         .hub-card.supervisor-card {
@@ -393,6 +404,79 @@
             transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
+
+        /* PIN MODAL (NUMERIC KEYPAD ONLY) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            color: #004d66;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 320px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: bold;
+            color: #005a79;
+        }
+
+        .pin-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 26px;
+            text-align: center;
+            border: 2px solid #005a79;
+            border-radius: 8px;
+            letter-spacing: 10px;
+            outline: none;
+            font-weight: bold;
+        }
+
+        .modal-btns-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-btn-confirm {
+            background: #00796b;
+            color: #ffffff;
+        }
+
+        .modal-btn-cancel {
+            background: #e0e0e0;
+            color: #333333;
+        }
     </style>
 </head>
 <body>
@@ -415,15 +499,15 @@
                 <div class="hub-card-desc">Log train arrival and departure times with direct screenshot capture and Excel export</div>
             </div>
 
-            <!-- Option 2: Quality Breaks -->
-            <div class="hub-card" onclick="navigateTo('screenBreaks')">
+            <!-- Option 2: Quality Investigator Breaks -->
+            <div class="hub-card break-hub-card" onclick="navigateTo('screenBreaks')">
                 <div class="hub-card-icon">☕</div>
-                <div class="hub-card-title">Quality Breaks Tracker</div>
+                <div class="hub-card-title">Quality Investigator Breaks</div>
                 <div class="hub-card-desc">Log break start and end with station selection & auto GPS saving</div>
             </div>
 
             <!-- Option 3: Supervisor Monitor -->
-            <div class="hub-card supervisor-card" onclick="promptSupervisorLogin()">
+            <div class="hub-card supervisor-card" onclick="openPinModal()">
                 <div class="hub-card-icon">🔒</div>
                 <div class="hub-card-title">Supervisor Live Monitor</div>
                 <div class="hub-card-desc">Protected view to track inspector break times, stations, and GPS locations on map</div>
@@ -432,7 +516,7 @@
 
         <div class="footer">
             <div class="status-msg">Select a module to continue...</div>
-            <div>Ver 98</div>
+            <div>Ver 100</div>
         </div>
     </div>
 
@@ -499,12 +583,12 @@
 
         <div class="footer">
             <div class="status-msg" id="statusMessage">Enter 2 digits & tap buttons...</div>
-            <div>Ver 98</div>
+            <div>Ver 100</div>
         </div>
     </div>
 
 
-    <!-- ==================== SCREEN 3: QUALITY BREAKS TRACKER ==================== -->
+    <!-- ==================== SCREEN 3: QUALITY INVESTIGATOR BREAKS ==================== -->
     <div id="screenBreaks" style="display: none; flex-direction: column; width: 100%; flex-grow: 1;">
         <div class="top-nav">
             <button class="btn-nav-back" onclick="navigateTo('screenHub')">🏠 Main Hub</button>
@@ -512,7 +596,7 @@
         </div>
 
         <div class="header">
-            <div class="header-title">Quality Breaks Tracker</div>
+            <div class="header-title">Quality Investigator Breaks</div>
         </div>
 
         <div class="content">
@@ -591,13 +675,6 @@
                 <option value="Ramadan City Center">Ramadan City Center</option>
             </select>
 
-            <!-- Break Type Dropdown -->
-            <select id="breakTypeSelect" class="select-field">
-                <option value="Lunch & Prayer">🍽️ Lunch & Prayer</option>
-                <option value="Coffee / Short Break">☕ Coffee / Short Break</option>
-                <option value="Emergency Break">⚠️ Emergency Break</option>
-            </select>
-
             <!-- GPS Live Card -->
             <div class="gps-status-card" id="gpsStatusDisplay">
                 <span>📍 Location: Tap 'Start Break' to acquire GPS</span>
@@ -619,7 +696,7 @@
 
         <div class="footer">
             <div class="status-msg" id="breakStatusMessage">Select station & tap Start Break...</div>
-            <div>Ver 98</div>
+            <div>Ver 100</div>
         </div>
     </div>
 
@@ -650,10 +727,31 @@
 
         <div class="footer">
             <div class="status-msg" id="supStatusMsg">Viewing logged breaks...</div>
-            <div>Ver 98</div>
+            <div>Ver 100</div>
         </div>
     </div>
 
+</div>
+
+<!-- PIN MODAL -->
+<div class="modal-overlay" id="pinModal">
+    <div class="modal-card">
+        <div class="modal-title">🔒 Please enter the PIN</div>
+        <input 
+            type="password" 
+            id="supervisorPinInput" 
+            class="pin-input" 
+            maxlength="4" 
+            inputmode="numeric" 
+            pattern="[0-9]*" 
+            placeholder="••••"
+            autocomplete="off"
+        />
+        <div class="modal-btns-row">
+            <button class="modal-btn modal-btn-confirm" onclick="verifySupervisorPin()">Unlock</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closePinModal()">Cancel</button>
+        </div>
+    </div>
 </div>
 
 <!-- Quick Toast -->
@@ -679,6 +777,13 @@
         document.getElementById('screenRegularity').style.display = 'none';
         document.getElementById('screenBreaks').style.display = 'none';
         document.getElementById('screenSupervisor').style.display = 'none';
+
+        const wrapper = document.getElementById('appMainWrapper');
+        if (screenId === 'screenBreaks') {
+            wrapper.classList.add('break-theme');
+        } else {
+            wrapper.classList.remove('break-theme');
+        }
 
         const target = document.getElementById(screenId);
         if (target) {
@@ -981,7 +1086,7 @@
 
 
     // ==========================================
-    // MODULE 2: QUALITY BREAKS TRACKER (GPS & STATIONS)
+    // MODULE 2: QUALITY INVESTIGATOR BREAKS (GPS & STATIONS)
     // ==========================================
     let breakStartTime = "";
     let breakEndTime = "";
@@ -997,7 +1102,6 @@
 
     const breakUserSelect = document.getElementById('breakUserSelect');
     const breakStationSelect = document.getElementById('breakStationSelect');
-    const breakTypeSelect = document.getElementById('breakTypeSelect');
     const btnStartBreak = document.getElementById('btnStartBreak');
     const btnEndBreak = document.getElementById('btnEndBreak');
     const gpsStatusDisplay = document.getElementById('gpsStatusDisplay');
@@ -1091,7 +1195,6 @@
 
         const user = breakUserSelect.value;
         const station = breakStationSelect.value;
-        const bType = breakTypeSelect.value;
 
         if (!user) {
             breakUserSelect.classList.add('error-highlight');
@@ -1112,7 +1215,6 @@
             date: formattedDate,
             user: user,
             station: station,
-            breakType: bType,
             startTime: breakStartTime,
             endTime: breakEndTime,
             duration: durationMinutes,
@@ -1181,17 +1283,15 @@
         }
 
         let csvContent = "\uFEFF";
-        csvContent += "Date,Inspector / User,Station,Break Type,Start Time,End Time,Duration (Mins),GPS Location,Google Maps Link\n";
+        csvContent += "Date,Inspector / User,Station,Start Time,End Time,Duration (Mins),GPS Location,Google Maps Link\n";
 
         savedBreaks.forEach(function(item) {
             const userSafe = '"' + (item.user || '').replace(/"/g, '""') + '"';
             const stationSafe = '"' + (item.station || '').replace(/"/g, '""') + '"';
-            const typeSafe = '"' + (item.breakType || '').replace(/"/g, '""') + '"';
             const row = [
                 `"${item.date}"`,
                 userSafe,
                 stationSafe,
-                typeSafe,
                 `"${item.startTime}"`,
                 `"${item.endTime}"`,
                 `"${item.duration}"`,
@@ -1255,27 +1355,46 @@
     // ==========================================
     // MODULE 3: SUPERVISOR PROTECTED MONITOR
     // ==========================================
-    // Default PIN: 1234 (Can be changed anytime)
     const SUPERVISOR_PIN = "1234";
 
-    function promptSupervisorLogin() {
-        const enteredPin = prompt("🔒 Restricted Access: Enter Supervisor PIN code:");
-        if (enteredPin === null) return;
+    function openPinModal() {
+        const modal = document.getElementById('pinModal');
+        const pinInput = document.getElementById('supervisorPinInput');
+        pinInput.value = "";
+        modal.style.display = 'flex';
+        setTimeout(() => pinInput.focus(), 150);
+    }
 
-        if (enteredPin === SUPERVISOR_PIN) {
+    function closePinModal() {
+        document.getElementById('pinModal').style.display = 'none';
+    }
+
+    function verifySupervisorPin() {
+        const pinInput = document.getElementById('supervisorPinInput');
+        const val = pinInput.value.trim();
+
+        if (val === SUPERVISOR_PIN) {
+            closePinModal();
             navigateTo('screenSupervisor');
             renderSupervisorLogs();
             showToast("🔓 Access Granted!");
         } else {
             alert("❌ Incorrect PIN code! Access denied.");
+            pinInput.value = "";
+            pinInput.focus();
         }
     }
+
+    document.getElementById('supervisorPinInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            verifySupervisorPin();
+        }
+    });
 
     function renderSupervisorLogs() {
         const container = document.getElementById('supervisorLogContainer');
         container.innerHTML = "";
 
-        // Reload breaks from storage to ensure latest data is displayed
         try {
             savedBreaks = JSON.parse(localStorage.getItem('break_records') || '[]');
         } catch(e) {
@@ -1291,7 +1410,6 @@
             return;
         }
 
-        // Render in reverse order (newest on top)
         for (let i = savedBreaks.length - 1; i >= 0; i--) {
             const item = savedBreaks[i];
             const mapHtml = item.mapsUrl 
@@ -1306,7 +1424,6 @@
                     <span style="font-size: 12px; color: #d32f2f;">⏳ ${item.duration} Mins</span>
                 </div>
                 <div><strong>🚉 Station:</strong> ${item.station || 'N/A'}</div>
-                <div><strong>☕ Type:</strong> ${item.breakType}</div>
                 <div><strong>⏱️ Timing:</strong> ${item.startTime} ➔ ${item.endTime}</div>
                 <div>${mapHtml}</div>
             `;
