@@ -183,6 +183,13 @@
             transition: all 0.2s ease;
         }
 
+        .select-field:disabled {
+            background-color: #e2e8f0;
+            color: #64748b;
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+
         .train-box-wrapper {
             width: 100%;
             position: relative;
@@ -256,6 +263,40 @@
             box-shadow: 0 4px 15px rgba(230, 81, 0, 0.45);
             border: 1px solid rgba(255, 255, 255, 0.2);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Persistent Live Timer Box */
+        .break-timer-card {
+            display: none;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            border: 2px solid #ffd54f;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 0 16px rgba(255, 213, 79, 0.35);
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 12px rgba(255, 213, 79, 0.25); }
+            50% { box-shadow: 0 0 20px rgba(255, 213, 79, 0.55); }
+        }
+
+        .break-timer-title {
+            font-size: 12px;
+            color: #ffd54f;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .break-timer-digits {
+            font-size: 34px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 3px;
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
         }
 
         /* GPS Status Box */
@@ -503,20 +544,20 @@
             <div class="hub-card break-hub-card" onclick="navigateTo('screenBreaks')">
                 <div class="hub-card-icon">☕</div>
                 <div class="hub-card-title">Quality Investigator Breaks</div>
-                <div class="hub-card-desc">Log break start and end with station selection & auto GPS saving</div>
+                <div class="hub-card-desc">Log break start and end with station selection, live timer & auto GPS saving</div>
             </div>
 
             <!-- Option 3: Supervisor Monitor -->
             <div class="hub-card supervisor-card" onclick="openPinModal()">
                 <div class="hub-card-icon">🔒</div>
                 <div class="hub-card-title">Supervisor Live Monitor</div>
-                <div class="hub-card-desc">Protected view to track inspector break times, stations, and GPS locations on map</div>
+                <div class="hub-card-desc">Protected view to track inspector break times, stations, GPS locations & Excel export</div>
             </div>
         </div>
 
         <div class="footer">
             <div class="status-msg">Select a module to continue...</div>
-            <div>Ver 100</div>
+            <div>Ver 101</div>
         </div>
     </div>
 
@@ -583,7 +624,7 @@
 
         <div class="footer">
             <div class="status-msg" id="statusMessage">Enter 2 digits & tap buttons...</div>
-            <div>Ver 100</div>
+            <div>Ver 101</div>
         </div>
     </div>
 
@@ -675,6 +716,12 @@
                 <option value="Ramadan City Center">Ramadan City Center</option>
             </select>
 
+            <!-- Persistent Live Timer Card -->
+            <div class="break-timer-card" id="breakTimerCard">
+                <div class="break-timer-title">⏱️ ACTIVE BREAK TIMER</div>
+                <div class="break-timer-digits" id="breakTimerDigits">00:00:00</div>
+            </div>
+
             <!-- GPS Live Card -->
             <div class="gps-status-card" id="gpsStatusDisplay">
                 <span>📍 Location: Tap 'Start Break' to acquire GPS</span>
@@ -685,7 +732,6 @@
             <!-- Action Buttons for Break (in English - Auto Save on End) -->
             <button class="btn btn-start-break" id="btnStartBreak" type="button" onclick="handleStartBreak()">🟢 Start Break</button>
             <button class="btn btn-end-break" id="btnEndBreak" type="button" onclick="handleEndBreak()">🔴 End Break</button>
-            <button class="btn btn-download-share" id="btnExportBreaksCsv" type="button" onclick="exportBreaksExcel()">📥 Download / Share Breaks (Excel)</button>
 
             <!-- Clear Action Buttons -->
             <div class="action-row">
@@ -696,7 +742,7 @@
 
         <div class="footer">
             <div class="status-msg" id="breakStatusMessage">Select station & tap Start Break...</div>
-            <div>Ver 100</div>
+            <div>Ver 101</div>
         </div>
     </div>
 
@@ -727,13 +773,13 @@
 
         <div class="footer">
             <div class="status-msg" id="supStatusMsg">Viewing logged breaks...</div>
-            <div>Ver 100</div>
+            <div>Ver 101</div>
         </div>
     </div>
 
 </div>
 
-<!-- PIN MODAL -->
+<!-- PIN MODAL (NUMERIC KEYPAD ONLY) -->
 <div class="modal-overlay" id="pinModal">
     <div class="modal-card">
         <div class="modal-title">🔒 Please enter the PIN</div>
@@ -1086,13 +1132,14 @@
 
 
     // ==========================================
-    // MODULE 2: QUALITY INVESTIGATOR BREAKS (GPS & STATIONS)
+    // MODULE 2: QUALITY INVESTIGATOR BREAKS (PERSISTENT TIMER & GPS)
     // ==========================================
     let breakStartTime = "";
     let breakEndTime = "";
     let breakGpsCoords = "Not Acquired";
     let breakGpsMapsUrl = "";
     let savedBreaks = [];
+    let breakTimerInterval = null;
 
     try {
         savedBreaks = JSON.parse(localStorage.getItem('break_records') || '[]');
@@ -1105,6 +1152,8 @@
     const btnStartBreak = document.getElementById('btnStartBreak');
     const btnEndBreak = document.getElementById('btnEndBreak');
     const gpsStatusDisplay = document.getElementById('gpsStatusDisplay');
+    const breakTimerCard = document.getElementById('breakTimerCard');
+    const breakTimerDigits = document.getElementById('breakTimerDigits');
 
     if (savedUser) {
         breakUserSelect.value = savedUser;
@@ -1125,6 +1174,66 @@
     }
     updateBreakCounter();
 
+    // TIMER ENGINE (PERSISTS EVEN ON PAGE CLOSE / REFRESH)
+    function startTimerEngine(startTimestampMs) {
+        breakTimerCard.style.display = 'block';
+        if (breakTimerInterval) clearInterval(breakTimerInterval);
+
+        function updateDisplay() {
+            const now = Date.now();
+            const elapsedTotalSeconds = Math.max(0, Math.floor((now - startTimestampMs) / 1000));
+            const hours = String(Math.floor(elapsedTotalSeconds / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((elapsedTotalSeconds % 3600) / 60)).padStart(2, '0');
+            const seconds = String(elapsedTotalSeconds % 60).padStart(2, '0');
+            breakTimerDigits.innerText = `${hours}:${minutes}:${seconds}`;
+        }
+
+        updateDisplay();
+        breakTimerInterval = setInterval(updateDisplay, 1000);
+    }
+
+    function stopTimerEngine() {
+        if (breakTimerInterval) {
+            clearInterval(breakTimerInterval);
+            breakTimerInterval = null;
+        }
+        breakTimerCard.style.display = 'none';
+        breakTimerDigits.innerText = "00:00:00";
+    }
+
+    // CHECK FOR RUNNING BREAK SESSION ON LOAD
+    function checkActiveBreakSession() {
+        const activeStartMs = localStorage.getItem('active_break_start_ms');
+        const activeUser = localStorage.getItem('active_break_user');
+        const activeStation = localStorage.getItem('active_break_station');
+        const activeTimeStr = localStorage.getItem('active_break_start_str');
+        const activeGps = localStorage.getItem('active_break_gps');
+        const activeMaps = localStorage.getItem('active_break_maps');
+
+        if (activeStartMs && activeTimeStr) {
+            breakStartTime = activeTimeStr;
+            if (activeGps) breakGpsCoords = activeGps;
+            if (activeMaps) breakGpsMapsUrl = activeMaps;
+
+            if (activeUser) breakUserSelect.value = activeUser;
+            if (activeStation) breakStationSelect.value = activeStation;
+
+            // Lock selects during active break
+            breakUserSelect.disabled = true;
+            breakStationSelect.disabled = true;
+
+            btnStartBreak.innerText = "Started: " + breakStartTime;
+            btnStartBreak.classList.add('recorded');
+
+            startTimerEngine(parseInt(activeStartMs, 10));
+            document.getElementById('breakStatusMessage').innerText = "⏳ Break in progress! Timer running continuously...";
+            if (activeGps && activeGps !== 'Not Acquired') {
+                gpsStatusDisplay.innerHTML = `<span>📍 GPS Acquired: ${activeGps}</span>`;
+            }
+        }
+    }
+    checkActiveBreakSession();
+
     // Fetch GPS coordinates
     function requestGpsLocation(callback) {
         if (!navigator.geolocation) {
@@ -1142,6 +1251,8 @@
                 breakGpsCoords = `${lat}, ${lon}`;
                 breakGpsMapsUrl = `https://maps.google.com/?q=${lat},${lon}`;
                 gpsStatusDisplay.innerHTML = `<span>📍 GPS Acquired: ${breakGpsCoords}</span>`;
+                localStorage.setItem('active_break_gps', breakGpsCoords);
+                localStorage.setItem('active_break_maps', breakGpsMapsUrl);
                 if (callback) callback(breakGpsCoords);
             },
             function(error) {
@@ -1158,6 +1269,12 @@
 
     // Handle Start Break
     function handleStartBreak() {
+        const activeStartMs = localStorage.getItem('active_break_start_ms');
+        if (activeStartMs) {
+            alert("⚠️ A break is already active! Tap 'End Break' when finished.");
+            return;
+        }
+
         const user = breakUserSelect.value;
         const station = breakStationSelect.value;
 
@@ -1175,10 +1292,25 @@
             return;
         }
 
+        const nowMs = Date.now();
         breakStartTime = get24HourTime();
+
+        // Save active session state in storage
+        localStorage.setItem('active_break_start_ms', String(nowMs));
+        localStorage.setItem('active_break_start_str', breakStartTime);
+        localStorage.setItem('active_break_user', user);
+        localStorage.setItem('active_break_station', station);
+
+        // Lock selects
+        breakUserSelect.disabled = true;
+        breakStationSelect.disabled = true;
+
         btnStartBreak.innerText = "Started: " + breakStartTime;
         btnStartBreak.classList.remove('error-highlight');
         btnStartBreak.classList.add('recorded');
+
+        startTimerEngine(nowMs);
+        showToast("⏱️ Break Started & Timer Running!");
 
         requestGpsLocation(function() {
             document.getElementById('breakStatusMessage').innerText = "Break started at " + breakStartTime + ". Tap 'End Break' to finish & auto-save.";
@@ -1187,14 +1319,15 @@
 
     // Handle End Break with AUTOMATIC SAVE
     function handleEndBreak() {
-        if (!breakStartTime) {
+        const activeStartMs = localStorage.getItem('active_break_start_ms');
+        if (!activeStartMs && !breakStartTime) {
             btnStartBreak.classList.add('error-highlight');
             alert("⚠️ Please tap '🟢 Start Break' first!");
             return;
         }
 
-        const user = breakUserSelect.value;
-        const station = breakStationSelect.value;
+        const user = breakUserSelect.value || localStorage.getItem('active_break_user');
+        const station = breakStationSelect.value || localStorage.getItem('active_break_station');
 
         if (!user) {
             breakUserSelect.classList.add('error-highlight');
@@ -1209,7 +1342,15 @@
         }
 
         breakEndTime = get24HourTime();
-        const durationMinutes = calculateDuration(breakStartTime, breakEndTime);
+        
+        // Accurate duration calculation via milliseconds
+        let durationMinutes = "0";
+        if (activeStartMs) {
+            const elapsedMs = Date.now() - parseInt(activeStartMs, 10);
+            durationMinutes = String(Math.max(1, Math.round(elapsedMs / 60000)));
+        } else {
+            durationMinutes = calculateDuration(breakStartTime, breakEndTime);
+        }
 
         const newBreak = {
             date: formattedDate,
@@ -1230,10 +1371,20 @@
 
         updateBreakCounter();
         showToast("✅ Break auto-saved! (" + durationMinutes + " mins at " + station + ")");
+
+        // Clear active session from storage
+        localStorage.removeItem('active_break_start_ms');
+        localStorage.removeItem('active_break_start_str');
+        localStorage.removeItem('active_break_user');
+        localStorage.removeItem('active_break_station');
+        localStorage.removeItem('active_break_gps');
+        localStorage.removeItem('active_break_maps');
+
+        stopTimerEngine();
         resetBreakForm(false);
     }
 
-    // Calculate Break Duration in minutes
+    // Calculate Break Duration in minutes (fallback)
     function calculateDuration(start, end) {
         if (!start || !end) return "0";
         try {
@@ -1243,7 +1394,7 @@
             const endSec = eh * 3600 + em * 60 + es;
             let diffSec = endSec - startSec;
             if (diffSec < 0) diffSec += 24 * 3600;
-            const mins = Math.round(diffSec / 60);
+            const mins = Math.max(1, Math.round(diffSec / 60));
             return mins.toString();
         } catch(e) {
             return "0";
@@ -1255,6 +1406,19 @@
         breakEndTime = "";
         breakGpsCoords = "Not Acquired";
         breakGpsMapsUrl = "";
+
+        // Stop active timer if any
+        stopTimerEngine();
+        localStorage.removeItem('active_break_start_ms');
+        localStorage.removeItem('active_break_start_str');
+        localStorage.removeItem('active_break_user');
+        localStorage.removeItem('active_break_station');
+        localStorage.removeItem('active_break_gps');
+        localStorage.removeItem('active_break_maps');
+
+        // Unlock selects
+        breakUserSelect.disabled = false;
+        breakStationSelect.disabled = false;
 
         btnStartBreak.innerText = "🟢 Start Break";
         btnStartBreak.classList.remove('recorded', 'error-highlight');
@@ -1275,7 +1439,7 @@
         }
     }
 
-    // Export Breaks Excel
+    // Export Breaks Excel (Reserved for Supervisor)
     async function exportBreaksExcel() {
         if (savedBreaks.length === 0) {
             alert("⚠️ No saved breaks to export! Please record at least one break.");
