@@ -45,7 +45,7 @@
 <div class="container" id="appContainer">
   <div class="nav-back-bar" id="navBackBar" style="display:none"><button class="btn-back" type="button" onclick="navigateTo('screenHub')">⬅ Hub Menu</button></div>
   <div class="header"><div class="header-title" id="pageTitle">Quality Investigators App</div><div class="date-display" id="currentDate"></div></div>
-  
+
   <div class="app-screen active-screen" id="screenHub">
     <div class="hub-cards-container">
       <div class="hub-card" onclick="navigateTo('screenRegularity')"><div class="hub-card-icon">⏱️</div><div><div class="hub-card-title">Regularity Measurement</div><div class="hub-card-desc">Log train arrivals and departures with CSV export</div></div></div>
@@ -56,7 +56,7 @@
 
   <div class="app-screen" id="screenRegularity">
     <select id="userSelect" class="select-field"><option value="" disabled selected>👤 Select Inspector Name</option></select>
-    <div class="train-box-wrapper"><input type="tel" id="trainNumber" class="input-field" placeholder="70.." maxlength="4" inputmode="numeric" pattern="[0-9]\*" value="70" autocomplete="off"></div>
+    <div class="train-box-wrapper"><input type="tel" id="trainNumber" class="input-field" placeholder="70.." maxlength="4" inputmode="numeric" pattern="[0-9]*" value="70" autocomplete="off"></div>
     <div class="counter-badge" id="trainCounter">Saved Trains: 0</div>
     <button class="btn" id="btnArrival" type="button" onclick="handleArrival()">Train Arrival</button>
     <button class="btn" id="btnDeparture" type="button" onclick="handleDeparture()">Train Departure</button>
@@ -74,15 +74,8 @@
     <button class="btn btn-end-break" id="btnEndBreak" type="button" onclick="handleEndBreak()">🔴 End Break</button>
   </div>
 
-  <!-- Supervisor Screen (Updated Layout with End All Breaks Button) -->
   <div class="app-screen" id="screenSupervisor">
-    <div style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px">
-      <div class="counter-badge" id="supervisorTotalBadge">Total Breaks: 0</div>
-      <div style="display:flex;gap:6px">
-        <button class="btn-back" style="background:#b91c1c;padding:4px 10px;border-color:#ef4444" type="button" onclick="confirmEndAllActiveBreaks()">🚨 End All Active</button>
-        <button class="btn-back" style="background:#0284c7;padding:4px 10px" type="button" onclick="loadBreaksFromCloud()">🔄 Refresh</button>
-      </div>
-    </div>
+    <div style="width:100%;display:flex;justify-content:space-between;align-items:center"><div class="counter-badge" id="supervisorTotalBadge">Total Breaks: 0</div><button class="btn-back" style="background:#0284c7;padding:4px 10px" type="button" onclick="loadBreaksFromCloud()">🔄 Refresh Cloud</button></div>
     <div id="supervisorRefreshStatus" style="width:100%;text-align:center;font-size:11px;color:#a7f3d0;font-weight:700">Auto refresh every 30 seconds</div>
     <div class="supervisor-tabs" role="tablist" aria-label="Break status">
       <button class="supervisor-tab-btn active" id="activeBreaksTab" data-tab="active" type="button" role="tab" aria-selected="true" onclick="switchSupervisorTab('active')">🟢 On Break <span class="tab-count" id="activeBreaksCount">0</span></button>
@@ -94,27 +87,23 @@
 
   <div class="footer"><div class="status-msg" id="statusMessage">Select a module...</div><div id="appVersion"></div></div>
 </div>
-
 <div class="toast" id="toastMessage">Action Completed</div>
-<div class="modal-overlay" id="pinModal"><div class="modal-card"><div style="font-size:32px">🔒</div><div style="font-size:16px;font-weight:bold;color:#004d66">Please enter the PIN</div><input type="password" id="supervisorPinInput" class="pin-input" maxlength="4" inputmode="numeric" pattern="[0-9]\*" placeholder="••••" autocomplete="off"><button class="btn" style="background:#e0e0e0;color:#333;width:100%;padding:8px 0" type="button" onclick="closeSupervisorPinModal()">Cancel</button></div></div>
+<div class="modal-overlay" id="pinModal"><div class="modal-card"><div style="font-size:32px">🔒</div><div style="font-size:16px;font-weight:bold;color:#004d66">Please enter the PIN</div><input type="password" id="supervisorPinInput" class="pin-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" autocomplete="off"><button class="btn" style="background:#e0e0e0;color:#333;width:100%;padding:8px 0" type="button" onclick="closeSupervisorPinModal()">Cancel</button></div></div>
 <div class="modal-overlay" id="breakSummaryModal"><div class="modal-card" style="border:2px solid #ff9100"><div style="font-size:36px">⏱️</div><div style="font-size:18px;color:#004d66;font-weight:bold">Break Completed</div><div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:8px;padding:10px"><div style="font-size:11px;color:#166534;font-weight:bold">TOTAL DURATION</div><div id="modalDurationText" style="font-size:22px;font-weight:900;color:#15803d">0 Hours & 0 Mins</div></div><div style="background:#f8fafc;border-radius:6px;padding:8px;font-size:12px;text-align:left;color:#334155"><div><strong>👤 Inspector:</strong> <span id="modalSummaryUser">--</span></div><div><strong>🚉 Station:</strong> <span id="modalSummaryStation">--</span></div><div><strong>⏱️ Time:</strong> <span id="modalSummaryTime">-- ➔ --</span></div></div><button class="btn btn-download-share" style="width:100%;padding:10px 0" type="button" onclick="closeBreakSummaryModal()">OK / Done</button></div></div>
 
 <script>
-const APP_VERSION="1.3.4"; // Updated version to reflect changes
+const APP_VERSION="1.3.3";
 const CLOUD_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxZCFVNqqDgpJpfLLyGnYH5et7bYU_ZRqyIsNp3vvbtYwwDpdhrTVTlrHEr1ZppaIMh7A/exec";
 const SUPERVISOR_PIN="5221";
 const INSPECTORS=["Fathy Helmy Fattouh Hassan","Karim Gamal Salah Al-Din","Karim Moustafa Mostafa","Khaled Mostafa Abdel Moneim","Mohamed El-Sayed Ibrahim","Shorouk Tarek Taha Yaseen","Mahmoud Taher Mahmoud Zaki","Ehab Abdel Kareem","Nancy Hesham Hassan Abdelrehim","Nourhan Karam Hanafy Mohamdy","Mohamed Emad Imam Mahmoud","Ehab Shabaan Fahmy Elsayed","Yasmine Mohamed Alsayed Abdelsattar Akila"];
 const STATIONS=["Adly Mansour","El Haykestep","Omar Ibn El khattab","Qubaa","Hesham Barakat","El Nozha","El Shams Club","Alf Maskan","Heliopolis","Haroun","El Ahram","Kolleyet El Banat","Stadium","Fair Zone","El Abassiya","Abdou Pasha","El Geish","Bab El Shaariya","Attaba","Nasser","Maspero","Safaa Hegazy","Kit-kat","Sudan","Imbaba","El-Bohy","El-Qawmia","Ring Road","Rod El Farag Corr.","Tawfikia","Wadi El Nile","Gamet El Dowel","Boulak El Dakrour","Cairo University","El-Obour","Future","El-Shorouk","New Heliopalis","Badr","El-Robaiky","Hadayek El-Assema","Capital Airport","Art & Culture City","Nativity Cathedral","The Octagon","International Sport City","Central Capital","Industrial Park","Knowledge City","West Of Ramadan","10 Th Of Ramadan","Ramadan City Center"];
-document.getElementById("appVersion").innerText="v"+APP_VERSION;
 
+document.getElementById("appVersion").innerText="v"+APP_VERSION;
 function fillSelect(id,items){const s=document.getElementById(id);items.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;s.appendChild(o)})}
 fillSelect("userSelect",INSPECTORS);fillSelect("breakUserSelect",INSPECTORS);fillSelect("breakStationSelect",STATIONS);
-
 const today=new Date(),months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const formattedDate=`${String(today.getDate()).padStart(2,"0")}-${months[today.getMonth()]}-${today.getFullYear()}`;document.getElementById("currentDate").innerText=formattedDate;
-
 function navigateTo(screenId){const validScreens=["screenHub","screenRegularity","screenBreaks","screenSupervisor"];if(!validScreens.includes(screenId))screenId="screenHub";localStorage.setItem("quality_hub_last_screen",screenId);document.querySelectorAll(".app-screen").forEach(s=>s.classList.remove("active-screen"));document.getElementById(screenId)?.classList.add("active-screen");const c=document.getElementById("appContainer"),n=document.getElementById("navBackBar"),t=document.getElementById("pageTitle");c.classList.toggle("break-theme",screenId==="screenBreaks");n.style.display=screenId==="screenHub"?"none":"flex";const names={screenHub:"Quality Investigators App",screenRegularity:"Regularity Measurement",screenBreaks:"Quality Investigator Breaks",screenSupervisor:"Supervisor Live Monitor"};t.innerText=names[screenId]||names.screenHub;if(screenId==="screenBreaks")restoreActiveBreakSession();if(screenId==="screenSupervisor"){loadBreaksFromCloud();startSupervisorAutoRefresh()}else{stopSupervisorAutoRefresh()}}
-
 function showToast(text){const t=document.getElementById("toastMessage");t.innerText=text;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2000)}
 function get24HourTime(){const n=new Date();return `${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}:${String(n.getSeconds()).padStart(2,"0")}`}
 function escapeHtml(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
@@ -123,13 +112,10 @@ let arrivalTime="",departureTime="",savedRecords=JSON.parse(localStorage.getItem
 const userSelect=document.getElementById("userSelect"),trainInput=document.getElementById("trainNumber"),arrivalBtn=document.getElementById("btnArrival"),departureBtn=document.getElementById("btnDeparture");
 function updateTrainCounter(){document.getElementById("trainCounter").innerText="Saved Trains: "+savedRecords.length}updateTrainCounter();
 userSelect.addEventListener("change",()=>userSelect.classList.remove("error-highlight"));
-
 trainInput.addEventListener("focus",function(){if(this.value==="70")this.setSelectionRange(2,2)});trainInput.addEventListener("keydown",function(e){if(this.selectionStart<=2&&(e.key==="Backspace"||e.key==="Delete")&&this.value.length<=2)e.preventDefault()});trainInput.addEventListener("input",function(){this.classList.remove("error-highlight");let d=this.value.replace(/[^0-9]/g,"");if(!d.startsWith("70"))d="70"+d.replace(/^70*/,"");this.value=d.slice(0,4);if(this.value.length===4){this.blur();arrivalBtn.scrollIntoView({behavior:"smooth",block:"center"})}});
-
 function handleArrival(){arrivalTime=get24HourTime();arrivalBtn.innerText="Arrival: "+arrivalTime;arrivalBtn.classList.remove("error-highlight");arrivalBtn.classList.add("recorded")}
 function handleDeparture(){departureTime=get24HourTime();departureBtn.innerText="Departure: "+departureTime;departureBtn.classList.remove("error-highlight");departureBtn.classList.add("recorded")}
 function resetCurrentForm(keepInspector=false){const selectedInspector=userSelect.value;trainInput.value="70";if(keepInspector&&selectedInspector){userSelect.value=selectedInspector}else{userSelect.selectedIndex=0;savedRecords=[];localStorage.removeItem("train_records");updateTrainCounter()}arrivalTime=departureTime="";userSelect.classList.remove("error-highlight");trainInput.classList.remove("error-highlight");arrivalBtn.innerText="Train Arrival";arrivalBtn.classList.remove("recorded","error-highlight");departureBtn.innerText="Train Departure";departureBtn.classList.remove("recorded","error-highlight");showToast(keepInspector?"✅ Ready for the next train":"🧹 Form and saved trains cleared!")}
-
 function saveRecord(){
   const user=userSelect.value;
   const trainNo=trainInput.value.trim();
@@ -145,7 +131,9 @@ function saveRecord(){
   if(missing.length){
     const first=document.querySelector("#screenRegularity .error-highlight");
     if(first){first.scrollIntoView({behavior:"smooth",block:"center"});if(first.tagName==="SELECT"||first.tagName==="INPUT")first.focus()}
-    alert(`⚠️ Complete all required fields before saving:\n\n• ${missing.join("\n• ")}`);
+    alert(`⚠️ Complete all required fields before saving:
+
+• ${missing.join("\n• ")}`);
     return;
   }
   savedRecords.push({date:formattedDate,user,trainNumber:trainNo,arrival:arrivalTime,departure:departureTime});
@@ -155,22 +143,116 @@ function saveRecord(){
   showToast(`✅ Train ${trainNo} Saved!`);
   resetCurrentForm(true);
 }
-
 function downloadCsv(csv,name){const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
 function exportAndShareExcel(){if(!savedRecords.length){alert("⚠️ No saved trains yet!");return}let csv="\uFEFFDate,Inspector / User,Train Number,Arrival Time,Departure Time\n";savedRecords.forEach(r=>csv+=`"${r.date}","${r.user}","${r.trainNumber}","${r.arrival}","${r.departure}"\n`);downloadCsv(csv,`Regularity_${formattedDate}.csv`)}
 
 let breakStartTime="",breakEndTime="",breakTimerInterval=null,breakGpsCoords="",breakGpsMapsUrl="",activeBreakId="";
 const breakUserSelect=document.getElementById("breakUserSelect"),breakStationSelect=document.getElementById("breakStationSelect"),btnStartBreak=document.getElementById("btnStartBreak"),btnEndBreak=document.getElementById("btnEndBreak"),gpsStatusDisplay=document.getElementById("gpsStatusDisplay"),liveBreakTimer=document.getElementById("liveBreakTimer");
-
 function startTimerEngine(startMs){clearInterval(breakTimerInterval);const tick=()=>{const diff=Math.max(0,Date.now()-startMs),s=Math.floor(diff/1000%60),m=Math.floor(diff/60000%60),h=Math.floor(diff/3600000);liveBreakTimer.innerText=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`};tick();breakTimerInterval=setInterval(tick,1000)}
-
 function restoreActiveBreakSession(){const savedMs=localStorage.getItem("active_break_start_ms");if(savedMs){activeBreakId=localStorage.getItem("active_break_id")||"";breakUserSelect.value=localStorage.getItem("active_break_user")||"";breakStationSelect.value=localStorage.getItem("active_break_station")||"";breakUserSelect.disabled=breakStationSelect.disabled=true;breakStartTime=localStorage.getItem("active_break_start_str")||"";btnStartBreak.innerText="🟢 Break Active: "+breakStartTime;btnStartBreak.classList.add("recorded");btnStartBreak.disabled=true;gpsStatusDisplay.innerHTML="<span>🟢 Break is currently active</span>";startTimerEngine(Number(savedMs))}else{btnStartBreak.disabled=false;btnStartBreak.innerText="🟢 Start Break"}}
-
 function requestGpsLocation(onSuccess,onError){if(!navigator.geolocation){onError("GPS not supported");return}gpsStatusDisplay.innerHTML="<span>📡 Checking GPS location...</span>";navigator.geolocation.getCurrentPosition(pos=>{const lat=pos.coords.latitude.toFixed(5),lon=pos.coords.longitude.toFixed(5);breakGpsCoords=`${lat}, ${lon}`;breakGpsMapsUrl=`https://maps.google.com/?q=${lat},${lon}`;gpsStatusDisplay.innerHTML="<span>📍 GPS Verified</span>";onSuccess(breakGpsCoords)},err=>{gpsStatusDisplay.innerHTML="<span>⚠️ GPS Location required!</span>";onError(err.message||"GPS permission denied")},{enableHighAccuracy:true,timeout:12000,maximumAge:0})}
-
 function generateBreakId(){return `BRK-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`}
 function sendCloud(payload){return fetch(CLOUD_SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})}
-
 function handleStartBreak(){if(localStorage.getItem("active_break_start_ms")){alert("⚠️ Break already running!");return}const u=breakUserSelect.value,st=breakStationSelect.value;if(!u||!st){alert("⚠️ Select Inspector & Station first!");return}btnStartBreak.disabled=true;btnStartBreak.innerText="⏳ Checking GPS...";requestGpsLocation(coords=>{const now=Date.now();activeBreakId=generateBreakId();breakStartTime=get24HourTime();localStorage.setItem("active_break_id",activeBreakId);localStorage.setItem("active_break_start_ms",String(now));localStorage.setItem("active_break_start_str",breakStartTime);localStorage.setItem("active_break_user",u);localStorage.setItem("active_break_station",st);breakUserSelect.disabled=breakStationSelect.disabled=true;btnStartBreak.innerText="🟢 Break Active: "+breakStartTime;btnStartBreak.classList.add("recorded");gpsStatusDisplay.innerHTML="<span>🟢 Break is currently active</span>";startTimerEngine(now);sendCloud({action:"START_BREAK",breakId:activeBreakId,status:"ACTIVE",date:formattedDate,user:u,station:st,startTime:breakStartTime,startTimestamp:now,endTime:"",duration:"",gps:coords,mapsUrl:breakGpsMapsUrl,appVersion:APP_VERSION}).catch(console.error);showToast("🟢 Break Started & Live Monitor Updated!")},()=>{btnStartBreak.disabled=false;btnStartBreak.innerText="🟢 Start Break";alert("❌ GPS Required to start break! Please enable location on your phone.")})}
+function handleEndBreak(){const startMs=localStorage.getItem("active_break_start_ms");if(!startMs){alert("⚠️ Tap Start Break first!");return}const u=localStorage.getItem("active_break_user")||breakUserSelect.value,st=localStorage.getItem("active_break_station")||breakStationSelect.value;btnEndBreak.disabled=true;btnEndBreak.innerText="⏳ Verifying GPS...";requestGpsLocation(coords=>{btnEndBreak.disabled=false;btnEndBreak.innerText="🔴 End Break";breakEndTime=get24HourTime();const diffMs=Date.now()-Number(startMs),totalMins=Math.max(1,Math.round(diffMs/60000)),hours=Math.floor(totalMins/60),mins=totalMins%60;activeBreakId=localStorage.getItem("active_break_id")||activeBreakId;sendCloud({action:"END_BREAK",breakId:activeBreakId,status:"COMPLETED",date:formattedDate,user:u,station:st,startTime:breakStartTime||localStorage.getItem("active_break_start_str")||"",startTimestamp:Number(startMs),endTime:breakEndTime,endTimestamp:Date.now(),duration:String(totalMins),gps:coords,mapsUrl:breakGpsMapsUrl,appVersion:APP_VERSION}).catch(console.error);document.getElementById("modalDurationText").innerText=`${hours} Hours & ${mins} Mins`;document.getElementById("modalSummaryUser").innerText=u;document.getElementById("modalSummaryStation").innerText=st;document.getElementById("modalSummaryTime").innerText=`${breakStartTime||localStorage.getItem("active_break_start_str")} ➔ ${breakEndTime}`;document.getElementById("breakSummaryModal").style.display="flex";clearInterval(breakTimerInterval);liveBreakTimer.innerText="00:00:00";["active_break_id","active_break_start_ms","active_break_start_str","active_break_user","active_break_station"].forEach(k=>localStorage.removeItem(k));activeBreakId="";breakUserSelect.disabled=breakStationSelect.disabled=false;btnStartBreak.disabled=false;btnStartBreak.innerText="🟢 Start Break";btnStartBreak.classList.remove("recorded");gpsStatusDisplay.innerHTML="<span>📍 GPS check mandatory to start/end break</span>"},()=>{btnEndBreak.disabled=false;btnEndBreak.innerText="🔴 End Break";alert("❌ GPS Required to end break! Please enable location on your phone.")})}
+function closeBreakSummaryModal(){document.getElementById("breakSummaryModal").style.display="none"}
 
-function handleEndBreak(){const startMs=localStorage.getItem("active_break_start_ms");if(!startMs){alert("⚠️ Tap Start Break first!");return}const u=localStorage.getItem("active_break_user")||breakUserSelect.value,st=localStorage.getItem("active_break_station")||breakStationSelect.value;btnEndBreak.disabled=true;btnEndBreak.innerText="⏳ Verifying GPS...";requestGpsLocation(coords=>{btnEndBreak.disabled=false;btnEndBreak.innerText="🔴 End Break";breakEndTime=get24HourTime();const diffMs=Date.now()-Number(startMs),totalMins=Math.max(1,Math.round(diffMs/60000)),hours=Math.floor(totalMins/60),mins=totalMins%60;activeBreakId=localStorage.getItem("active_break_id")||activeBreakId;sendCloud({action:"END_BREAK",breakId:activeBreakId,status:"COMPLETED",date:formattedDate,user:u,station:st,startTime:breakStartTime||localStorage.getItem("active_break_start_str")||"",startTimestamp:Number(startMs),endTime:breakEndTime,endTimestamp:Date.now(),duration:String(totalMins),gps:coords,mapsUrl:breakGpsMapsUrl,appVersion:APP_VERSION}).catch(console.error);document.getElementById("modalDurationText").innerText=`${hours} Hours & ${mins} Mins`;document.getElementById("modalSummaryUser").innerText=u;document.getElementById("modalSummaryStation").innerText=st;document.getElementById("modalSummaryTime").innerText=`${breakStartTime||localStorage.getItem("active_break_start_str")} ➔ ${breakEndTime}`;document.getElementById("breakSummaryModal").style.display="flex";clearInterval(breakTimerInterval);liveBreakTimer.innerText="00:00:00";["active_break_id","active_break_start_ms","active_break_
+let cloudBreaksData=[],supervisorLiveTimerInterval=null,supervisorAutoRefreshInterval=null,currentSupervisorTab="active";
+function openSupervisorPinModal(){document.getElementById("supervisorPinInput").value="";document.getElementById("pinModal").style.display="flex";setTimeout(()=>document.getElementById("supervisorPinInput").focus(),200)}
+function closeSupervisorPinModal(){document.getElementById("pinModal").style.display="none"}
+document.getElementById("supervisorPinInput").addEventListener("input",function(){if(this.value===SUPERVISOR_PIN){closeSupervisorPinModal();navigateTo("screenSupervisor")}});
+function normalizeBreak(b){return {breakId:b.breakId||b.breakID||b[0]||"",status:b.status||b[1]||"",date:b.date||b[2]||"",user:b.user||b[3]||"",station:b.station||b[4]||"",startTime:b.startTime||b[5]||"",startTimestamp:b.startTimestamp||b[6]||"",endTime:b.endTime||b[7]||"",duration:b.duration||b[8]||"",gps:b.gps||b[9]||"",mapsUrl:b.mapsUrl||b[10]||"",appVersion:b.appVersion||b[11]||""}}
+function isBreakActive(b){return String(b.status||"").toUpperCase()==="ACTIVE"||(!b.endTime&&String(b.status||"").toUpperCase()!=="COMPLETED")}
+function breakMatchKey(b){
+  if(b.breakId)return "ID|"+String(b.breakId).trim();
+  return ["LEGACY",b.date,b.user,b.station,b.startTime].map(v=>String(v||"").trim().toLowerCase()).join("|");
+}
+function deduplicateBreaks(rows){
+  const groups=new Map();
+  rows.forEach((item,index)=>{
+    const b=normalizeBreak(item);
+    const key=breakMatchKey(b);
+    if(!groups.has(key))groups.set(key,[]);
+    groups.get(key).push({...b,_sourceIndex:index});
+  });
+  return Array.from(groups.values()).map(group=>{
+    const completed=group.filter(b=>String(b.status||"").toUpperCase()==="COMPLETED"||Boolean(b.endTime));
+    if(completed.length)return completed[completed.length-1];
+    return group[group.length-1];
+  }).sort((a,b)=>b._sourceIndex-a._sourceIndex).map(({_sourceIndex,...b})=>b);
+}
+function formatCloudDate(value){
+  if(!value)return "--";
+  const text=String(value).trim();
+  const already=text.match(/^(\d{2})-([A-Za-z]{3})-(\d{4})$/);
+  if(already)return `${already[1]}-${already[2][0].toUpperCase()+already[2].slice(1).toLowerCase()}-${already[3]}`;
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime()))return text;
+  const parts=new Intl.DateTimeFormat("en-GB",{day:"2-digit",month:"short",year:"numeric"}).formatToParts(d);
+  const get=type=>parts.find(p=>p.type===type)?.value||"";
+  return `${get("day")}-${get("month")}-${get("year")}`;
+}
+function formatCloudTime(value){
+  if(!value)return "--";
+  const text=String(value).trim();
+  let hours,minutes;
+  const plain=text.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?$/i);
+  if(plain){
+    hours=Number(plain[1]);minutes=Number(plain[2]);
+    if(plain[3]){const ap=plain[3].toUpperCase();if(ap==="PM"&&hours<12)hours+=12;if(ap==="AM"&&hours===12)hours=0;}
+  }else{
+    const d=new Date(value);
+    if(Number.isNaN(d.getTime()))return text;
+    hours=d.getHours();minutes=d.getMinutes();
+  }
+  const period=hours>=12?"PM":"AM";
+  const h12=hours%12||12;
+  return `${String(h12).padStart(2,"0")}:${String(minutes).padStart(2,"0")} ${period}`;
+}
+function getStartMilliseconds(ts,dateValue,timeValue){
+  const numeric=Number(ts);
+  if(Number.isFinite(numeric)&&numeric>100000000000)return numeric;
+  const parsedTs=new Date(ts);
+  if(!Number.isNaN(parsedTs.getTime())&&parsedTs.getUTCFullYear()>2000)return parsedTs.getTime();
+  const dateText=formatCloudDate(dateValue);
+  const timeText=formatCloudTime(timeValue);
+  const parts=dateText.match(/^(\d{2})-([A-Za-z]{3})-(\d{4})$/);
+  const timeParts=timeText.match(/^(\d{2}):(\d{2}) (AM|PM)$/);
+  if(!parts||!timeParts)return 0;
+  const months={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  let h=Number(timeParts[1]);if(timeParts[3]==="PM"&&h<12)h+=12;if(timeParts[3]==="AM"&&h===12)h=0;
+  return new Date(Number(parts[3]),months[parts[2]],Number(parts[1]),h,Number(timeParts[2]),0,0).getTime();
+}
+function getLiveBreakDuration(ts,dateValue,timeValue){const start=getStartMilliseconds(ts,dateValue,timeValue);if(!start)return "In progress";const sec=Math.floor(Math.max(0,Date.now()-start)/1000),h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
+function startSupervisorLiveTimers(){clearInterval(supervisorLiveTimerInterval);const tick=()=>document.querySelectorAll("[data-live-start]").forEach(el=>el.innerText="Live Duration: "+getLiveBreakDuration(el.dataset.liveStart,el.dataset.liveDate,el.dataset.liveTime));tick();supervisorLiveTimerInterval=setInterval(tick,1000)}
+function switchSupervisorTab(tab){
+  currentSupervisorTab=tab==="completed"?"completed":"active";
+  localStorage.setItem("quality_hub_supervisor_tab",currentSupervisorTab);
+  const activeBtn=document.getElementById("activeBreaksTab"),completedBtn=document.getElementById("completedBreaksTab");
+  activeBtn.classList.toggle("active",currentSupervisorTab==="active");
+  completedBtn.classList.toggle("active",currentSupervisorTab==="completed");
+  activeBtn.setAttribute("aria-selected",String(currentSupervisorTab==="active"));
+  completedBtn.setAttribute("aria-selected",String(currentSupervisorTab==="completed"));
+  renderSupervisorBreaks();
+}
+function renderSupervisorBreaks(){const container=document.getElementById("supervisorLogContainer");const activeBreaks=cloudBreaksData.filter(isBreakActive),completedBreaks=cloudBreaksData.filter(b=>!isBreakActive(b));document.getElementById("supervisorTotalBadge").innerText="Total Breaks: "+cloudBreaksData.length;document.getElementById("activeBreaksCount").innerText=activeBreaks.length;document.getElementById("completedBreaksCount").innerText=completedBreaks.length;const visibleBreaks=currentSupervisorTab==="active"?activeBreaks:completedBreaks;if(!visibleBreaks.length){container.innerHTML=`<div class="empty-tab-message">${currentSupervisorTab==="active"?"🟢 No one is currently on break.":"📋 No completed breaks recorded yet."}</div>`;clearInterval(supervisorLiveTimerInterval);return}container.innerHTML=visibleBreaks.map(b=>{const active=isBreakActive(b),status=active?`<div class="break-live-status"><span class="break-live-lamp"></span><span>Still On Break</span></div>`:`<div class="break-completed-status"><span>✅</span><span>Break Completed</span></div>`,time=active?`<div style="color:#333"><strong>⏱️ Started:</strong> ${escapeHtml(formatCloudTime(b.startTime))}</div><div class="live-break-duration" data-live-start="${escapeHtml(b.startTimestamp)}" data-live-date="${escapeHtml(b.date)}" data-live-time="${escapeHtml(b.startTime)}">Live Duration: ${getLiveBreakDuration(b.startTimestamp,b.date,b.startTime)}</div>`:`<div style="color:#333"><strong>⏱️ Time:</strong> ${escapeHtml(formatCloudTime(b.startTime))} ➔ ${escapeHtml(formatCloudTime(b.endTime))} (${escapeHtml(b.duration||"--")} mins)</div>`,map=b.mapsUrl?`<a href="${escapeHtml(b.mapsUrl)}" target="_blank" rel="noopener noreferrer" class="map-link-btn">🗺️ View on Google Maps</a>`:"";return `<div class="supervisor-log-item ${active?"active-break-card":""}">${status}<div class="user-title">👤 ${escapeHtml(b.user||"Unknown Inspector")} &bull; <span style="font-size:13px;font-weight:600;color:#555">${escapeHtml(b.station||"--")}</span></div><div style="margin-top:2px;color:#333"><strong>📅 Date:</strong> ${escapeHtml(formatCloudDate(b.date))}</div>${time}${map}</div>`}).join("");startSupervisorLiveTimers()}
+function stopSupervisorAutoRefresh(){if(supervisorAutoRefreshInterval){clearInterval(supervisorAutoRefreshInterval);supervisorAutoRefreshInterval=null}}
+function startSupervisorAutoRefresh(){
+  stopSupervisorAutoRefresh();
+  supervisorAutoRefreshInterval=setInterval(()=>{
+    if(document.getElementById("screenSupervisor").classList.contains("active-screen"))loadBreaksFromCloud(true);
+  },30000);
+}
+function loadBreaksFromCloud(isAutoRefresh=false){const container=document.getElementById("supervisorLogContainer");if(!isAutoRefresh)container.innerHTML="<div style='text-align:center;padding:20px;color:#ffd54f'>📡 Loading from Google Sheet...</div>";const refreshStatus=document.getElementById("supervisorRefreshStatus");if(refreshStatus)refreshStatus.innerText=isAutoRefresh?"🔄 Updating...":"📡 Loading cloud data...";fetch(CLOUD_SCRIPT_URL,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(data=>{const rows=Array.isArray(data)?data:(Array.isArray(data.data)?data.data:[]);cloudBreaksData=deduplicateBreaks(rows);renderSupervisorBreaks();if(refreshStatus)refreshStatus.innerText="✅ Last updated: "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"})+" • Next refresh in 30 sec"}).catch(()=>{if(!isAutoRefresh)container.innerHTML="<div style='text-align:center;padding:20px;color:#ff8a80'>⚠️ Error fetching from cloud. Tap Refresh Cloud to retry.</div>";if(refreshStatus)refreshStatus.innerText="⚠️ Auto refresh failed • Retrying in 30 sec"})}
+function exportSupervisorBreaksExcel(){if(!cloudBreaksData.length){alert("⚠️ No records to export!");return}let csv="\uFEFFBreak ID,Status,Date,Inspector,Station,Start Time,End Time,Duration (Mins),GPS,Google Maps Link,App Version\n";cloudBreaksData.forEach(b=>csv+=`"${b.breakId}","${b.status}","${b.date}","${b.user}","${b.station}","${b.startTime}","${b.endTime}","${b.duration}","${b.gps}","${b.mapsUrl}","${b.appVersion}"\n`);downloadCsv(csv,`Breaks_Report_${formattedDate}.csv`)}
+// Restore the last open screen and Supervisor sub-tab after browser refresh.
+document.addEventListener("DOMContentLoaded",()=>{
+  currentSupervisorTab=localStorage.getItem("quality_hub_supervisor_tab")==="completed"?"completed":"active";
+  const lastScreen=localStorage.getItem("quality_hub_last_screen")||"screenHub";
+  navigateTo(lastScreen);
+  if(lastScreen==="screenSupervisor")switchSupervisorTab(currentSupervisorTab);
+});
+
+</script>
+</body>
+</html>
