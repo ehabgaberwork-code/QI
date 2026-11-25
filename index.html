@@ -118,6 +118,8 @@
     .input-field:focus-visible,
     .search-input:focus-visible,
     .supervisor-tab-btn:focus-visible,
+    .filter-pill:focus-visible,
+    .history-date-input:focus-visible,
     .icon-btn:focus-visible {
       outline: 2px solid var(--warning);
       outline-offset: 2px;
@@ -604,6 +606,58 @@
       font-size: 11px;
     }
 
+    .history-filter-bar {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.18);
+      padding: 8px;
+      border-radius: 12px;
+    }
+
+    .history-filter-bar.visible {
+      display: flex;
+    }
+
+    .history-filter-pills {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .filter-pill {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 8px;
+      padding: 7px 6px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .filter-pill.active {
+      background: var(--accent-orange);
+      border-color: var(--accent-orange);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(255, 145, 0, 0.35);
+    }
+
+    .history-date-input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+      outline: none;
+    }
+
     .supervisor-log-list {
       width: 100%;
       max-height: 460px;
@@ -990,6 +1044,15 @@
       <button class="supervisor-tab-btn" id="completedBreaksTab" data-tab="completed" type="button" role="tab" aria-selected="false" onclick="switchSupervisorTab('completed')">✅ Break History <span class="tab-count" id="completedBreaksCount">0</span></button>
     </div>
 
+    <div class="history-filter-bar" id="historyFilterBar">
+      <div class="history-filter-pills" role="group" aria-label="Filter break history by date">
+        <button class="filter-pill active" id="filterDateToday" type="button" onclick="setHistoryDateFilter('today')">Today Only</button>
+        <button class="filter-pill" id="filterDateAll" type="button" onclick="setHistoryDateFilter('all')">All Days</button>
+        <button class="filter-pill" id="filterDateCustom" type="button" onclick="setHistoryDateFilter('custom')">Specific Date</button>
+      </div>
+      <input type="date" id="historyDatePicker" class="history-date-input" style="display:none" aria-label="Select specific date">
+    </div>
+
     <button class="btn btn-download-share" type="button" style="padding:10px 14px;font-size:14px" onclick="exportSupervisorBreaksExcel()">📤 Share / Export All Breaks (Excel)</button>
 
     <div id="supervisorLogContainer" class="supervisor-log-list" role="tabpanel"></div>
@@ -1058,7 +1121,7 @@
 </div>
 
 <script>
-  const APP_VERSION = "1.4.0";
+  const APP_VERSION = "1.5.0";
   const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZCFVNqqDgpJpfLLyGnYH5et7bYU_ZRqyIsNp3vvbtYwwDpdhrTVTlrHEr1ZppaIMh7A/exec";
   const SUPERVISOR_PIN = "5221";
   const OVERDUE_BREAK_MINUTES = 30;
@@ -1718,7 +1781,26 @@
     return `BRK-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
   }
 
-  function handleStartBreak() {
+  async function checkInspectorActiveBreakInCloud(inspectorName) {
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 12000) : null;
+    try {
+      const resp = await fetch(CLOUD_SCRIPT_URL, {
+        cache: "no-store",
+        signal: controller ? controller.signal : undefined
+      });
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      const data = await resp.json();
+      const rows = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
+      const deduped = deduplicateBreaks(rows);
+      const target = String(inspectorName || "").trim().toLowerCase();
+      return deduped.find(b => isBreakActive(b) && String(b.user || "").trim().toLowerCase() === target) || null;
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+  }
+
+  async function handleStartBreak() {
     if (safeGet("active_break_start_ms")) {
       showNotice("Break Running", "A break is already active. Tap End Break when you finish.");
       return;
@@ -1740,6 +1822,36 @@
 
     saveLastInspector(u);
     btnStartBreak.disabled = true;
+    btnStartBreak.innerText = "🔍 Checking Active Breaks...";
+    setGpsStatus("📡 Verifying inspector status on cloud...", "warn");
+
+    try {
+      const existingActive = await checkInspectorActiveBreakInCloud(u);
+      if (existingActive) {
+        btnStartBreak.disabled = false;
+        btnStartBreak.innerText = "🟢 Start Break";
+        setGpsStatus("⛔ Active break already open on another device", "err");
+        const where = existingActive.station ? ` at ${existingActive.station}` : "";
+        const since = existingActive.startTime ? ` (started ${formatCloudTime(existingActive.startTime)})` : "";
+        showNotice(
+          "Active Break Already Exists",
+          `${u} is already recorded as Still On Break${where}${since}.\n\nPlease end the existing break before starting a new one.`,
+          "⛔"
+        );
+        return;
+      }
+    } catch {
+      btnStartBreak.disabled = false;
+      btnStartBreak.innerText = "🟢 Start Break";
+      setGpsStatus("⚠️ Cloud check failed — network required", "err");
+      showNotice(
+        "Cloud Sync Failed",
+        "Could not verify active breaks on the server.\n\nPlease move to an area with good network coverage and try again.",
+        "📡"
+      );
+      return;
+    }
+
     btnStartBreak.innerText = "⏳ Checking GPS...";
 
     requestGpsLocation(
@@ -1912,10 +2024,49 @@
   let supervisorLiveTimerInterval = null;
   let supervisorAutoRefreshInterval = null;
   let currentSupervisorTab = "active";
+  let historyDateFilter = "today";
+  let historyCustomDate = "";
 
   const pinInput = document.getElementById("supervisorPinInput");
   const pinErrorMsg = document.getElementById("pinErrorMsg");
   const supervisorSearchInput = document.getElementById("supervisorSearchInput");
+  const historyFilterBar = document.getElementById("historyFilterBar");
+  const historyDatePicker = document.getElementById("historyDatePicker");
+
+  function getTodayIsoDate() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+
+  function formatIsoToDisplayDate(isoStr) {
+    const parts = String(isoStr || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!parts) return getFormattedDate();
+    const d = new Date(Number(parts[1]), Number(parts[2]) - 1, Number(parts[3]));
+    return getFormattedDate(d);
+  }
+
+  function setHistoryDateFilter(mode) {
+    historyDateFilter = ["today", "all", "custom"].includes(mode) ? mode : "today";
+    document.getElementById("filterDateToday").classList.toggle("active", historyDateFilter === "today");
+    document.getElementById("filterDateAll").classList.toggle("active", historyDateFilter === "all");
+    document.getElementById("filterDateCustom").classList.toggle("active", historyDateFilter === "custom");
+
+    if (historyDateFilter === "custom") {
+      if (!historyDatePicker.value) {
+        historyDatePicker.value = historyCustomDate || getTodayIsoDate();
+      }
+      historyCustomDate = historyDatePicker.value;
+      historyDatePicker.style.display = "block";
+    } else {
+      historyDatePicker.style.display = "none";
+    }
+    renderSupervisorBreaks();
+  }
+
+  historyDatePicker.addEventListener("change", () => {
+    historyCustomDate = historyDatePicker.value;
+    renderSupervisorBreaks();
+  });
 
   function openSupervisorPinModal() {
     pinInput.value = "";
@@ -2109,27 +2260,48 @@
     const container = document.getElementById("supervisorLogContainer");
     const query = (supervisorSearchInput.value || "").trim().toLowerCase();
 
+    historyFilterBar.classList.toggle("visible", currentSupervisorTab === "completed");
+
     const matchesSearch = b => {
       if (!query) return true;
       return String(b.user || "").toLowerCase().includes(query) ||
         String(b.station || "").toLowerCase().includes(query);
     };
 
+    const targetDateStr = historyDateFilter === "today"
+      ? getFormattedDate()
+      : (historyDateFilter === "custom"
+          ? formatIsoToDisplayDate(historyCustomDate || historyDatePicker.value || getTodayIsoDate())
+          : "");
+
+    const matchesHistoryDate = b => {
+      if (historyDateFilter === "all") return true;
+      return formatCloudDate(b.date) === targetDateStr;
+    };
+
     const allActive = cloudBreaksData.filter(isBreakActive);
     const allCompleted = cloudBreaksData.filter(b => !isBreakActive(b));
+    const dateFilteredCompleted = allCompleted.filter(matchesHistoryDate);
 
     document.getElementById("supervisorTotalBadge").innerText = "Total Breaks: " + cloudBreaksData.length;
     document.getElementById("activeBreaksCount").innerText = allActive.length;
-    document.getElementById("completedBreaksCount").innerText = allCompleted.length;
+    document.getElementById("completedBreaksCount").innerText = dateFilteredCompleted.length;
 
-    const visibleBreaks = (currentSupervisorTab === "active" ? allActive : allCompleted).filter(matchesSearch);
+    const visibleBreaks = (currentSupervisorTab === "active" ? allActive : dateFilteredCompleted).filter(matchesSearch);
 
     if (!visibleBreaks.length) {
-      const msg = query
-        ? `🔍 No breaks match "${escapeHtml(supervisorSearchInput.value.trim())}".`
-        : (currentSupervisorTab === "active"
-            ? "🟢 No one is currently on break."
-            : "📋 No completed breaks recorded yet.");
+      let msg;
+      if (query) {
+        msg = `🔍 No breaks match "${escapeHtml(supervisorSearchInput.value.trim())}".`;
+      } else if (currentSupervisorTab === "active") {
+        msg = "🟢 No one is currently on break.";
+      } else if (historyDateFilter === "today") {
+        msg = `📋 No completed breaks recorded today (${escapeHtml(targetDateStr)}).`;
+      } else if (historyDateFilter === "custom") {
+        msg = `📋 No completed breaks recorded on ${escapeHtml(targetDateStr)}.`;
+      } else {
+        msg = "📋 No completed breaks recorded yet.";
+      }
       container.innerHTML = `<div class="empty-tab-message">${msg}</div>`;
       clearInterval(supervisorLiveTimerInterval);
       return;
