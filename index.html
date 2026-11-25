@@ -5,254 +5,2343 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#005a79">
   <title>Quality Investigators App</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
   <style>
-    :root{--bg-color:#005a79;--text-color:#fff;--btn-bg:#fff;--btn-text:#004d66;--accent-orange:#ff9100;--accent-dark-orange:#e65100}
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{background:var(--bg-color);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--text-color);display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
-    .container{width:100%;max-width:440px;min-height:100vh;padding:16px 20px;display:flex;flex-direction:column;position:relative;background:var(--bg-color);transition:background .3s ease}
-    .container.break-theme{background:linear-gradient(135deg,#0d222d 0%,#16394c 100%)}
-    .nav-back-bar{display:flex;align-items:center;justify-content:flex-start;margin-bottom:10px}
-    .btn-back{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:bold;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-    .header{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin:4px 0 14px;width:100%}
-    .header-title{font-size:22px;font-weight:800;text-align:center;letter-spacing:.5px}
-    .date-display{font-size:14px;font-weight:700;color:rgba(255,255,255,.95);background:rgba(0,0,0,.25);padding:4px 14px;border-radius:20px;letter-spacing:.5px}
-    .app-screen{display:none;width:100%;flex-direction:column;align-items:center;gap:12px}.app-screen.active-screen{display:flex}
-    .hub-cards-container{width:100%;display:flex;flex-direction:column;gap:14px;margin-top:10px}
-    .hub-card{background:#fff;color:#004d66;border-radius:14px;padding:20px 18px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.2);display:flex;align-items:center;gap:16px;transition:all .2s ease;border-left:6px solid #005a79}.hub-card-break{border-left-color:#ff9100}.hub-card-supervisor{border-left-color:#ffd54f;background:#fffdf7}.hub-card:active{transform:scale(.98)}
-    .hub-card-icon{font-size:34px;line-height:1}.hub-card-title{font-size:17px;font-weight:800}.hub-card-desc{font-size:12px;color:#555;margin-top:3px}
-    .select-field{width:100%;padding:12px 14px;font-size:15px;border:2px solid transparent;border-radius:8px;text-align:center;background:#fff;color:#004d66;font-weight:bold;cursor:pointer;outline:none}
-    .train-box-wrapper{width:100%;background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
-    .input-field{width:100%;padding:10px;font-size:24px;border:2px solid transparent;border-radius:8px;text-align:center;background:#fff;color:#004d66;letter-spacing:4px;font-weight:800;outline:none;display:block}
-    .btn{width:95%;background:var(--btn-bg);color:var(--btn-text);border:2px solid transparent;border-radius:8px;padding:13px 0;font-size:17px;font-weight:bold;cursor:pointer;box-shadow:0 3px 6px rgba(0,0,0,.15);text-align:center;display:block}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.65;cursor:not-allowed}
-    .btn.recorded{background:#e8f5e9;color:#1b5e20;border:2px solid #81c784}.btn-submit{background:#2e7d32;color:#fff}.btn-download-share{background:linear-gradient(135deg,#ff9100 0%,#e65100 100%);color:#fff;box-shadow:0 4px 12px rgba(230,81,0,.35)}.btn-start-break{background:linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%);color:#fff}.btn-end-break{background:linear-gradient(135deg,#d32f2f 0%,#b71c1c 100%);color:#fff}
-    .timer-box{background:rgba(0,0,0,.35);border:2px solid #ff9100;border-radius:12px;padding:10px;width:95%;text-align:center}.timer-val{font-size:32px;font-weight:900;color:#ffd54f;font-family:monospace;letter-spacing:2px}.counter-badge{background:rgba(0,0,0,.25);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:bold;color:#ffd54f}
-    .error-highlight{border:2px solid #ff5252!important;background:#ffebee!important;color:#c62828!important}
-    .footer{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.85);margin-top:20px;width:100%}.status-msg{font-size:12px;color:#ffd54f;font-weight:500;min-height:18px}
-    .toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%) translateY(100px);background:#1b5e20;color:#fff;padding:10px 20px;border-radius:25px;font-size:14px;font-weight:bold;opacity:0;transition:all .3s ease;z-index:1000;pointer-events:none;white-space:nowrap}.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;justify-content:center;align-items:center;padding:20px}.modal-card{background:#fff;color:#333;border-radius:12px;width:100%;max-width:320px;padding:22px 18px;display:flex;flex-direction:column;gap:12px;text-align:center}.pin-input{width:100%;padding:12px;font-size:24px;text-align:center;letter-spacing:8px;border:2px solid #005a79;border-radius:8px;font-weight:bold;outline:none}
-    .supervisor-log-item{background:#fff;color:#222;border-radius:10px;padding:12px 14px;margin-bottom:10px;text-align:left;font-size:13px;border-left:5px solid #ff9100;box-shadow:0 2px 6px rgba(0,0,0,.1);display:flex;flex-direction:column;gap:4px}.supervisor-log-item .user-title{font-size:15px;font-weight:bold;color:#005a79}.map-link-btn{display:inline-block;background:#0284c7;color:#fff;padding:5px 12px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:11px;margin-top:4px;align-self:flex-start}
-    .supervisor-log-item.active-break-card{border-left-color:#22c55e;background:linear-gradient(135deg,#fff 0%,#f0fdf4 100%);box-shadow:0 0 0 1px rgba(34,197,94,.22),0 5px 14px rgba(34,197,94,.18)}
-    .break-live-status,.break-completed-status{display:inline-flex;align-items:center;gap:7px;width:fit-content;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.4px}.break-live-status{background:#dcfce7;color:#166534;border:1px solid #86efac}.break-completed-status{color:#475569;background:#f1f5f9;border:1px solid #cbd5e1}
-    .break-live-lamp{width:11px;height:11px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.18),0 0 12px rgba(34,197,94,.9);animation:liveBreakBlink 1.1s ease-in-out infinite;flex-shrink:0}
-    @keyframes liveBreakBlink{0%,100%{opacity:1;transform:scale(1);box-shadow:0 0 0 4px rgba(34,197,94,.18),0 0 13px rgba(34,197,94,.95)}50%{opacity:.25;transform:scale(.72);box-shadow:0 0 0 1px rgba(34,197,94,.08),0 0 3px rgba(34,197,94,.25)}}
-    .live-break-duration{color:#15803d;font-weight:900}
-    .supervisor-tabs{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px;background:rgba(0,0,0,.18);padding:5px;border-radius:12px}.supervisor-tab-btn{border:0;border-radius:9px;padding:10px 8px;font-size:12px;font-weight:900;cursor:pointer;background:rgba(255,255,255,.92);color:#475569;box-shadow:0 2px 6px rgba(0,0,0,.12)}.supervisor-tab-btn.active{background:#22c55e;color:#fff;box-shadow:0 3px 10px rgba(34,197,94,.35)}.supervisor-tab-btn[data-tab="completed"].active{background:#ff9100;box-shadow:0 3px 10px rgba(255,145,0,.35)}.tab-count{display:inline-flex;min-width:21px;height:21px;padding:0 6px;align-items:center;justify-content:center;margin-left:4px;border-radius:11px;background:rgba(0,0,0,.18);color:inherit;font-size:11px}.empty-tab-message{width:100%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:24px 12px;text-align:center;color:#fff;font-weight:700}
-    @media (prefers-reduced-motion:reduce){.break-live-lamp{animation:none}}
+    :root {
+      --bg-color: #005a79;
+      --bg-deep: #00425a;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --text-color: #ffffff;
+      --ink: #0f2937;
+      --muted: #526575;
+      --btn-bg: #ffffff;
+      --btn-text: #004d66;
+      --accent-orange: #ff9100;
+      --accent-dark-orange: #e65100;
+      --success: #16a34a;
+      --success-bg: #dcfce7;
+      --success-ink: #166534;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --danger-ink: #991b1b;
+      --warning: #ffd54f;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.14);
+      --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.22);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-color) 100%);
+      font-family: var(--font);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      line-height: 1.45;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 460px;
+      min-height: 100vh;
+      padding: 16px 18px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: var(--bg-color);
+      transition: background 0.3s ease;
+    }
+
+    @media (min-width: 520px) {
+      body {
+        padding: 18px 12px;
+      }
+      .container {
+        min-height: calc(100vh - 36px);
+        border-radius: 20px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+      }
+    }
+
+    .container.break-theme {
+      background: linear-gradient(145deg, #0c222e 0%, #153b4f 100%);
+    }
+
+    /* Top Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 34px;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .btn-back:active {
+      transform: scale(0.97);
+    }
+
+    .btn-back:focus-visible,
+    .btn:focus-visible,
+    .select-field:focus-visible,
+    .input-field:focus-visible,
+    .search-input:focus-visible,
+    .supervisor-tab-btn:focus-visible,
+    .icon-btn:focus-visible {
+      outline: 2px solid var(--warning);
+      outline-offset: 2px;
+    }
+
+    .network-pill {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(0, 0, 0, 0.24);
+      color: #bbf7d0;
+      border: 1px solid rgba(187, 247, 208, 0.28);
+    }
+
+    .network-pill.offline {
+      background: rgba(220, 38, 38, 0.28);
+      color: #fecaca;
+      border-color: rgba(254, 202, 202, 0.45);
+    }
+
+    .net-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    .network-pill.offline .net-dot {
+      background: #f87171;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 2px 0 16px;
+      width: 100%;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+
+    .date-display {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.96);
+      background: rgba(0, 0, 0, 0.24);
+      padding: 4px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.4px;
+    }
+
+    /* Screens */
+    .app-screen {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .app-screen.active-screen {
+      display: flex;
+    }
+
+    /* Hub Cards */
+    .hub-cards-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .hub-card {
+      background: var(--surface);
+      color: var(--btn-text);
+      border-radius: 14px;
+      padding: 18px 16px;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      border: 0;
+      border-left: 6px solid #005a79;
+      width: 100%;
+      text-align: left;
+      font: inherit;
+    }
+
+    .hub-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.26);
+    }
+
+    .hub-card:active {
+      transform: scale(0.985);
+    }
+
+    .hub-card-break {
+      border-left-color: var(--accent-orange);
+    }
+
+    .hub-card-supervisor {
+      border-left-color: var(--warning);
+      background: #fffdf6;
+    }
+
+    .hub-card-icon {
+      font-size: 32px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .hub-card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .hub-card-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* Sync Queue Banner */
+    .sync-banner {
+      width: 100%;
+      background: rgba(255, 145, 0, 0.18);
+      border: 1px solid rgba(255, 213, 79, 0.55);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff8e1;
+    }
+
+    .sync-banner.visible {
+      display: flex;
+    }
+
+    .sync-retry-btn {
+      background: var(--accent-orange);
+      color: #fff;
+      border: 0;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Form Controls */
+    .field-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: rgba(255, 255, 255, 0.85);
+      padding-left: 4px;
+    }
+
+    .select-field {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      text-align: center;
+      background: var(--surface);
+      color: var(--btn-text);
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .select-field:disabled {
+      opacity: 0.72;
+      cursor: not-allowed;
+    }
+
+    .train-box-wrapper {
+      width: 100%;
+      background: var(--surface);
+      border-radius: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 10px;
+      font-size: 26px;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      text-align: center;
+      background: var(--surface);
+      color: var(--btn-text);
+      letter-spacing: 5px;
+      font-weight: 800;
+      outline: none;
+      display: block;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 13px 14px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.1s ease, filter 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      filter: brightness(0.97);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: scale(0.985);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn.recorded {
+      background: #e8f5e9;
+      color: #1b5e20;
+      border-color: #66bb6a;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+      color: #fff;
+    }
+
+    .btn-download-share {
+      background: linear-gradient(135deg, var(--accent-orange) 0%, var(--accent-dark-orange) 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(230, 81, 0, 0.35);
+    }
+
+    .btn-start-break {
+      background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+      color: #fff;
+    }
+
+    .btn-end-break {
+      background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+      color: #fff;
+    }
+
+    .btn-secondary-ghost {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      box-shadow: none;
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+
+    .btn-danger-soft {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+      box-shadow: none;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    .btn-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Saved Trains Counter & Expandable List */
+    .counter-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.22);
+      padding: 7px 12px;
+      border-radius: 10px;
+      gap: 8px;
+    }
+
+    .counter-badge {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--warning);
+    }
+
+    .btn-toggle-list {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 16px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .saved-trains-panel {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 12px;
+      padding: 10px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .saved-trains-panel.open {
+      display: flex;
+    }
+
+    .saved-train-row {
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    }
+
+    .saved-train-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .saved-train-title {
+      font-weight: 800;
+      color: var(--btn-text);
+      font-size: 13px;
+    }
+
+    .saved-train-sub {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .icon-btn {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .empty-inline {
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      padding: 10px 6px;
+    }
+
+    /* Timer Box */
+    .timer-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 2px solid var(--accent-orange);
+      border-radius: 14px;
+      padding: 12px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .timer-label {
+      font-size: 11px;
+      color: var(--warning);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .timer-val {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--warning);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      letter-spacing: 2px;
+      margin-top: 2px;
+    }
+
+    .gps-status {
+      font-size: 12px;
+      color: #a7f3d0;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.22);
+      padding: 7px 12px;
+      border-radius: 8px;
+      width: 100%;
+    }
+
+    .gps-status.warn {
+      color: #fde68a;
+    }
+
+    .gps-status.err {
+      color: #fecaca;
+    }
+
+    .error-highlight {
+      border: 2px solid #ff5252 !important;
+      background: #ffebee !important;
+      color: #c62828 !important;
+    }
+
+    /* Supervisor Monitor */
+    .supervisor-header-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .supervisor-refresh-status {
+      width: 100%;
+      text-align: center;
+      font-size: 11px;
+      color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .supervisor-tabs {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 5px;
+      border-radius: 12px;
+    }
+
+    .supervisor-tab-btn {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 8px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.92);
+      color: #475569;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .supervisor-tab-btn.active {
+      background: #22c55e;
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(34, 197, 94, 0.35);
+    }
+
+    .supervisor-tab-btn[data-tab="completed"].active {
+      background: var(--accent-orange);
+      box-shadow: 0 3px 10px rgba(255, 145, 0, 0.35);
+    }
+
+    .tab-count {
+      display: inline-flex;
+      min-width: 21px;
+      height: 21px;
+      padding: 0 6px;
+      align-items: center;
+      justify-content: center;
+      margin-left: 4px;
+      border-radius: 11px;
+      background: rgba(0, 0, 0, 0.18);
+      color: inherit;
+      font-size: 11px;
+    }
+
+    .supervisor-log-list {
+      width: 100%;
+      max-height: 460px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 2px;
+    }
+
+    .supervisor-log-item {
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 13px;
+      border-left: 5px solid var(--accent-orange);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .supervisor-log-item .user-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--bg-color);
+    }
+
+    .supervisor-log-item .station-sub {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .supervisor-log-item.active-break-card {
+      border-left-color: #22c55e;
+      background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.24), 0 4px 12px rgba(34, 197, 94, 0.16);
+    }
+
+    .supervisor-log-item.overdue-break-card {
+      border-left-color: var(--danger);
+      background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+      box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.35), 0 4px 14px rgba(220, 38, 38, 0.22);
+    }
+
+    .status-badges-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .break-live-status,
+    .break-completed-status,
+    .break-overdue-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .break-live-status {
+      background: var(--success-bg);
+      color: var(--success-ink);
+      border: 1px solid #86efac;
+    }
+
+    .break-overdue-badge {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .break-completed-status {
+      color: #475569;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+    }
+
+    .break-live-lamp {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18), 0 0 10px rgba(34, 197, 94, 0.9);
+      animation: liveBreakBlink 1.1s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .overdue-break-card .break-live-lamp {
+      background: #dc2626;
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2), 0 0 10px rgba(220, 38, 38, 0.9);
+    }
+
+    @keyframes liveBreakBlink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.74); }
+    }
+
+    .live-break-duration {
+      color: #15803d;
+      font-weight: 800;
+    }
+
+    .overdue-break-card .live-break-duration {
+      color: #b91c1c;
+    }
+
+    .map-link-btn {
+      display: inline-block;
+      background: #0284c7;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 11px;
+      margin-top: 4px;
+      align-self: flex-start;
+    }
+
+    .empty-tab-message {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 12px;
+      padding: 24px 12px;
+      text-align: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    /* Footer */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 18px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      width: 100%;
+    }
+
+    .status-msg {
+      font-size: 12px;
+      color: var(--warning);
+      font-weight: 600;
+      min-height: 18px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1b5e20;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0;
+      transition: all 0.25s ease;
+      z-index: 1100;
+      pointer-events: none;
+      max-width: 90vw;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast.error {
+      background: #b91c1c;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 340px;
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--btn-text);
+    }
+
+    .modal-body-text {
+      font-size: 13px;
+      color: #334155;
+      white-space: pre-line;
+      line-height: 1.5;
+    }
+
+    .pin-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 24px;
+      text-align: center;
+      letter-spacing: 8px;
+      border: 2px solid var(--bg-color);
+      border-radius: 10px;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .pin-error {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--danger);
+      min-height: 16px;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .shake {
+      animation: shake 0.25s ease-in-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .break-live-lamp,
+      .shake {
+        animation: none;
+      }
+    }
   </style>
 </head>
 <body>
 <div class="container" id="appContainer">
-  <div class="nav-back-bar" id="navBackBar" style="display:none"><button class="btn-back" type="button" onclick="navigateTo('screenHub')">⬅ Hub Menu</button></div>
-  <div class="header"><div class="header-title" id="pageTitle">Quality Investigators App</div><div class="date-display" id="currentDate"></div></div>
+  <div class="top-bar">
+    <button class="btn-back" id="navBackBtn" type="button" style="display:none" onclick="navigateTo('screenHub')">⬅ Hub Menu</button>
+    <div class="network-pill" id="networkPill"><span class="net-dot"></span><span id="networkPillText">Online</span></div>
+  </div>
 
+  <div class="header">
+    <div class="header-title" id="pageTitle">Quality Investigators App</div>
+    <div class="date-display" id="currentDate"></div>
+  </div>
+
+  <div class="sync-banner" id="syncBanner" role="status">
+    <span id="syncBannerText">⏳ 0 pending cloud sync</span>
+    <button class="sync-retry-btn" type="button" onclick="flushCloudQueue(true)">Sync Now</button>
+  </div>
+
+  <!-- HUB SCREEN -->
   <div class="app-screen active-screen" id="screenHub">
     <div class="hub-cards-container">
-      <div class="hub-card" onclick="navigateTo('screenRegularity')"><div class="hub-card-icon">⏱️</div><div><div class="hub-card-title">Regularity Measurement</div><div class="hub-card-desc">Log train arrivals and departures with CSV export</div></div></div>
-      <div class="hub-card hub-card-break" onclick="navigateTo('screenBreaks')"><div class="hub-card-icon">☕</div><div><div class="hub-card-title">Quality Investigator Breaks</div><div class="hub-card-desc">Live persistent break timer with mandatory GPS sync</div></div></div>
-      <div class="hub-card hub-card-supervisor" onclick="openSupervisorPinModal()"><div class="hub-card-icon">🔒</div><div><div class="hub-card-title">Supervisor Live Monitor</div><div class="hub-card-desc">Live cloud sync for all team breaks and Google Maps links</div></div></div>
+      <button class="hub-card" type="button" onclick="navigateTo('screenRegularity')">
+        <div class="hub-card-icon">⏱️</div>
+        <div>
+          <div class="hub-card-title">Regularity Measurement</div>
+          <div class="hub-card-desc">Log train arrivals and departures with CSV export &amp; share</div>
+        </div>
+      </button>
+      <button class="hub-card hub-card-break" type="button" onclick="navigateTo('screenBreaks')">
+        <div class="hub-card-icon">☕</div>
+        <div>
+          <div class="hub-card-title">Quality Investigator Breaks</div>
+          <div class="hub-card-desc">Live persistent break timer with GPS &amp; offline sync queue</div>
+        </div>
+      </button>
+      <button class="hub-card hub-card-supervisor" type="button" onclick="openSupervisorPinModal()">
+        <div class="hub-card-icon">🔒</div>
+        <div>
+          <div class="hub-card-title">Supervisor Live Monitor</div>
+          <div class="hub-card-desc">Live cloud sync, overdue alerts, search &amp; Google Maps links</div>
+        </div>
+      </button>
     </div>
   </div>
 
+  <!-- REGULARITY SCREEN -->
   <div class="app-screen" id="screenRegularity">
-    <select id="userSelect" class="select-field"><option value="" disabled selected>👤 Select Inspector Name</option></select>
-    <div class="train-box-wrapper"><input type="tel" id="trainNumber" class="input-field" placeholder="70.." maxlength="4" inputmode="numeric" pattern="[0-9]*" value="70" autocomplete="off"></div>
-    <div class="counter-badge" id="trainCounter">Saved Trains: 0</div>
+    <div class="field-group">
+      <label class="field-label" for="userSelect">Inspector</label>
+      <select id="userSelect" class="select-field">
+        <option value="" disabled selected>👤 Select Inspector Name</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="trainNumber">Train Number (70XX)</label>
+      <div class="train-box-wrapper">
+        <input type="tel" id="trainNumber" class="input-field" placeholder="70.." maxlength="4" inputmode="numeric" pattern="[0-9]*" value="70" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="counter-bar">
+      <div class="counter-badge" id="trainCounter">Saved Trains: 0</div>
+      <button class="btn-toggle-list" id="toggleSavedListBtn" type="button" onclick="toggleSavedTrainsList()">📋 View List</button>
+    </div>
+
+    <div class="saved-trains-panel" id="savedTrainsPanel" aria-label="Saved trains list">
+      <div id="savedTrainsList"></div>
+      <button class="btn btn-danger-soft" id="btnClearAllSaved" type="button" onclick="confirmClearAllSaved()">🗑️ Clear All Saved Trains</button>
+    </div>
+
     <button class="btn" id="btnArrival" type="button" onclick="handleArrival()">Train Arrival</button>
-    <button class="btn" id="btnDeparture" type="button" onclick="handleDeparture()">Train Departure</button>
-    <button class="btn btn-submit" type="button" onclick="saveRecord()">💾 Save Train</button>
-    <button class="btn btn-download-share" type="button" onclick="exportAndShareExcel()">📥 Download / Share All (Excel)</button>
-    <button class="btn" style="background:#c62828;color:#fff;width:65%;padding:10px 0;font-size:13px" type="button" onclick="resetCurrentForm()">🧹 Clear Form</button>
+    <button class="btn" id="btnDeparture" type="button" onclick="handleDeparture()" disabled>Train Departure</button>
+    <button class="btn btn-submit" id="btnSaveRecord" type="button" onclick="saveRecord()">💾 Save Train</button>
+    <button class="btn btn-download-share" type="button" onclick="exportAndShareExcel()">📤 Share / Download All (Excel)</button>
+    <button class="btn btn-secondary-ghost" type="button" onclick="resetCurrentForm(true, true)">🧹 Clear Current Form</button>
   </div>
 
+  <!-- BREAKS SCREEN -->
   <div class="app-screen" id="screenBreaks">
-    <select id="breakUserSelect" class="select-field"><option value="" disabled selected>👤 Select Inspector Name</option></select>
-    <select id="breakStationSelect" class="select-field"><option value="" disabled selected>🚉 Select Break Station</option></select>
-    <div class="timer-box"><div style="font-size:11px;color:#ffd54f;font-weight:bold;text-transform:uppercase">Live Break Timer</div><div class="timer-val" id="liveBreakTimer">00:00:00</div></div>
-    <div id="gpsStatusDisplay" style="font-size:12px;color:#a7f3d0;text-align:center"><span>📍 GPS check mandatory to start/end break</span></div>
+    <div class="field-group">
+      <label class="field-label" for="breakUserSelect">Inspector</label>
+      <select id="breakUserSelect" class="select-field">
+        <option value="" disabled selected>👤 Select Inspector Name</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="breakStationSelect">Break Station</label>
+      <select id="breakStationSelect" class="select-field">
+        <option value="" disabled selected>🚉 Select Break Station</option>
+      </select>
+    </div>
+
+    <div class="timer-box">
+      <div class="timer-label">Live Break Timer</div>
+      <div class="timer-val" id="liveBreakTimer">00:00:00</div>
+    </div>
+
+    <div id="gpsStatusDisplay" class="gps-status">📍 GPS check mandatory to start/end break</div>
+
     <button class="btn btn-start-break" id="btnStartBreak" type="button" onclick="handleStartBreak()">🟢 Start Break</button>
-    <button class="btn btn-end-break" id="btnEndBreak" type="button" onclick="handleEndBreak()">🔴 End Break</button>
+    <button class="btn btn-end-break" id="btnEndBreak" type="button" onclick="handleEndBreak()" disabled>🔴 End Break</button>
   </div>
 
+  <!-- SUPERVISOR SCREEN -->
   <div class="app-screen" id="screenSupervisor">
-    <div style="width:100%;display:flex;justify-content:space-between;align-items:center"><div class="counter-badge" id="supervisorTotalBadge">Total Breaks: 0</div><button class="btn-back" style="background:#0284c7;padding:4px 10px" type="button" onclick="loadBreaksFromCloud()">🔄 Refresh Cloud</button></div>
-    <div id="supervisorRefreshStatus" style="width:100%;text-align:center;font-size:11px;color:#a7f3d0;font-weight:700">Auto refresh every 30 seconds</div>
+    <div class="supervisor-header-row">
+      <div class="counter-badge" id="supervisorTotalBadge">Total Breaks: 0</div>
+      <button class="btn-back" style="background:#0284c7;border-color:#38bdf8;padding:5px 12px" type="button" onclick="loadBreaksFromCloud(false)">🔄 Refresh Cloud</button>
+    </div>
+
+    <div id="supervisorRefreshStatus" class="supervisor-refresh-status">Auto refresh every 30 seconds (pauses in background)</div>
+
+    <input type="search" id="supervisorSearchInput" class="search-input" placeholder="🔍 Search by inspector name or station..." autocomplete="off">
+
     <div class="supervisor-tabs" role="tablist" aria-label="Break status">
       <button class="supervisor-tab-btn active" id="activeBreaksTab" data-tab="active" type="button" role="tab" aria-selected="true" onclick="switchSupervisorTab('active')">🟢 On Break <span class="tab-count" id="activeBreaksCount">0</span></button>
       <button class="supervisor-tab-btn" id="completedBreaksTab" data-tab="completed" type="button" role="tab" aria-selected="false" onclick="switchSupervisorTab('completed')">✅ Break History <span class="tab-count" id="completedBreaksCount">0</span></button>
     </div>
-    <button class="btn btn-download-share" type="button" style="width:100%;padding:10px 0;font-size:14px" onclick="exportSupervisorBreaksExcel()">📥 Export All Breaks (Excel)</button>
-    <div id="supervisorLogContainer" style="width:100%;max-height:480px;overflow-y:auto;margin-top:8px" role="tabpanel"></div>
+
+    <button class="btn btn-download-share" type="button" style="padding:10px 14px;font-size:14px" onclick="exportSupervisorBreaksExcel()">📤 Share / Export All Breaks (Excel)</button>
+
+    <div id="supervisorLogContainer" class="supervisor-log-list" role="tabpanel"></div>
   </div>
 
-  <div class="footer"><div class="status-msg" id="statusMessage">Select a module...</div><div id="appVersion"></div></div>
+  <div class="footer">
+    <div class="status-msg" id="statusMessage">Select a module...</div>
+    <div id="appVersion"></div>
+  </div>
 </div>
-<div class="toast" id="toastMessage">Action Completed</div>
-<div class="modal-overlay" id="pinModal"><div class="modal-card"><div style="font-size:32px">🔒</div><div style="font-size:16px;font-weight:bold;color:#004d66">Please enter the PIN</div><input type="password" id="supervisorPinInput" class="pin-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" autocomplete="off"><button class="btn" style="background:#e0e0e0;color:#333;width:100%;padding:8px 0" type="button" onclick="closeSupervisorPinModal()">Cancel</button></div></div>
-<div class="modal-overlay" id="breakSummaryModal"><div class="modal-card" style="border:2px solid #ff9100"><div style="font-size:36px">⏱️</div><div style="font-size:18px;color:#004d66;font-weight:bold">Break Completed</div><div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:8px;padding:10px"><div style="font-size:11px;color:#166534;font-weight:bold">TOTAL DURATION</div><div id="modalDurationText" style="font-size:22px;font-weight:900;color:#15803d">0 Hours & 0 Mins</div></div><div style="background:#f8fafc;border-radius:6px;padding:8px;font-size:12px;text-align:left;color:#334155"><div><strong>👤 Inspector:</strong> <span id="modalSummaryUser">--</span></div><div><strong>🚉 Station:</strong> <span id="modalSummaryStation">--</span></div><div><strong>⏱️ Time:</strong> <span id="modalSummaryTime">-- ➔ --</span></div></div><button class="btn btn-download-share" style="width:100%;padding:10px 0" type="button" onclick="closeBreakSummaryModal()">OK / Done</button></div></div>
+
+<div class="toast" id="toastMessage" role="status" aria-live="polite">Action Completed</div>
+
+<!-- PIN MODAL -->
+<div class="modal-overlay" id="pinModal" role="dialog" aria-modal="true" aria-labelledby="pinModalTitle">
+  <div class="modal-card">
+    <div style="font-size:32px">🔒</div>
+    <div class="modal-title" id="pinModalTitle">Supervisor Access</div>
+    <div class="modal-body-text">Enter the 4-digit supervisor PIN to open Live Monitor.</div>
+    <input type="password" id="supervisorPinInput" class="pin-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" autocomplete="off">
+    <div class="pin-error" id="pinErrorMsg"></div>
+    <button class="btn" style="background:#e2e8f0;color:#1e293b;padding:10px 0;font-size:14px;box-shadow:none" type="button" onclick="closeSupervisorPinModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- BREAK SUMMARY MODAL -->
+<div class="modal-overlay" id="breakSummaryModal" role="dialog" aria-modal="true" aria-labelledby="breakSummaryTitle">
+  <div class="modal-card" style="border:2px solid #ff9100">
+    <div style="font-size:34px">⏱️</div>
+    <div class="modal-title" id="breakSummaryTitle">Break Completed</div>
+    <div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:10px;padding:10px">
+      <div style="font-size:11px;color:#166534;font-weight:800;letter-spacing:0.5px">TOTAL DURATION</div>
+      <div id="modalDurationText" style="font-size:22px;font-weight:900;color:#15803d">0 Hours &amp; 0 Mins</div>
+    </div>
+    <div style="background:#f8fafc;border-radius:8px;padding:10px;font-size:12px;text-align:left;color:#334155;display:flex;flex-direction:column;gap:4px">
+      <div><strong>👤 Inspector:</strong> <span id="modalSummaryUser">--</span></div>
+      <div><strong>🚉 Station:</strong> <span id="modalSummaryStation">--</span></div>
+      <div><strong>⏱️ Time:</strong> <span id="modalSummaryTime">-- ➔ --</span></div>
+      <div><strong>☁️ Cloud Sync:</strong> <span id="modalSummarySync">Sent</span></div>
+    </div>
+    <button class="btn btn-download-share" style="padding:10px 0;font-size:15px" type="button" onclick="closeBreakSummaryModal()">OK / Done</button>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+  <div class="modal-card">
+    <div style="font-size:32px" id="confirmModalIcon">⚠️</div>
+    <div class="modal-title" id="confirmModalTitle">Confirm Action</div>
+    <div class="modal-body-text" id="confirmModalMessage"></div>
+    <div class="btn-row">
+      <button class="btn" style="background:#e2e8f0;color:#1e293b;padding:10px 0;font-size:14px;box-shadow:none" type="button" onclick="closeConfirmModal()">Cancel</button>
+      <button class="btn btn-end-break" id="confirmModalOkBtn" style="padding:10px 0;font-size:14px" type="button">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTICE / ALERT MODAL -->
+<div class="modal-overlay" id="noticeModal" role="dialog" aria-modal="true" aria-labelledby="noticeModalTitle">
+  <div class="modal-card">
+    <div style="font-size:32px" id="noticeModalIcon">⚠️</div>
+    <div class="modal-title" id="noticeModalTitle">Notice</div>
+    <div class="modal-body-text" id="noticeModalMessage"></div>
+    <button class="btn btn-submit" style="padding:10px 0;font-size:14px" type="button" onclick="closeNoticeModal()">OK</button>
+  </div>
+</div>
 
 <script>
-const APP_VERSION="1.3.3";
-const CLOUD_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxZCFVNqqDgpJpfLLyGnYH5et7bYU_ZRqyIsNp3vvbtYwwDpdhrTVTlrHEr1ZppaIMh7A/exec";
-const SUPERVISOR_PIN="5221";
-const INSPECTORS=["Fathy Helmy Fattouh Hassan","Karim Gamal Salah Al-Din","Karim Moustafa Mostafa","Khaled Mostafa Abdel Moneim","Mohamed El-Sayed Ibrahim","Shorouk Tarek Taha Yaseen","Mahmoud Taher Mahmoud Zaki","Ehab Abdel Kareem","Nancy Hesham Hassan Abdelrehim","Nourhan Karam Hanafy Mohamdy","Mohamed Emad Imam Mahmoud","Ehab Shabaan Fahmy Elsayed","Yasmine Mohamed Alsayed Abdelsattar Akila"];
-const STATIONS=["Adly Mansour","El Haykestep","Omar Ibn El khattab","Qubaa","Hesham Barakat","El Nozha","El Shams Club","Alf Maskan","Heliopolis","Haroun","El Ahram","Kolleyet El Banat","Stadium","Fair Zone","El Abassiya","Abdou Pasha","El Geish","Bab El Shaariya","Attaba","Nasser","Maspero","Safaa Hegazy","Kit-kat","Sudan","Imbaba","El-Bohy","El-Qawmia","Ring Road","Rod El Farag Corr.","Tawfikia","Wadi El Nile","Gamet El Dowel","Boulak El Dakrour","Cairo University","El-Obour","Future","El-Shorouk","New Heliopalis","Badr","El-Robaiky","Hadayek El-Assema","Capital Airport","Art & Culture City","Nativity Cathedral","The Octagon","International Sport City","Central Capital","Industrial Park","Knowledge City","West Of Ramadan","10 Th Of Ramadan","Ramadan City Center"];
+  const APP_VERSION = "1.4.0";
+  const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZCFVNqqDgpJpfLLyGnYH5et7bYU_ZRqyIsNp3vvbtYwwDpdhrTVTlrHEr1ZppaIMh7A/exec";
+  const SUPERVISOR_PIN = "5221";
+  const OVERDUE_BREAK_MINUTES = 30;
 
-document.getElementById("appVersion").innerText="v"+APP_VERSION;
-function fillSelect(id,items){const s=document.getElementById(id);items.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;s.appendChild(o)})}
-fillSelect("userSelect",INSPECTORS);fillSelect("breakUserSelect",INSPECTORS);fillSelect("breakStationSelect",STATIONS);
-const today=new Date(),months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const formattedDate=`${String(today.getDate()).padStart(2,"0")}-${months[today.getMonth()]}-${today.getFullYear()}`;document.getElementById("currentDate").innerText=formattedDate;
-function navigateTo(screenId){const validScreens=["screenHub","screenRegularity","screenBreaks","screenSupervisor"];if(!validScreens.includes(screenId))screenId="screenHub";localStorage.setItem("quality_hub_last_screen",screenId);document.querySelectorAll(".app-screen").forEach(s=>s.classList.remove("active-screen"));document.getElementById(screenId)?.classList.add("active-screen");const c=document.getElementById("appContainer"),n=document.getElementById("navBackBar"),t=document.getElementById("pageTitle");c.classList.toggle("break-theme",screenId==="screenBreaks");n.style.display=screenId==="screenHub"?"none":"flex";const names={screenHub:"Quality Investigators App",screenRegularity:"Regularity Measurement",screenBreaks:"Quality Investigator Breaks",screenSupervisor:"Supervisor Live Monitor"};t.innerText=names[screenId]||names.screenHub;if(screenId==="screenBreaks")restoreActiveBreakSession();if(screenId==="screenSupervisor"){loadBreaksFromCloud();startSupervisorAutoRefresh()}else{stopSupervisorAutoRefresh()}}
-function showToast(text){const t=document.getElementById("toastMessage");t.innerText=text;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2000)}
-function get24HourTime(){const n=new Date();return `${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}:${String(n.getSeconds()).padStart(2,"0")}`}
-function escapeHtml(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+  const INSPECTORS = [
+    "Fathy Helmy Fattouh Hassan",
+    "Karim Gamal Salah Al-Din",
+    "Karim Moustafa Mostafa",
+    "Khaled Mostafa Abdel Moneim",
+    "Mohamed El-Sayed Ibrahim",
+    "Shorouk Tarek Taha Yaseen",
+    "Mahmoud Taher Mahmoud Zaki",
+    "Ehab Abdel Kareem",
+    "Nancy Hesham Hassan Abdelrehim",
+    "Nourhan Karam Hanafy Mohamdy",
+    "Mohamed Emad Imam Mahmoud",
+    "Ehab Shabaan Fahmy Elsayed",
+    "Yasmine Mohamed Alsayed Abdelsattar Akila"
+  ];
 
-let arrivalTime="",departureTime="",savedRecords=JSON.parse(localStorage.getItem("train_records")||"[]");
-const userSelect=document.getElementById("userSelect"),trainInput=document.getElementById("trainNumber"),arrivalBtn=document.getElementById("btnArrival"),departureBtn=document.getElementById("btnDeparture");
-function updateTrainCounter(){document.getElementById("trainCounter").innerText="Saved Trains: "+savedRecords.length}updateTrainCounter();
-userSelect.addEventListener("change",()=>userSelect.classList.remove("error-highlight"));
-trainInput.addEventListener("focus",function(){if(this.value==="70")this.setSelectionRange(2,2)});trainInput.addEventListener("keydown",function(e){if(this.selectionStart<=2&&(e.key==="Backspace"||e.key==="Delete")&&this.value.length<=2)e.preventDefault()});trainInput.addEventListener("input",function(){this.classList.remove("error-highlight");let d=this.value.replace(/[^0-9]/g,"");if(!d.startsWith("70"))d="70"+d.replace(/^70*/,"");this.value=d.slice(0,4);if(this.value.length===4){this.blur();arrivalBtn.scrollIntoView({behavior:"smooth",block:"center"})}});
-function handleArrival(){arrivalTime=get24HourTime();arrivalBtn.innerText="Arrival: "+arrivalTime;arrivalBtn.classList.remove("error-highlight");arrivalBtn.classList.add("recorded")}
-function handleDeparture(){departureTime=get24HourTime();departureBtn.innerText="Departure: "+departureTime;departureBtn.classList.remove("error-highlight");departureBtn.classList.add("recorded")}
-function resetCurrentForm(keepInspector=false){const selectedInspector=userSelect.value;trainInput.value="70";if(keepInspector&&selectedInspector){userSelect.value=selectedInspector}else{userSelect.selectedIndex=0;savedRecords=[];localStorage.removeItem("train_records");updateTrainCounter()}arrivalTime=departureTime="";userSelect.classList.remove("error-highlight");trainInput.classList.remove("error-highlight");arrivalBtn.innerText="Train Arrival";arrivalBtn.classList.remove("recorded","error-highlight");departureBtn.innerText="Train Departure";departureBtn.classList.remove("recorded","error-highlight");showToast(keepInspector?"✅ Ready for the next train":"🧹 Form and saved trains cleared!")}
-function saveRecord(){
-  const user=userSelect.value;
-  const trainNo=trainInput.value.trim();
-  userSelect.classList.remove("error-highlight");
-  trainInput.classList.remove("error-highlight");
-  arrivalBtn.classList.remove("error-highlight");
-  departureBtn.classList.remove("error-highlight");
-  const missing=[];
-  if(!user){userSelect.classList.add("error-highlight");missing.push("Inspector Name")}
-  if(!/^70\d{2}$/.test(trainNo)){trainInput.classList.add("error-highlight");missing.push("4-digit Train Number")}
-  if(!arrivalTime){arrivalBtn.classList.add("error-highlight");missing.push("Arrival Time")}
-  if(!departureTime){departureBtn.classList.add("error-highlight");missing.push("Departure Time")}
-  if(missing.length){
-    const first=document.querySelector("#screenRegularity .error-highlight");
-    if(first){first.scrollIntoView({behavior:"smooth",block:"center"});if(first.tagName==="SELECT"||first.tagName==="INPUT")first.focus()}
-    alert(`⚠️ Complete all required fields before saving:
+  const STATIONS = [
+    "Adly Mansour", "El Haykestep", "Omar Ibn El khattab", "Qubaa", "Hesham Barakat",
+    "El Nozha", "El Shams Club", "Alf Maskan", "Heliopolis", "Haroun", "El Ahram",
+    "Kolleyet El Banat", "Stadium", "Fair Zone", "El Abassiya", "Abdou Pasha",
+    "El Geish", "Bab El Shaariya", "Attaba", "Nasser", "Maspero", "Safaa Hegazy",
+    "Kit-kat", "Sudan", "Imbaba", "El-Bohy", "El-Qawmia", "Ring Road",
+    "Rod El Farag Corr.", "Tawfikia", "Wadi El Nile", "Gamet El Dowel",
+    "Boulak El Dakrour", "Cairo University", "El-Obour", "Future", "El-Shorouk",
+    "New Heliopolis", "Badr", "El-Robaiky", "Hadayek El-Assema", "Capital Airport",
+    "Art & Culture City", "Nativity Cathedral", "The Octagon",
+    "International Sport City", "Central Capital", "Industrial Park",
+    "Knowledge City", "West Of Ramadan", "10th of Ramadan", "Ramadan City Center"
+  ];
 
-• ${missing.join("\n• ")}`);
-    return;
+  const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  /* ---------- Safe Storage Helpers ---------- */
+  function safeGet(key, fallback = null) {
+    try {
+      const v = localStorage.getItem(key);
+      return v === null ? fallback : v;
+    } catch {
+      return fallback;
+    }
   }
-  savedRecords.push({date:formattedDate,user,trainNumber:trainNo,arrival:arrivalTime,departure:departureTime});
-  localStorage.setItem("train_records",JSON.stringify(savedRecords));
-  updateTrainCounter();
-  if(typeof html2canvas!=="undefined")html2canvas(document.getElementById("appContainer"),{scale:2}).then(canvas=>{const l=document.createElement("a");l.download=`Train_${trainNo}_${formattedDate}.png`;l.href=canvas.toDataURL("image/png");l.click()});
-  showToast(`✅ Train ${trainNo} Saved!`);
-  resetCurrentForm(true);
-}
-function downloadCsv(csv,name){const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
-function exportAndShareExcel(){if(!savedRecords.length){alert("⚠️ No saved trains yet!");return}let csv="\uFEFFDate,Inspector / User,Train Number,Arrival Time,Departure Time\n";savedRecords.forEach(r=>csv+=`"${r.date}","${r.user}","${r.trainNumber}","${r.arrival}","${r.departure}"\n`);downloadCsv(csv,`Regularity_${formattedDate}.csv`)}
 
-let breakStartTime="",breakEndTime="",breakTimerInterval=null,breakGpsCoords="",breakGpsMapsUrl="",activeBreakId="";
-const breakUserSelect=document.getElementById("breakUserSelect"),breakStationSelect=document.getElementById("breakStationSelect"),btnStartBreak=document.getElementById("btnStartBreak"),btnEndBreak=document.getElementById("btnEndBreak"),gpsStatusDisplay=document.getElementById("gpsStatusDisplay"),liveBreakTimer=document.getElementById("liveBreakTimer");
-function startTimerEngine(startMs){clearInterval(breakTimerInterval);const tick=()=>{const diff=Math.max(0,Date.now()-startMs),s=Math.floor(diff/1000%60),m=Math.floor(diff/60000%60),h=Math.floor(diff/3600000);liveBreakTimer.innerText=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`};tick();breakTimerInterval=setInterval(tick,1000)}
-function restoreActiveBreakSession(){const savedMs=localStorage.getItem("active_break_start_ms");if(savedMs){activeBreakId=localStorage.getItem("active_break_id")||"";breakUserSelect.value=localStorage.getItem("active_break_user")||"";breakStationSelect.value=localStorage.getItem("active_break_station")||"";breakUserSelect.disabled=breakStationSelect.disabled=true;breakStartTime=localStorage.getItem("active_break_start_str")||"";btnStartBreak.innerText="🟢 Break Active: "+breakStartTime;btnStartBreak.classList.add("recorded");btnStartBreak.disabled=true;gpsStatusDisplay.innerHTML="<span>🟢 Break is currently active</span>";startTimerEngine(Number(savedMs))}else{btnStartBreak.disabled=false;btnStartBreak.innerText="🟢 Start Break"}}
-function requestGpsLocation(onSuccess,onError){if(!navigator.geolocation){onError("GPS not supported");return}gpsStatusDisplay.innerHTML="<span>📡 Checking GPS location...</span>";navigator.geolocation.getCurrentPosition(pos=>{const lat=pos.coords.latitude.toFixed(5),lon=pos.coords.longitude.toFixed(5);breakGpsCoords=`${lat}, ${lon}`;breakGpsMapsUrl=`https://maps.google.com/?q=${lat},${lon}`;gpsStatusDisplay.innerHTML="<span>📍 GPS Verified</span>";onSuccess(breakGpsCoords)},err=>{gpsStatusDisplay.innerHTML="<span>⚠️ GPS Location required!</span>";onError(err.message||"GPS permission denied")},{enableHighAccuracy:true,timeout:12000,maximumAge:0})}
-function generateBreakId(){return `BRK-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`}
-function sendCloud(payload){return fetch(CLOUD_SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})}
-function handleStartBreak(){if(localStorage.getItem("active_break_start_ms")){alert("⚠️ Break already running!");return}const u=breakUserSelect.value,st=breakStationSelect.value;if(!u||!st){alert("⚠️ Select Inspector & Station first!");return}btnStartBreak.disabled=true;btnStartBreak.innerText="⏳ Checking GPS...";requestGpsLocation(coords=>{const now=Date.now();activeBreakId=generateBreakId();breakStartTime=get24HourTime();localStorage.setItem("active_break_id",activeBreakId);localStorage.setItem("active_break_start_ms",String(now));localStorage.setItem("active_break_start_str",breakStartTime);localStorage.setItem("active_break_user",u);localStorage.setItem("active_break_station",st);breakUserSelect.disabled=breakStationSelect.disabled=true;btnStartBreak.innerText="🟢 Break Active: "+breakStartTime;btnStartBreak.classList.add("recorded");gpsStatusDisplay.innerHTML="<span>🟢 Break is currently active</span>";startTimerEngine(now);sendCloud({action:"START_BREAK",breakId:activeBreakId,status:"ACTIVE",date:formattedDate,user:u,station:st,startTime:breakStartTime,startTimestamp:now,endTime:"",duration:"",gps:coords,mapsUrl:breakGpsMapsUrl,appVersion:APP_VERSION}).catch(console.error);showToast("🟢 Break Started & Live Monitor Updated!")},()=>{btnStartBreak.disabled=false;btnStartBreak.innerText="🟢 Start Break";alert("❌ GPS Required to start break! Please enable location on your phone.")})}
-function handleEndBreak(){const startMs=localStorage.getItem("active_break_start_ms");if(!startMs){alert("⚠️ Tap Start Break first!");return}const u=localStorage.getItem("active_break_user")||breakUserSelect.value,st=localStorage.getItem("active_break_station")||breakStationSelect.value;btnEndBreak.disabled=true;btnEndBreak.innerText="⏳ Verifying GPS...";requestGpsLocation(coords=>{btnEndBreak.disabled=false;btnEndBreak.innerText="🔴 End Break";breakEndTime=get24HourTime();const diffMs=Date.now()-Number(startMs),totalMins=Math.max(1,Math.round(diffMs/60000)),hours=Math.floor(totalMins/60),mins=totalMins%60;activeBreakId=localStorage.getItem("active_break_id")||activeBreakId;sendCloud({action:"END_BREAK",breakId:activeBreakId,status:"COMPLETED",date:formattedDate,user:u,station:st,startTime:breakStartTime||localStorage.getItem("active_break_start_str")||"",startTimestamp:Number(startMs),endTime:breakEndTime,endTimestamp:Date.now(),duration:String(totalMins),gps:coords,mapsUrl:breakGpsMapsUrl,appVersion:APP_VERSION}).catch(console.error);document.getElementById("modalDurationText").innerText=`${hours} Hours & ${mins} Mins`;document.getElementById("modalSummaryUser").innerText=u;document.getElementById("modalSummaryStation").innerText=st;document.getElementById("modalSummaryTime").innerText=`${breakStartTime||localStorage.getItem("active_break_start_str")} ➔ ${breakEndTime}`;document.getElementById("breakSummaryModal").style.display="flex";clearInterval(breakTimerInterval);liveBreakTimer.innerText="00:00:00";["active_break_id","active_break_start_ms","active_break_start_str","active_break_user","active_break_station"].forEach(k=>localStorage.removeItem(k));activeBreakId="";breakUserSelect.disabled=breakStationSelect.disabled=false;btnStartBreak.disabled=false;btnStartBreak.innerText="🟢 Start Break";btnStartBreak.classList.remove("recorded");gpsStatusDisplay.innerHTML="<span>📍 GPS check mandatory to start/end break</span>"},()=>{btnEndBreak.disabled=false;btnEndBreak.innerText="🔴 End Break";alert("❌ GPS Required to end break! Please enable location on your phone.")})}
-function closeBreakSummaryModal(){document.getElementById("breakSummaryModal").style.display="none"}
+  function safeSet(key, val) {
+    try {
+      localStorage.setItem(key, String(val));
+    } catch {
+      // Ignore storage quota / private-mode errors
+    }
+  }
 
-let cloudBreaksData=[],supervisorLiveTimerInterval=null,supervisorAutoRefreshInterval=null,currentSupervisorTab="active";
-function openSupervisorPinModal(){document.getElementById("supervisorPinInput").value="";document.getElementById("pinModal").style.display="flex";setTimeout(()=>document.getElementById("supervisorPinInput").focus(),200)}
-function closeSupervisorPinModal(){document.getElementById("pinModal").style.display="none"}
-document.getElementById("supervisorPinInput").addEventListener("input",function(){if(this.value===SUPERVISOR_PIN){closeSupervisorPinModal();navigateTo("screenSupervisor")}});
-function normalizeBreak(b){return {breakId:b.breakId||b.breakID||b[0]||"",status:b.status||b[1]||"",date:b.date||b[2]||"",user:b.user||b[3]||"",station:b.station||b[4]||"",startTime:b.startTime||b[5]||"",startTimestamp:b.startTimestamp||b[6]||"",endTime:b.endTime||b[7]||"",duration:b.duration||b[8]||"",gps:b.gps||b[9]||"",mapsUrl:b.mapsUrl||b[10]||"",appVersion:b.appVersion||b[11]||""}}
-function isBreakActive(b){return String(b.status||"").toUpperCase()==="ACTIVE"||(!b.endTime&&String(b.status||"").toUpperCase()!=="COMPLETED")}
-function breakMatchKey(b){
-  if(b.breakId)return "ID|"+String(b.breakId).trim();
-  return ["LEGACY",b.date,b.user,b.station,b.startTime].map(v=>String(v||"").trim().toLowerCase()).join("|");
-}
-function deduplicateBreaks(rows){
-  const groups=new Map();
-  rows.forEach((item,index)=>{
-    const b=normalizeBreak(item);
-    const key=breakMatchKey(b);
-    if(!groups.has(key))groups.set(key,[]);
-    groups.get(key).push({...b,_sourceIndex:index});
+  function safeRemove(key) {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // Ignore
+    }
+  }
+
+  function safeGetJSON(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  /* ---------- Dynamic Date & Time ---------- */
+  function getFormattedDate(dateObj = new Date()) {
+    return `${String(dateObj.getDate()).padStart(2, "0")}-${MONTHS_SHORT[dateObj.getMonth()]}-${dateObj.getFullYear()}`;
+  }
+
+  function get24HourTime(dateObj = new Date()) {
+    return `${String(dateObj.getHours()).padStart(2, "0")}:${String(dateObj.getMinutes()).padStart(2, "0")}:${String(dateObj.getSeconds()).padStart(2, "0")}`;
+  }
+
+  function refreshHeaderDate() {
+    document.getElementById("currentDate").innerText = getFormattedDate();
+  }
+
+  function escapeHtml(v) {
+    return String(v ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function csvEscape(value) {
+    let str = String(value ?? "");
+    if (/^[=+\-@\t\r]/.test(str)) {
+      str = "'" + str;
+    }
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+
+  /* ---------- Toast & In-Page Modals ---------- */
+  let toastTimeout = null;
+  function showToast(text, isError = false) {
+    const t = document.getElementById("toastMessage");
+    t.innerText = text;
+    t.classList.toggle("error", isError);
+    t.classList.add("show");
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => t.classList.remove("show"), 2400);
+  }
+
+  function showNotice(title, message, icon = "⚠️") {
+    document.getElementById("noticeModalIcon").innerText = icon;
+    document.getElementById("noticeModalTitle").innerText = title;
+    document.getElementById("noticeModalMessage").innerText = message;
+    document.getElementById("noticeModal").classList.add("open");
+  }
+
+  function closeNoticeModal() {
+    document.getElementById("noticeModal").classList.remove("open");
+  }
+
+  let pendingConfirmCallback = null;
+  function showConfirm(title, message, okLabel, callback, icon = "⚠️") {
+    document.getElementById("confirmModalIcon").innerText = icon;
+    document.getElementById("confirmModalTitle").innerText = title;
+    document.getElementById("confirmModalMessage").innerText = message;
+    const okBtn = document.getElementById("confirmModalOkBtn");
+    okBtn.innerText = okLabel || "Confirm";
+    pendingConfirmCallback = callback;
+    document.getElementById("confirmModal").classList.add("open");
+  }
+
+  function closeConfirmModal() {
+    document.getElementById("confirmModal").classList.remove("open");
+    pendingConfirmCallback = null;
+  }
+
+  document.getElementById("confirmModalOkBtn").addEventListener("click", () => {
+    const cb = pendingConfirmCallback;
+    closeConfirmModal();
+    if (typeof cb === "function") cb();
   });
-  return Array.from(groups.values()).map(group=>{
-    const completed=group.filter(b=>String(b.status||"").toUpperCase()==="COMPLETED"||Boolean(b.endTime));
-    if(completed.length)return completed[completed.length-1];
-    return group[group.length-1];
-  }).sort((a,b)=>b._sourceIndex-a._sourceIndex).map(({_sourceIndex,...b})=>b);
-}
-function formatCloudDate(value){
-  if(!value)return "--";
-  const text=String(value).trim();
-  const already=text.match(/^(\d{2})-([A-Za-z]{3})-(\d{4})$/);
-  if(already)return `${already[1]}-${already[2][0].toUpperCase()+already[2].slice(1).toLowerCase()}-${already[3]}`;
-  const d=new Date(value);
-  if(Number.isNaN(d.getTime()))return text;
-  const parts=new Intl.DateTimeFormat("en-GB",{day:"2-digit",month:"short",year:"numeric"}).formatToParts(d);
-  const get=type=>parts.find(p=>p.type===type)?.value||"";
-  return `${get("day")}-${get("month")}-${get("year")}`;
-}
-function formatCloudTime(value){
-  if(!value)return "--";
-  const text=String(value).trim();
-  let hours,minutes;
-  const plain=text.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?$/i);
-  if(plain){
-    hours=Number(plain[1]);minutes=Number(plain[2]);
-    if(plain[3]){const ap=plain[3].toUpperCase();if(ap==="PM"&&hours<12)hours+=12;if(ap==="AM"&&hours===12)hours=0;}
-  }else{
-    const d=new Date(value);
-    if(Number.isNaN(d.getTime()))return text;
-    hours=d.getHours();minutes=d.getMinutes();
-  }
-  const period=hours>=12?"PM":"AM";
-  const h12=hours%12||12;
-  return `${String(h12).padStart(2,"0")}:${String(minutes).padStart(2,"0")} ${period}`;
-}
-function getStartMilliseconds(ts,dateValue,timeValue){
-  const numeric=Number(ts);
-  if(Number.isFinite(numeric)&&numeric>100000000000)return numeric;
-  const parsedTs=new Date(ts);
-  if(!Number.isNaN(parsedTs.getTime())&&parsedTs.getUTCFullYear()>2000)return parsedTs.getTime();
-  const dateText=formatCloudDate(dateValue);
-  const timeText=formatCloudTime(timeValue);
-  const parts=dateText.match(/^(\d{2})-([A-Za-z]{3})-(\d{4})$/);
-  const timeParts=timeText.match(/^(\d{2}):(\d{2}) (AM|PM)$/);
-  if(!parts||!timeParts)return 0;
-  const months={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
-  let h=Number(timeParts[1]);if(timeParts[3]==="PM"&&h<12)h+=12;if(timeParts[3]==="AM"&&h===12)h=0;
-  return new Date(Number(parts[3]),months[parts[2]],Number(parts[1]),h,Number(timeParts[2]),0,0).getTime();
-}
-function getLiveBreakDuration(ts,dateValue,timeValue){const start=getStartMilliseconds(ts,dateValue,timeValue);if(!start)return "In progress";const sec=Math.floor(Math.max(0,Date.now()-start)/1000),h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
-function startSupervisorLiveTimers(){clearInterval(supervisorLiveTimerInterval);const tick=()=>document.querySelectorAll("[data-live-start]").forEach(el=>el.innerText="Live Duration: "+getLiveBreakDuration(el.dataset.liveStart,el.dataset.liveDate,el.dataset.liveTime));tick();supervisorLiveTimerInterval=setInterval(tick,1000)}
-function switchSupervisorTab(tab){
-  currentSupervisorTab=tab==="completed"?"completed":"active";
-  localStorage.setItem("quality_hub_supervisor_tab",currentSupervisorTab);
-  const activeBtn=document.getElementById("activeBreaksTab"),completedBtn=document.getElementById("completedBreaksTab");
-  activeBtn.classList.toggle("active",currentSupervisorTab==="active");
-  completedBtn.classList.toggle("active",currentSupervisorTab==="completed");
-  activeBtn.setAttribute("aria-selected",String(currentSupervisorTab==="active"));
-  completedBtn.setAttribute("aria-selected",String(currentSupervisorTab==="completed"));
-  renderSupervisorBreaks();
-}
-function renderSupervisorBreaks(){const container=document.getElementById("supervisorLogContainer");const activeBreaks=cloudBreaksData.filter(isBreakActive),completedBreaks=cloudBreaksData.filter(b=>!isBreakActive(b));document.getElementById("supervisorTotalBadge").innerText="Total Breaks: "+cloudBreaksData.length;document.getElementById("activeBreaksCount").innerText=activeBreaks.length;document.getElementById("completedBreaksCount").innerText=completedBreaks.length;const visibleBreaks=currentSupervisorTab==="active"?activeBreaks:completedBreaks;if(!visibleBreaks.length){container.innerHTML=`<div class="empty-tab-message">${currentSupervisorTab==="active"?"🟢 No one is currently on break.":"📋 No completed breaks recorded yet."}</div>`;clearInterval(supervisorLiveTimerInterval);return}container.innerHTML=visibleBreaks.map(b=>{const active=isBreakActive(b),status=active?`<div class="break-live-status"><span class="break-live-lamp"></span><span>Still On Break</span></div>`:`<div class="break-completed-status"><span>✅</span><span>Break Completed</span></div>`,time=active?`<div style="color:#333"><strong>⏱️ Started:</strong> ${escapeHtml(formatCloudTime(b.startTime))}</div><div class="live-break-duration" data-live-start="${escapeHtml(b.startTimestamp)}" data-live-date="${escapeHtml(b.date)}" data-live-time="${escapeHtml(b.startTime)}">Live Duration: ${getLiveBreakDuration(b.startTimestamp,b.date,b.startTime)}</div>`:`<div style="color:#333"><strong>⏱️ Time:</strong> ${escapeHtml(formatCloudTime(b.startTime))} ➔ ${escapeHtml(formatCloudTime(b.endTime))} (${escapeHtml(b.duration||"--")} mins)</div>`,map=b.mapsUrl?`<a href="${escapeHtml(b.mapsUrl)}" target="_blank" rel="noopener noreferrer" class="map-link-btn">🗺️ View on Google Maps</a>`:"";return `<div class="supervisor-log-item ${active?"active-break-card":""}">${status}<div class="user-title">👤 ${escapeHtml(b.user||"Unknown Inspector")} &bull; <span style="font-size:13px;font-weight:600;color:#555">${escapeHtml(b.station||"--")}</span></div><div style="margin-top:2px;color:#333"><strong>📅 Date:</strong> ${escapeHtml(formatCloudDate(b.date))}</div>${time}${map}</div>`}).join("");startSupervisorLiveTimers()}
-function stopSupervisorAutoRefresh(){if(supervisorAutoRefreshInterval){clearInterval(supervisorAutoRefreshInterval);supervisorAutoRefreshInterval=null}}
-function startSupervisorAutoRefresh(){
-  stopSupervisorAutoRefresh();
-  supervisorAutoRefreshInterval=setInterval(()=>{
-    if(document.getElementById("screenSupervisor").classList.contains("active-screen"))loadBreaksFromCloud(true);
-  },30000);
-}
-function loadBreaksFromCloud(isAutoRefresh=false){const container=document.getElementById("supervisorLogContainer");if(!isAutoRefresh)container.innerHTML="<div style='text-align:center;padding:20px;color:#ffd54f'>📡 Loading from Google Sheet...</div>";const refreshStatus=document.getElementById("supervisorRefreshStatus");if(refreshStatus)refreshStatus.innerText=isAutoRefresh?"🔄 Updating...":"📡 Loading cloud data...";fetch(CLOUD_SCRIPT_URL,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(data=>{const rows=Array.isArray(data)?data:(Array.isArray(data.data)?data.data:[]);cloudBreaksData=deduplicateBreaks(rows);renderSupervisorBreaks();if(refreshStatus)refreshStatus.innerText="✅ Last updated: "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"})+" • Next refresh in 30 sec"}).catch(()=>{if(!isAutoRefresh)container.innerHTML="<div style='text-align:center;padding:20px;color:#ff8a80'>⚠️ Error fetching from cloud. Tap Refresh Cloud to retry.</div>";if(refreshStatus)refreshStatus.innerText="⚠️ Auto refresh failed • Retrying in 30 sec"})}
-function exportSupervisorBreaksExcel(){if(!cloudBreaksData.length){alert("⚠️ No records to export!");return}let csv="\uFEFFBreak ID,Status,Date,Inspector,Station,Start Time,End Time,Duration (Mins),GPS,Google Maps Link,App Version\n";cloudBreaksData.forEach(b=>csv+=`"${b.breakId}","${b.status}","${b.date}","${b.user}","${b.station}","${b.startTime}","${b.endTime}","${b.duration}","${b.gps}","${b.mapsUrl}","${b.appVersion}"\n`);downloadCsv(csv,`Breaks_Report_${formattedDate}.csv`)}
-// Restore the last open screen and Supervisor sub-tab after browser refresh.
-document.addEventListener("DOMContentLoaded",()=>{
-  currentSupervisorTab=localStorage.getItem("quality_hub_supervisor_tab")==="completed"?"completed":"active";
-  const lastScreen=localStorage.getItem("quality_hub_last_screen")||"screenHub";
-  navigateTo(lastScreen);
-  if(lastScreen==="screenSupervisor")switchSupervisorTab(currentSupervisorTab);
-});
 
+  /* ---------- Initial Setup ---------- */
+  document.getElementById("appVersion").innerText = "v" + APP_VERSION;
+  refreshHeaderDate();
+  setInterval(refreshHeaderDate, 60000);
+
+  function fillSelect(id, items) {
+    const s = document.getElementById(id);
+    items.forEach(v => {
+      const o = document.createElement("option");
+      o.value = v;
+      o.textContent = v;
+      s.appendChild(o);
+    });
+  }
+
+  fillSelect("userSelect", INSPECTORS);
+  fillSelect("breakUserSelect", INSPECTORS);
+  fillSelect("breakStationSelect", STATIONS);
+
+  function saveLastInspector(name) {
+    if (name && INSPECTORS.includes(name)) {
+      safeSet("quality_hub_last_inspector", name);
+    }
+  }
+
+  function applySavedInspector() {
+    const last = safeGet("quality_hub_last_inspector", "");
+    if (!last || !INSPECTORS.includes(last)) return;
+    if (!userSelect.value) userSelect.value = last;
+    if (!safeGet("active_break_start_ms") && !breakUserSelect.value) {
+      breakUserSelect.value = last;
+    }
+  }
+
+  /* ---------- Navigation (PIN Bypass Fixed) ---------- */
+  const SCREEN_META = {
+    screenHub: { title: "Quality Investigators App", status: "Select a module..." },
+    screenRegularity: { title: "Regularity Measurement", status: "Log arrival, then departure" },
+    screenBreaks: { title: "Quality Investigator Breaks", status: "GPS verified break tracking" },
+    screenSupervisor: { title: "Supervisor Live Monitor", status: "Live team break monitor" }
+  };
+
+  function navigateTo(screenId) {
+    const validScreens = ["screenHub", "screenRegularity", "screenBreaks", "screenSupervisor"];
+    if (!validScreens.includes(screenId)) screenId = "screenHub";
+
+    // Never persist screenSupervisor so a page refresh always requires PIN again
+    if (screenId !== "screenSupervisor") {
+      safeSet("quality_hub_last_screen", screenId);
+    } else {
+      safeSet("quality_hub_last_screen", "screenHub");
+    }
+
+    document.querySelectorAll(".app-screen").forEach(s => s.classList.remove("active-screen"));
+    document.getElementById(screenId)?.classList.add("active-screen");
+
+    const c = document.getElementById("appContainer");
+    const backBtn = document.getElementById("navBackBtn");
+    const titleEl = document.getElementById("pageTitle");
+    const statusEl = document.getElementById("statusMessage");
+
+    c.classList.toggle("break-theme", screenId === "screenBreaks");
+    backBtn.style.display = screenId === "screenHub" ? "none" : "inline-flex";
+    titleEl.innerText = SCREEN_META[screenId].title;
+    statusEl.innerText = SCREEN_META[screenId].status;
+
+    if (screenId === "screenRegularity") {
+      applySavedInspector();
+      renderSavedTrainsList();
+    }
+
+    if (screenId === "screenBreaks") {
+      restoreActiveBreakSession();
+      applySavedInspector();
+    }
+
+    if (screenId === "screenSupervisor") {
+      loadBreaksFromCloud(false);
+      startSupervisorAutoRefresh();
+    } else {
+      stopSupervisorAutoRefresh();
+      clearInterval(supervisorLiveTimerInterval);
+    }
+  }
+
+  /* ---------- Network & Offline Sync Queue ---------- */
+  let syncQueue = safeGetJSON("break_sync_queue", []);
+  let isFlushingQueue = false;
+
+  function updateNetworkIndicator() {
+    const pill = document.getElementById("networkPill");
+    const text = document.getElementById("networkPillText");
+    const online = navigator.onLine;
+    pill.classList.toggle("offline", !online);
+    text.innerText = online ? "Online" : "Offline";
+  }
+
+  function updateSyncBanner() {
+    const banner = document.getElementById("syncBanner");
+    const text = document.getElementById("syncBannerText");
+    if (syncQueue.length > 0) {
+      banner.classList.add("visible");
+      text.innerText = `⏳ ${syncQueue.length} break update${syncQueue.length > 1 ? "s" : ""} pending cloud sync`;
+    } else {
+      banner.classList.remove("visible");
+    }
+  }
+
+  function persistSyncQueue() {
+    safeSet("break_sync_queue", JSON.stringify(syncQueue));
+    updateSyncBanner();
+  }
+
+  function postCloudPayload(payload) {
+    if (!navigator.onLine) {
+      return Promise.reject(new Error("Offline"));
+    }
+    return fetch(CLOUD_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async function enqueueAndSendCloud(payload) {
+    try {
+      await postCloudPayload(payload);
+      return true;
+    } catch {
+      syncQueue.push(payload);
+      persistSyncQueue();
+      return false;
+    }
+  }
+
+  async function flushCloudQueue(manual = false) {
+    if (isFlushingQueue || !syncQueue.length) return;
+    if (!navigator.onLine) {
+      if (manual) showToast("⚠️ Still offline — will sync automatically when connected", true);
+      return;
+    }
+    isFlushingQueue = true;
+    const remaining = [];
+    let syncedCount = 0;
+
+    for (let i = 0; i < syncQueue.length; i++) {
+      try {
+        await postCloudPayload(syncQueue[i]);
+        syncedCount++;
+      } catch {
+        remaining.push(...syncQueue.slice(i));
+        break;
+      }
+    }
+
+    syncQueue = remaining;
+    persistSyncQueue();
+    isFlushingQueue = false;
+
+    if (syncedCount > 0) {
+      showToast(`☁️ Synced ${syncedCount} pending break update${syncedCount > 1 ? "s" : ""}!`);
+    } else if (manual) {
+      showToast("⚠️ Cloud sync failed. Will retry automatically.", true);
+    }
+  }
+
+  window.addEventListener("online", () => {
+    updateNetworkIndicator();
+    flushCloudQueue(false);
+  });
+
+  window.addEventListener("offline", () => {
+    updateNetworkIndicator();
+  });
+
+  /* ---------- CSV Share / Download Helper ---------- */
+  async function shareOrDownloadCsv(csvContent, filename, shareTitle) {
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    if (typeof File !== "undefined" && navigator.share && navigator.canShare) {
+      try {
+        const file = new File([blob], filename, { type: "text/csv" });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: shareTitle,
+            text: shareTitle,
+            files: [file]
+          });
+          showToast("📤 Shared successfully!");
+          return;
+        }
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+      }
+    }
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1500);
+    showToast("📥 CSV file downloaded!");
+  }
+
+  /* ---------- Regularity Measurement Module ---------- */
+  let arrivalTime = "";
+  let arrivalMs = 0;
+  let departureTime = "";
+  let departureMs = 0;
+  let savedRecords = safeGetJSON("train_records", []);
+  let isSavingRecord = false;
+
+  const userSelect = document.getElementById("userSelect");
+  const trainInput = document.getElementById("trainNumber");
+  const arrivalBtn = document.getElementById("btnArrival");
+  const departureBtn = document.getElementById("btnDeparture");
+  const saveRecordBtn = document.getElementById("btnSaveRecord");
+
+  function updateTrainCounter() {
+    document.getElementById("trainCounter").innerText = "Saved Trains: " + savedRecords.length;
+    document.getElementById("btnClearAllSaved").disabled = savedRecords.length === 0;
+  }
+
+  function toggleSavedTrainsList() {
+    const panel = document.getElementById("savedTrainsPanel");
+    const btn = document.getElementById("toggleSavedListBtn");
+    const open = panel.classList.toggle("open");
+    btn.innerText = open ? "🔼 Hide List" : "📋 View List";
+    if (open) renderSavedTrainsList();
+  }
+
+  function renderSavedTrainsList() {
+    updateTrainCounter();
+    const listEl = document.getElementById("savedTrainsList");
+    if (!savedRecords.length) {
+      listEl.innerHTML = `<div class="empty-inline">No trains saved yet.</div>`;
+      return;
+    }
+
+    listEl.innerHTML = savedRecords
+      .map((r, idx) => ({ r, idx }))
+      .reverse()
+      .map(({ r, idx }) => `
+        <div class="saved-train-row">
+          <div class="saved-train-meta">
+            <div class="saved-train-title">🚆 Train ${escapeHtml(r.trainNumber)} &bull; ${escapeHtml(r.arrival)} ➔ ${escapeHtml(r.departure)}</div>
+            <div class="saved-train-sub">${escapeHtml(r.date)} &bull; ${escapeHtml(r.user)}</div>
+          </div>
+          <button class="icon-btn" type="button" title="Delete train ${escapeHtml(r.trainNumber)}" aria-label="Delete train ${escapeHtml(r.trainNumber)}" onclick="deleteSavedTrain(${idx})">✕</button>
+        </div>
+      `)
+      .join("");
+  }
+
+  function deleteSavedTrain(index) {
+    if (index < 0 || index >= savedRecords.length) return;
+    const removed = savedRecords.splice(index, 1)[0];
+    safeSet("train_records", JSON.stringify(savedRecords));
+    renderSavedTrainsList();
+    showToast(`🗑️ Removed Train ${removed.trainNumber}`);
+  }
+
+  function confirmClearAllSaved() {
+    if (!savedRecords.length) return;
+    showConfirm(
+      "Clear All Saved Trains?",
+      `This will permanently delete all ${savedRecords.length} saved train record${savedRecords.length > 1 ? "s" : ""} from this device.`,
+      "Delete All",
+      () => {
+        savedRecords = [];
+        safeRemove("train_records");
+        renderSavedTrainsList();
+        showToast("🗑️ All saved trains cleared");
+      }
+    );
+  }
+
+  userSelect.addEventListener("change", () => {
+    userSelect.classList.remove("error-highlight");
+    saveLastInspector(userSelect.value);
+  });
+
+  trainInput.addEventListener("focus", function () {
+    if (this.value === "70") this.setSelectionRange(2, 2);
+  });
+
+  trainInput.addEventListener("keydown", function (e) {
+    if (this.selectionStart <= 2 && (e.key === "Backspace" || e.key === "Delete") && this.value.length <= 2) {
+      e.preventDefault();
+    }
+  });
+
+  trainInput.addEventListener("input", function () {
+    this.classList.remove("error-highlight");
+    let d = this.value.replace(/[^0-9]/g, "");
+    if (!d.startsWith("70")) d = "70" + d.replace(/^70*/, "");
+    this.value = d.slice(0, 4);
+    if (this.value.length === 4) {
+      this.blur();
+      arrivalBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  });
+
+  function handleArrival() {
+    const now = new Date();
+    arrivalMs = now.getTime();
+    arrivalTime = get24HourTime(now);
+    arrivalBtn.innerText = "Arrival: " + arrivalTime;
+    arrivalBtn.classList.remove("error-highlight");
+    arrivalBtn.classList.add("recorded");
+
+    // Reset departure if arrival was re-tapped so departure is never earlier than arrival
+    departureTime = "";
+    departureMs = 0;
+    departureBtn.disabled = false;
+    departureBtn.innerText = "Train Departure";
+    departureBtn.classList.remove("recorded", "error-highlight");
+  }
+
+  function handleDeparture() {
+    if (!arrivalTime) {
+      arrivalBtn.classList.add("error-highlight");
+      showToast("⚠️ Record Train Arrival first", true);
+      return;
+    }
+    const now = new Date();
+    departureMs = now.getTime();
+    departureTime = get24HourTime(now);
+    departureBtn.innerText = "Departure: " + departureTime;
+    departureBtn.classList.remove("error-highlight");
+    departureBtn.classList.add("recorded");
+  }
+
+  function resetCurrentForm(keepInspector = true, showMessage = true) {
+    const selectedInspector = userSelect.value;
+    trainInput.value = "70";
+    if (keepInspector && selectedInspector) {
+      userSelect.value = selectedInspector;
+    } else {
+      userSelect.selectedIndex = 0;
+    }
+    arrivalTime = "";
+    arrivalMs = 0;
+    departureTime = "";
+    departureMs = 0;
+
+    userSelect.classList.remove("error-highlight");
+    trainInput.classList.remove("error-highlight");
+    arrivalBtn.innerText = "Train Arrival";
+    arrivalBtn.classList.remove("recorded", "error-highlight");
+    departureBtn.innerText = "Train Departure";
+    departureBtn.classList.remove("recorded", "error-highlight");
+    departureBtn.disabled = true;
+
+    if (showMessage) {
+      showToast("🧹 Current form cleared (saved trains kept)");
+    }
+  }
+
+  function saveRecord() {
+    if (isSavingRecord) return;
+    const user = userSelect.value;
+    const trainNo = trainInput.value.trim();
+
+    userSelect.classList.remove("error-highlight");
+    trainInput.classList.remove("error-highlight");
+    arrivalBtn.classList.remove("error-highlight");
+    departureBtn.classList.remove("error-highlight");
+
+    const missing = [];
+    if (!user) {
+      userSelect.classList.add("error-highlight");
+      missing.push("Inspector Name");
+    }
+    if (!/^70\d{2}$/.test(trainNo)) {
+      trainInput.classList.add("error-highlight");
+      missing.push("4-digit Train Number (70XX)");
+    }
+    if (!arrivalTime) {
+      arrivalBtn.classList.add("error-highlight");
+      missing.push("Arrival Time");
+    }
+    if (!departureTime) {
+      departureBtn.classList.add("error-highlight");
+      missing.push("Departure Time");
+    }
+    if (arrivalMs && departureMs && departureMs < arrivalMs) {
+      departureBtn.classList.add("error-highlight");
+      missing.push("Departure Time must be after Arrival Time");
+    }
+
+    if (missing.length) {
+      const first = document.querySelector("#screenRegularity .error-highlight");
+      if (first) {
+        first.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (first.tagName === "SELECT" || first.tagName === "INPUT") first.focus();
+      }
+      showNotice("Complete Required Fields", "Please complete before saving:\n• " + missing.join("\n• "));
+      return;
+    }
+
+    const currentDateStr = getFormattedDate();
+    refreshHeaderDate();
+    saveLastInspector(user);
+
+    savedRecords.push({
+      date: currentDateStr,
+      user,
+      trainNumber: trainNo,
+      arrival: arrivalTime,
+      departure: departureTime
+    });
+    safeSet("train_records", JSON.stringify(savedRecords));
+    renderSavedTrainsList();
+
+    const finishSave = () => {
+      isSavingRecord = false;
+      saveRecordBtn.disabled = false;
+      saveRecordBtn.innerText = "💾 Save Train";
+      showToast(`✅ Train ${trainNo} Saved!`);
+      resetCurrentForm(true, false);
+    };
+
+    // Wait for html2canvas to finish BEFORE resetting the form so screenshots are never blank
+    if (typeof html2canvas !== "undefined") {
+      isSavingRecord = true;
+      saveRecordBtn.disabled = true;
+      saveRecordBtn.innerText = "📸 Saving Snapshot...";
+      html2canvas(document.getElementById("appContainer"), { scale: 2 })
+        .then(canvas => {
+          const link = document.createElement("a");
+          link.download = `Train_${trainNo}_${currentDateStr}.png`;
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        })
+        .catch(() => {
+          // Ignore screenshot failure in restricted environments
+        })
+        .finally(finishSave);
+    } else {
+      finishSave();
+    }
+  }
+
+  function exportAndShareExcel() {
+    if (!savedRecords.length) {
+      showNotice("No Saved Trains", "Save at least one train record before exporting.");
+      return;
+    }
+    let csv = "\uFEFFDate,Inspector / User,Train Number,Arrival Time,Departure Time\n";
+    savedRecords.forEach(r => {
+      csv += [r.date, r.user, r.trainNumber, r.arrival, r.departure].map(csvEscape).join(",") + "\n";
+    });
+    shareOrDownloadCsv(csv, `Regularity_${getFormattedDate()}.csv`, `Regularity Report (${getFormattedDate()})`);
+  }
+
+  /* ---------- Breaks Module ---------- */
+  let breakStartTime = "";
+  let breakEndTime = "";
+  let breakTimerInterval = null;
+  let breakGpsCoords = "";
+  let breakGpsMapsUrl = "";
+  let activeBreakId = "";
+
+  const breakUserSelect = document.getElementById("breakUserSelect");
+  const breakStationSelect = document.getElementById("breakStationSelect");
+  const btnStartBreak = document.getElementById("btnStartBreak");
+  const btnEndBreak = document.getElementById("btnEndBreak");
+  const gpsStatusDisplay = document.getElementById("gpsStatusDisplay");
+  const liveBreakTimer = document.getElementById("liveBreakTimer");
+
+  breakUserSelect.addEventListener("change", () => saveLastInspector(breakUserSelect.value));
+
+  function setGpsStatus(text, tone = "") {
+    gpsStatusDisplay.className = "gps-status" + (tone ? " " + tone : "");
+    gpsStatusDisplay.innerText = text;
+  }
+
+  function startTimerEngine(startMs) {
+    clearInterval(breakTimerInterval);
+    const tick = () => {
+      const diff = Math.max(0, Date.now() - startMs);
+      const s = Math.floor((diff / 1000) % 60);
+      const m = Math.floor((diff / 60000) % 60);
+      const h = Math.floor(diff / 3600000);
+      liveBreakTimer.innerText = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    };
+    tick();
+    breakTimerInterval = setInterval(tick, 1000);
+  }
+
+  function restoreActiveBreakSession() {
+    const savedMs = safeGet("active_break_start_ms");
+    if (savedMs) {
+      activeBreakId = safeGet("active_break_id", "");
+      breakUserSelect.value = safeGet("active_break_user", "");
+      breakStationSelect.value = safeGet("active_break_station", "");
+      breakUserSelect.disabled = true;
+      breakStationSelect.disabled = true;
+      breakStartTime = safeGet("active_break_start_str", "");
+      btnStartBreak.innerText = "🟢 Break Active: " + breakStartTime;
+      btnStartBreak.classList.add("recorded");
+      btnStartBreak.disabled = true;
+      btnEndBreak.disabled = false;
+      setGpsStatus("🟢 Break is currently active");
+      startTimerEngine(Number(savedMs));
+    } else {
+      clearInterval(breakTimerInterval);
+      liveBreakTimer.innerText = "00:00:00";
+      breakUserSelect.disabled = false;
+      breakStationSelect.disabled = false;
+      btnStartBreak.disabled = false;
+      btnStartBreak.innerText = "🟢 Start Break";
+      btnStartBreak.classList.remove("recorded");
+      btnEndBreak.disabled = true;
+      setGpsStatus("📍 GPS check mandatory to start/end break");
+    }
+  }
+
+  function requestGpsLocation(onSuccess, onError) {
+    if (!navigator.geolocation) {
+      setGpsStatus("⚠️ GPS is not supported on this device", "err");
+      onError("GPS not supported on this device.");
+      return;
+    }
+
+    const handlePos = (pos, usedFallback) => {
+      const lat = pos.coords.latitude.toFixed(5);
+      const lon = pos.coords.longitude.toFixed(5);
+      const acc = Number.isFinite(pos.coords.accuracy) ? Math.round(pos.coords.accuracy) : null;
+      breakGpsCoords = `${lat}, ${lon}`;
+      breakGpsMapsUrl = `https://maps.google.com/?q=${lat},${lon}`;
+      const accText = acc !== null ? ` (±${acc}m${usedFallback ? ", network" : ""})` : "";
+      setGpsStatus(`📍 GPS Verified${accText}`);
+      onSuccess(breakGpsCoords);
+    };
+
+    setGpsStatus("📡 Checking high-accuracy GPS...", "warn");
+    navigator.geolocation.getCurrentPosition(
+      pos => handlePos(pos, false),
+      () => {
+        // Fallback to network/Wi-Fi location for underground stations
+        setGpsStatus("📡 Weak GPS signal — trying network location...", "warn");
+        navigator.geolocation.getCurrentPosition(
+          pos => handlePos(pos, true),
+          err => {
+            setGpsStatus("⚠️ GPS Location required!", "err");
+            onError(err?.message || "GPS permission denied or unavailable.");
+          },
+          { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+        );
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+
+  function generateBreakId() {
+    return `BRK-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  }
+
+  function handleStartBreak() {
+    if (safeGet("active_break_start_ms")) {
+      showNotice("Break Running", "A break is already active. Tap End Break when you finish.");
+      return;
+    }
+    const u = breakUserSelect.value;
+    const st = breakStationSelect.value;
+    if (!u || !st) {
+      showNotice("Missing Selection", "Please select both Inspector Name and Break Station first.");
+      return;
+    }
+
+    saveLastInspector(u);
+    btnStartBreak.disabled = true;
+    btnStartBreak.innerText = "⏳ Checking GPS...";
+
+    requestGpsLocation(
+      async coords => {
+        const nowDate = new Date();
+        const now = nowDate.getTime();
+        const currentDateStr = getFormattedDate(nowDate);
+        refreshHeaderDate();
+
+        activeBreakId = generateBreakId();
+        breakStartTime = get24HourTime(nowDate);
+
+        safeSet("active_break_id", activeBreakId);
+        safeSet("active_break_start_ms", String(now));
+        safeSet("active_break_start_str", breakStartTime);
+        safeSet("active_break_user", u);
+        safeSet("active_break_station", st);
+
+        breakUserSelect.disabled = true;
+        breakStationSelect.disabled = true;
+        btnStartBreak.innerText = "🟢 Break Active: " + breakStartTime;
+        btnStartBreak.classList.add("recorded");
+        btnEndBreak.disabled = false;
+        startTimerEngine(now);
+
+        const synced = await enqueueAndSendCloud({
+          action: "START_BREAK",
+          breakId: activeBreakId,
+          status: "ACTIVE",
+          date: currentDateStr,
+          user: u,
+          station: st,
+          startTime: breakStartTime,
+          startTimestamp: now,
+          endTime: "",
+          duration: "",
+          gps: coords,
+          mapsUrl: breakGpsMapsUrl,
+          appVersion: APP_VERSION
+        });
+
+        if (synced) {
+          showToast("🟢 Break Started & Live Monitor Updated!");
+        } else {
+          showToast("🟡 Break Started (queued for sync when online)");
+        }
+      },
+      errMsg => {
+        btnStartBreak.disabled = false;
+        btnStartBreak.innerText = "🟢 Start Break";
+        showNotice("GPS Required", `Location is mandatory to start a break.\n\nDetails: ${errMsg}`, "📍");
+      }
+    );
+  }
+
+  function handleEndBreak() {
+    const startMs = safeGet("active_break_start_ms");
+    if (!startMs) {
+      showNotice("No Active Break", "Tap Start Break first.");
+      return;
+    }
+
+    const u = safeGet("active_break_user") || breakUserSelect.value;
+    const st = safeGet("active_break_station") || breakStationSelect.value;
+    const savedStartStr = breakStartTime || safeGet("active_break_start_str") || "";
+
+    btnEndBreak.disabled = true;
+    btnEndBreak.innerText = "⏳ Verifying GPS...";
+
+    requestGpsLocation(
+      async coords => {
+        const nowDate = new Date();
+        const now = nowDate.getTime();
+        const currentDateStr = getFormattedDate(nowDate);
+        refreshHeaderDate();
+
+        breakEndTime = get24HourTime(nowDate);
+        const diffMs = Math.max(0, now - Number(startMs));
+        const totalMins = Math.max(1, Math.round(diffMs / 60000));
+        const hours = Math.floor(totalMins / 60);
+        const mins = totalMins % 60;
+        activeBreakId = safeGet("active_break_id") || activeBreakId;
+
+        const synced = await enqueueAndSendCloud({
+          action: "END_BREAK",
+          breakId: activeBreakId,
+          status: "COMPLETED",
+          date: currentDateStr,
+          user: u,
+          station: st,
+          startTime: savedStartStr,
+          startTimestamp: Number(startMs),
+          endTime: breakEndTime,
+          endTimestamp: now,
+          duration: String(totalMins),
+          gps: coords,
+          mapsUrl: breakGpsMapsUrl,
+          appVersion: APP_VERSION
+        });
+
+        document.getElementById("modalDurationText").innerText = `${hours} Hours & ${mins} Mins`;
+        document.getElementById("modalSummaryUser").innerText = u;
+        document.getElementById("modalSummaryStation").innerText = st;
+        document.getElementById("modalSummaryTime").innerText = `${savedStartStr} ➔ ${breakEndTime}`;
+        document.getElementById("modalSummarySync").innerText = synced
+          ? "✅ Synced to Cloud"
+          : "⏳ Saved offline — will auto-sync";
+        document.getElementById("breakSummaryModal").classList.add("open");
+
+        clearInterval(breakTimerInterval);
+        liveBreakTimer.innerText = "00:00:00";
+        ["active_break_id", "active_break_start_ms", "active_break_start_str", "active_break_user", "active_break_station"]
+          .forEach(safeRemove);
+
+        activeBreakId = "";
+        breakUserSelect.disabled = false;
+        breakStationSelect.disabled = false;
+        btnStartBreak.disabled = false;
+        btnStartBreak.innerText = "🟢 Start Break";
+        btnStartBreak.classList.remove("recorded");
+        btnEndBreak.disabled = true;
+        btnEndBreak.innerText = "🔴 End Break";
+        setGpsStatus("📍 GPS check mandatory to start/end break");
+      },
+      errMsg => {
+        btnEndBreak.disabled = false;
+        btnEndBreak.innerText = "🔴 End Break";
+        showNotice("GPS Required", `Location is mandatory to end a break.\n\nDetails: ${errMsg}`, "📍");
+      }
+    );
+  }
+
+  function closeBreakSummaryModal() {
+    document.getElementById("breakSummaryModal").classList.remove("open");
+  }
+
+  /* ---------- Supervisor Live Monitor Module ---------- */
+  let cloudBreaksData = [];
+  let supervisorLiveTimerInterval = null;
+  let supervisorAutoRefreshInterval = null;
+  let currentSupervisorTab = "active";
+
+  const pinInput = document.getElementById("supervisorPinInput");
+  const pinErrorMsg = document.getElementById("pinErrorMsg");
+  const supervisorSearchInput = document.getElementById("supervisorSearchInput");
+
+  function openSupervisorPinModal() {
+    pinInput.value = "";
+    pinErrorMsg.innerText = "";
+    pinInput.classList.remove("error-highlight", "shake");
+    document.getElementById("pinModal").classList.add("open");
+    setTimeout(() => pinInput.focus(), 150);
+  }
+
+  function closeSupervisorPinModal() {
+    document.getElementById("pinModal").classList.remove("open");
+  }
+
+  pinInput.addEventListener("input", function () {
+    pinErrorMsg.innerText = "";
+    this.classList.remove("error-highlight", "shake");
+    const val = this.value.replace(/[^0-9]/g, "");
+    this.value = val;
+
+    if (val.length === 4) {
+      if (val === SUPERVISOR_PIN) {
+        closeSupervisorPinModal();
+        navigateTo("screenSupervisor");
+      } else {
+        pinErrorMsg.innerText = "Incorrect PIN. Please try again.";
+        this.classList.add("error-highlight", "shake");
+        setTimeout(() => {
+          this.value = "";
+          this.focus();
+        }, 350);
+      }
+    }
+  });
+
+  supervisorSearchInput.addEventListener("input", () => {
+    renderSupervisorBreaks();
+  });
+
+  function normalizeBreak(b) {
+    return {
+      breakId: b.breakId || b.breakID || b[0] || "",
+      status: b.status || b[1] || "",
+      date: b.date || b[2] || "",
+      user: b.user || b[3] || "",
+      station: b.station || b[4] || "",
+      startTime: b.startTime || b[5] || "",
+      startTimestamp: b.startTimestamp || b[6] || "",
+      endTime: b.endTime || b[7] || "",
+      duration: b.duration || b[8] || "",
+      gps: b.gps || b[9] || "",
+      mapsUrl: b.mapsUrl || b[10] || "",
+      appVersion: b.appVersion || b[11] || ""
+    };
+  }
+
+  function isBreakActive(b) {
+    return String(b.status || "").toUpperCase() === "ACTIVE" ||
+      (!b.endTime && String(b.status || "").toUpperCase() !== "COMPLETED");
+  }
+
+  function breakMatchKey(b) {
+    if (b.breakId) return "ID|" + String(b.breakId).trim();
+    return ["LEGACY", b.date, b.user, b.station, b.startTime]
+      .map(v => String(v || "").trim().toLowerCase())
+      .join("|");
+  }
+
+  function deduplicateBreaks(rows) {
+    const groups = new Map();
+    rows.forEach((item, index) => {
+      const b = normalizeBreak(item);
+      const key = breakMatchKey(b);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push({ ...b, _sourceIndex: index });
+    });
+    return Array.from(groups.values())
+      .map(group => {
+        const completed = group.filter(b => String(b.status || "").toUpperCase() === "COMPLETED" || Boolean(b.endTime));
+        if (completed.length) return completed[completed.length - 1];
+        return group[group.length - 1];
+      })
+      .sort((a, b) => b._sourceIndex - a._sourceIndex)
+      .map(({ _sourceIndex, ...b }) => b);
+  }
+
+  function formatCloudDate(value) {
+    if (!value) return "--";
+    const text = String(value).trim();
+    const already = text.match(/^(\d{2})-([A-Za-z]{3})-(\d{4})$/);
+    if (already) {
+      return `${already[1]}-${already[2][0].toUpperCase() + already[2].slice(1).toLowerCase()}-${already[3]}`;
+    }
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return text;
+    return getFormattedDate(d);
+  }
+
+  function formatCloudTime(value) {
+    if (!value) return "--";
+    const text = String(value).trim();
+    let hours, minutes;
+    const plain = text.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?$/i);
+    if (plain) {
+      hours = Number(plain[1]);
+      minutes = Number(plain[2]);
+      if (plain[3]) {
+        const ap = plain[3].toUpperCase();
+        if (ap === "PM" && hours < 12) hours += 12;
+        if (ap === "AM" && hours === 12) hours = 0;
+      }
+    } else {
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return text;
+      hours = d.getHours();
+      minutes = d.getMinutes();
+    }
+    const period = hours >= 12 ? "PM" : "AM";
+    const h12 = hours % 12 || 12;
+    return `${String(h12).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${period}`;
+  }
+
+  function getStartMilliseconds(ts, dateValue, timeValue) {
+    const numeric = Number(ts);
+    if (Number.isFinite(numeric) && numeric > 100000000000) return numeric;
+    const parsedTs = new Date(ts);
+    if (!Number.isNaN(parsedTs.getTime()) && parsedTs.getUTCFullYear() > 2000) return parsedTs.getTime();
+
+    const dateText = formatCloudDate(dateValue);
+    const timeText = formatCloudTime(timeValue);
+    const parts = dateText.match(/^(\d{2})-([A-Za-z]{3})-(\d{4})$/);
+    const timeParts = timeText.match(/^(\d{2}):(\d{2}) (AM|PM)$/);
+    if (!parts || !timeParts) return 0;
+
+    const monthsMap = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+    let h = Number(timeParts[1]);
+    if (timeParts[3] === "PM" && h < 12) h += 12;
+    if (timeParts[3] === "AM" && h === 12) h = 0;
+    return new Date(Number(parts[3]), monthsMap[parts[2]], Number(parts[1]), h, Number(timeParts[2]), 0, 0).getTime();
+  }
+
+  function getLiveElapsedSeconds(ts, dateValue, timeValue) {
+    const start = getStartMilliseconds(ts, dateValue, timeValue);
+    if (!start) return -1;
+    return Math.floor(Math.max(0, Date.now() - start) / 1000);
+  }
+
+  function formatSecondsHMS(sec) {
+    if (sec < 0) return "In progress";
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  }
+
+  function startSupervisorLiveTimers() {
+    clearInterval(supervisorLiveTimerInterval);
+    const tick = () => {
+      document.querySelectorAll("[data-live-start]").forEach(el => {
+        const sec = getLiveElapsedSeconds(el.dataset.liveStart, el.dataset.liveDate, el.dataset.liveTime);
+        el.innerText = "Live Duration: " + formatSecondsHMS(sec);
+        const card = el.closest(".supervisor-log-item");
+        if (card && sec >= OVERDUE_BREAK_MINUTES * 60 && !card.classList.contains("overdue-break-card")) {
+          card.classList.add("overdue-break-card");
+          const badgeRow = card.querySelector(".status-badges-row");
+          if (badgeRow && !badgeRow.querySelector(".break-overdue-badge")) {
+            const b = document.createElement("span");
+            b.className = "break-overdue-badge";
+            b.innerText = `⚠️ Overdue (>${OVERDUE_BREAK_MINUTES}m)`;
+            badgeRow.appendChild(b);
+          }
+        }
+      });
+    };
+    tick();
+    supervisorLiveTimerInterval = setInterval(tick, 1000);
+  }
+
+  function switchSupervisorTab(tab) {
+    currentSupervisorTab = tab === "completed" ? "completed" : "active";
+    safeSet("quality_hub_supervisor_tab", currentSupervisorTab);
+    const activeBtn = document.getElementById("activeBreaksTab");
+    const completedBtn = document.getElementById("completedBreaksTab");
+    activeBtn.classList.toggle("active", currentSupervisorTab === "active");
+    completedBtn.classList.toggle("active", currentSupervisorTab === "completed");
+    activeBtn.setAttribute("aria-selected", String(currentSupervisorTab === "active"));
+    completedBtn.setAttribute("aria-selected", String(currentSupervisorTab === "completed"));
+    renderSupervisorBreaks();
+  }
+
+  function renderSupervisorBreaks() {
+    const container = document.getElementById("supervisorLogContainer");
+    const query = (supervisorSearchInput.value || "").trim().toLowerCase();
+
+    const matchesSearch = b => {
+      if (!query) return true;
+      return String(b.user || "").toLowerCase().includes(query) ||
+        String(b.station || "").toLowerCase().includes(query);
+    };
+
+    const allActive = cloudBreaksData.filter(isBreakActive);
+    const allCompleted = cloudBreaksData.filter(b => !isBreakActive(b));
+
+    document.getElementById("supervisorTotalBadge").innerText = "Total Breaks: " + cloudBreaksData.length;
+    document.getElementById("activeBreaksCount").innerText = allActive.length;
+    document.getElementById("completedBreaksCount").innerText = allCompleted.length;
+
+    const visibleBreaks = (currentSupervisorTab === "active" ? allActive : allCompleted).filter(matchesSearch);
+
+    if (!visibleBreaks.length) {
+      const msg = query
+        ? `🔍 No breaks match "${escapeHtml(supervisorSearchInput.value.trim())}".`
+        : (currentSupervisorTab === "active"
+            ? "🟢 No one is currently on break."
+            : "📋 No completed breaks recorded yet.");
+      container.innerHTML = `<div class="empty-tab-message">${msg}</div>`;
+      clearInterval(supervisorLiveTimerInterval);
+      return;
+    }
+
+    container.innerHTML = visibleBreaks.map(b => {
+      const active = isBreakActive(b);
+      const elapsedSec = active ? getLiveElapsedSeconds(b.startTimestamp, b.date, b.startTime) : -1;
+      const isOverdue = active && elapsedSec >= OVERDUE_BREAK_MINUTES * 60;
+
+      const statusHtml = active
+        ? `<div class="status-badges-row">
+             <div class="break-live-status"><span class="break-live-lamp"></span><span>Still On Break</span></div>
+             ${isOverdue ? `<span class="break-overdue-badge">⚠️ Overdue (&gt;${OVERDUE_BREAK_MINUTES}m)</span>` : ""}
+           </div>`
+        : `<div class="status-badges-row"><div class="break-completed-status"><span>✅</span><span>Break Completed</span></div></div>`;
+
+      const timeHtml = active
+        ? `<div><strong>⏱️ Started:</strong> ${escapeHtml(formatCloudTime(b.startTime))}</div>
+           <div class="live-break-duration" data-live-start="${escapeHtml(b.startTimestamp)}" data-live-date="${escapeHtml(b.date)}" data-live-time="${escapeHtml(b.startTime)}">Live Duration: ${formatSecondsHMS(elapsedSec)}</div>`
+        : `<div><strong>⏱️ Time:</strong> ${escapeHtml(formatCloudTime(b.startTime))} ➔ ${escapeHtml(formatCloudTime(b.endTime))} (${escapeHtml(b.duration || "--")} mins)</div>`;
+
+      const safeMapsUrl = typeof b.mapsUrl === "string" && /^https:\/\/maps\.google\.com\//i.test(b.mapsUrl) ? b.mapsUrl : "";
+      const mapHtml = safeMapsUrl
+        ? `<a href="${escapeHtml(safeMapsUrl)}" target="_blank" rel="noopener noreferrer" class="map-link-btn">🗺️ View on Google Maps</a>`
+        : "";
+
+      const cardClass = active
+        ? (isOverdue ? "active-break-card overdue-break-card" : "active-break-card")
+        : "";
+
+      return `
+        <div class="supervisor-log-item ${cardClass}">
+          ${statusHtml}
+          <div class="user-title">👤 ${escapeHtml(b.user || "Unknown Inspector")} &bull; <span class="station-sub">${escapeHtml(b.station || "--")}</span></div>
+          <div><strong>📅 Date:</strong> ${escapeHtml(formatCloudDate(b.date))}</div>
+          ${timeHtml}
+          ${mapHtml}
+        </div>
+      `;
+    }).join("");
+
+    startSupervisorLiveTimers();
+  }
+
+  function stopSupervisorAutoRefresh() {
+    if (supervisorAutoRefreshInterval) {
+      clearInterval(supervisorAutoRefreshInterval);
+      supervisorAutoRefreshInterval = null;
+    }
+  }
+
+  function startSupervisorAutoRefresh() {
+    stopSupervisorAutoRefresh();
+    supervisorAutoRefreshInterval = setInterval(() => {
+      if (!document.hidden && document.getElementById("screenSupervisor").classList.contains("active-screen")) {
+        loadBreaksFromCloud(true);
+      }
+    }, 30000);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && document.getElementById("screenSupervisor").classList.contains("active-screen")) {
+      loadBreaksFromCloud(true);
+    }
+  });
+
+  function loadBreaksFromCloud(isAutoRefresh = false) {
+    const container = document.getElementById("supervisorLogContainer");
+    const refreshStatus = document.getElementById("supervisorRefreshStatus");
+
+    if (!isAutoRefresh) {
+      container.innerHTML = `<div class="empty-tab-message" style="color:#ffd54f">📡 Loading from Google Sheet...</div>`;
+    }
+    if (refreshStatus) {
+      refreshStatus.innerText = isAutoRefresh ? "🔄 Updating..." : "📡 Loading cloud data...";
+    }
+
+    fetch(CLOUD_SCRIPT_URL, { cache: "no-store" })
+      .then(r => {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(data => {
+        const rows = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
+        cloudBreaksData = deduplicateBreaks(rows);
+        renderSupervisorBreaks();
+        if (refreshStatus) {
+          const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+          refreshStatus.innerText = `✅ Last updated: ${timeStr} • Auto refresh every 30s`;
+        }
+      })
+      .catch(() => {
+        if (!isAutoRefresh) {
+          container.innerHTML = `<div class="empty-tab-message" style="color:#fecaca">⚠️ Error fetching from cloud. Tap Refresh Cloud to retry.</div>`;
+        }
+        if (refreshStatus) {
+          refreshStatus.innerText = "⚠️ Auto refresh failed • Retrying in 30s";
+        }
+      });
+  }
+
+  function exportSupervisorBreaksExcel() {
+    if (!cloudBreaksData.length) {
+      showNotice("No Break Records", "There are no break records loaded to export.");
+      return;
+    }
+    let csv = "\uFEFFBreak ID,Status,Date,Inspector,Station,Start Time,End Time,Duration (Mins),GPS,Google Maps Link,App Version\n";
+    cloudBreaksData.forEach(b => {
+      csv += [
+        b.breakId, b.status, b.date, b.user, b.station,
+        b.startTime, b.endTime, b.duration, b.gps, b.mapsUrl, b.appVersion
+      ].map(csvEscape).join(",") + "\n";
+    });
+    shareOrDownloadCsv(csv, `Breaks_Report_${getFormattedDate()}.csv`, `Breaks Report (${getFormattedDate()})`);
+  }
+
+  /* ---------- Bootstrap ---------- */
+  document.addEventListener("DOMContentLoaded", () => {
+    updateNetworkIndicator();
+    updateSyncBanner();
+    updateTrainCounter();
+    applySavedInspector();
+
+    currentSupervisorTab = safeGet("quality_hub_supervisor_tab") === "completed" ? "completed" : "active";
+    const lastScreen = safeGet("quality_hub_last_screen", "screenHub");
+    // Security: never restore screenSupervisor without PIN
+    navigateTo(lastScreen === "screenSupervisor" ? "screenHub" : lastScreen);
+
+    if (syncQueue.length > 0 && navigator.onLine) {
+      flushCloudQueue(false);
+    }
+  });
 </script>
 </body>
 </html>
