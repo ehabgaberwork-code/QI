@@ -123,37 +123,6 @@
       outline-offset: 2px;
     }
 
-    .network-pill {
-      margin-left: auto;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(0, 0, 0, 0.24);
-      color: #bbf7d0;
-      border: 1px solid rgba(187, 247, 208, 0.28);
-    }
-
-    .network-pill.offline {
-      background: rgba(220, 38, 38, 0.28);
-      color: #fecaca;
-      border-color: rgba(254, 202, 202, 0.45);
-    }
-
-    .net-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-    }
-
-    .network-pill.offline .net-dot {
-      background: #f87171;
-    }
-
     /* Header */
     .header {
       display: flex;
@@ -257,38 +226,6 @@
       font-size: 12px;
       color: var(--muted);
       margin-top: 3px;
-    }
-
-    /* Sync Queue Banner */
-    .sync-banner {
-      width: 100%;
-      background: rgba(255, 145, 0, 0.18);
-      border: 1px solid rgba(255, 213, 79, 0.55);
-      border-radius: 10px;
-      padding: 8px 12px;
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #fff8e1;
-    }
-
-    .sync-banner.visible {
-      display: flex;
-    }
-
-    .sync-retry-btn {
-      background: var(--accent-orange);
-      color: #fff;
-      border: 0;
-      border-radius: 6px;
-      padding: 5px 10px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      white-space: nowrap;
     }
 
     /* Form Controls */
@@ -943,17 +880,11 @@
 <div class="container" id="appContainer">
   <div class="top-bar">
     <button class="btn-back" id="navBackBtn" type="button" style="display:none" onclick="navigateTo('screenHub')">⬅ Hub Menu</button>
-    <div class="network-pill" id="networkPill"><span class="net-dot"></span><span id="networkPillText">Online</span></div>
   </div>
 
   <div class="header">
     <div class="header-title" id="pageTitle">Quality Investigators App</div>
     <div class="date-display" id="currentDate"></div>
-  </div>
-
-  <div class="sync-banner" id="syncBanner" role="status">
-    <span id="syncBannerText">⏳ 0 pending cloud sync</span>
-    <button class="sync-retry-btn" type="button" onclick="flushCloudQueue(true)">Sync Now</button>
   </div>
 
   <!-- HUB SCREEN -->
@@ -970,7 +901,7 @@
         <div class="hub-card-icon">☕</div>
         <div>
           <div class="hub-card-title">Quality Investigator Breaks</div>
-          <div class="hub-card-desc">Live persistent break timer with GPS &amp; offline sync queue</div>
+          <div class="hub-card-desc">Live persistent break timer with mandatory GPS &amp; cloud sync</div>
         </div>
       </button>
       <button class="hub-card hub-card-supervisor" type="button" onclick="openSupervisorPinModal()">
@@ -1358,96 +1289,25 @@
     }
   }
 
-  /* ---------- Network & Offline Sync Queue ---------- */
-  let syncQueue = safeGetJSON("break_sync_queue", []);
-  let isFlushingQueue = false;
-
-  function updateNetworkIndicator() {
-    const pill = document.getElementById("networkPill");
-    const text = document.getElementById("networkPillText");
-    const online = navigator.onLine;
-    pill.classList.toggle("offline", !online);
-    text.innerText = online ? "Online" : "Offline";
-  }
-
-  function updateSyncBanner() {
-    const banner = document.getElementById("syncBanner");
-    const text = document.getElementById("syncBannerText");
-    if (syncQueue.length > 0) {
-      banner.classList.add("visible");
-      text.innerText = `⏳ ${syncQueue.length} break update${syncQueue.length > 1 ? "s" : ""} pending cloud sync`;
-    } else {
-      banner.classList.remove("visible");
-    }
-  }
-
-  function persistSyncQueue() {
-    safeSet("break_sync_queue", JSON.stringify(syncQueue));
-    updateSyncBanner();
-  }
-
-  function postCloudPayload(payload) {
+  /* ---------- Mandatory Cloud Sync (Online Required) ---------- */
+  async function sendCloudRequired(payload) {
     if (!navigator.onLine) {
-      return Promise.reject(new Error("Offline"));
+      throw new Error("OFFLINE");
     }
-    return fetch(CLOUD_SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-  }
-
-  async function enqueueAndSendCloud(payload) {
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 12000) : null;
     try {
-      await postCloudPayload(payload);
-      return true;
-    } catch {
-      syncQueue.push(payload);
-      persistSyncQueue();
-      return false;
+      await fetch(CLOUD_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+        signal: controller ? controller.signal : undefined
+      });
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
     }
   }
-
-  async function flushCloudQueue(manual = false) {
-    if (isFlushingQueue || !syncQueue.length) return;
-    if (!navigator.onLine) {
-      if (manual) showToast("⚠️ Still offline — will sync automatically when connected", true);
-      return;
-    }
-    isFlushingQueue = true;
-    const remaining = [];
-    let syncedCount = 0;
-
-    for (let i = 0; i < syncQueue.length; i++) {
-      try {
-        await postCloudPayload(syncQueue[i]);
-        syncedCount++;
-      } catch {
-        remaining.push(...syncQueue.slice(i));
-        break;
-      }
-    }
-
-    syncQueue = remaining;
-    persistSyncQueue();
-    isFlushingQueue = false;
-
-    if (syncedCount > 0) {
-      showToast(`☁️ Synced ${syncedCount} pending break update${syncedCount > 1 ? "s" : ""}!`);
-    } else if (manual) {
-      showToast("⚠️ Cloud sync failed. Will retry automatically.", true);
-    }
-  }
-
-  window.addEventListener("online", () => {
-    updateNetworkIndicator();
-    flushCloudQueue(false);
-  });
-
-  window.addEventListener("offline", () => {
-    updateNetworkIndicator();
-  });
 
   /* ---------- CSV Share / Download Helper ---------- */
   async function shareOrDownloadCsv(csvContent, filename, shareTitle) {
@@ -1869,6 +1729,14 @@
       showNotice("Missing Selection", "Please select both Inspector Name and Break Station first.");
       return;
     }
+    if (!navigator.onLine) {
+      showNotice(
+        "Internet Connection Required",
+        "You must have an active internet connection to start a break so it syncs live with the Supervisor Monitor.\n\nPlease move to an area with network coverage and try again.",
+        "📡"
+      );
+      return;
+    }
 
     saveLastInspector(u);
     btnStartBreak.disabled = true;
@@ -1881,8 +1749,40 @@
         const currentDateStr = getFormattedDate(nowDate);
         refreshHeaderDate();
 
-        activeBreakId = generateBreakId();
-        breakStartTime = get24HourTime(nowDate);
+        const newBreakId = generateBreakId();
+        const newStartTime = get24HourTime(nowDate);
+
+        btnStartBreak.innerText = "☁️ Syncing to Cloud...";
+        try {
+          await sendCloudRequired({
+            action: "START_BREAK",
+            breakId: newBreakId,
+            status: "ACTIVE",
+            date: currentDateStr,
+            user: u,
+            station: st,
+            startTime: newStartTime,
+            startTimestamp: now,
+            endTime: "",
+            duration: "",
+            gps: coords,
+            mapsUrl: breakGpsMapsUrl,
+            appVersion: APP_VERSION
+          });
+        } catch {
+          btnStartBreak.disabled = false;
+          btnStartBreak.innerText = "🟢 Start Break";
+          setGpsStatus("⚠️ Cloud sync failed — network required", "err");
+          showNotice(
+            "Cloud Sync Failed",
+            "Could not connect to the server to start your break.\n\nPlease move to an area with good network coverage and try again.",
+            "📡"
+          );
+          return;
+        }
+
+        activeBreakId = newBreakId;
+        breakStartTime = newStartTime;
 
         safeSet("active_break_id", activeBreakId);
         safeSet("active_break_start_ms", String(now));
@@ -1895,29 +1795,9 @@
         btnStartBreak.innerText = "🟢 Break Active: " + breakStartTime;
         btnStartBreak.classList.add("recorded");
         btnEndBreak.disabled = false;
+        setGpsStatus("🟢 Break is currently active");
         startTimerEngine(now);
-
-        const synced = await enqueueAndSendCloud({
-          action: "START_BREAK",
-          breakId: activeBreakId,
-          status: "ACTIVE",
-          date: currentDateStr,
-          user: u,
-          station: st,
-          startTime: breakStartTime,
-          startTimestamp: now,
-          endTime: "",
-          duration: "",
-          gps: coords,
-          mapsUrl: breakGpsMapsUrl,
-          appVersion: APP_VERSION
-        });
-
-        if (synced) {
-          showToast("🟢 Break Started & Live Monitor Updated!");
-        } else {
-          showToast("🟡 Break Started (queued for sync when online)");
-        }
+        showToast("🟢 Break Started & Live Monitor Updated!");
       },
       errMsg => {
         btnStartBreak.disabled = false;
@@ -1931,6 +1811,14 @@
     const startMs = safeGet("active_break_start_ms");
     if (!startMs) {
       showNotice("No Active Break", "Tap Start Break first.");
+      return;
+    }
+    if (!navigator.onLine) {
+      showNotice(
+        "Internet Connection Required",
+        "You must have an active internet connection to end your break so it syncs live with the Supervisor Monitor.\n\nPlease move to an area with network coverage and try again.",
+        "📡"
+      );
       return;
     }
 
@@ -1955,30 +1843,41 @@
         const mins = totalMins % 60;
         activeBreakId = safeGet("active_break_id") || activeBreakId;
 
-        const synced = await enqueueAndSendCloud({
-          action: "END_BREAK",
-          breakId: activeBreakId,
-          status: "COMPLETED",
-          date: currentDateStr,
-          user: u,
-          station: st,
-          startTime: savedStartStr,
-          startTimestamp: Number(startMs),
-          endTime: breakEndTime,
-          endTimestamp: now,
-          duration: String(totalMins),
-          gps: coords,
-          mapsUrl: breakGpsMapsUrl,
-          appVersion: APP_VERSION
-        });
+        btnEndBreak.innerText = "☁️ Syncing to Cloud...";
+        try {
+          await sendCloudRequired({
+            action: "END_BREAK",
+            breakId: activeBreakId,
+            status: "COMPLETED",
+            date: currentDateStr,
+            user: u,
+            station: st,
+            startTime: savedStartStr,
+            startTimestamp: Number(startMs),
+            endTime: breakEndTime,
+            endTimestamp: now,
+            duration: String(totalMins),
+            gps: coords,
+            mapsUrl: breakGpsMapsUrl,
+            appVersion: APP_VERSION
+          });
+        } catch {
+          btnEndBreak.disabled = false;
+          btnEndBreak.innerText = "🔴 End Break";
+          setGpsStatus("⚠️ Cloud sync failed — network required", "err");
+          showNotice(
+            "Cloud Sync Failed",
+            "Could not connect to the server to end your break.\n\nPlease move to an area with good network coverage and try again.",
+            "📡"
+          );
+          return;
+        }
 
         document.getElementById("modalDurationText").innerText = `${hours} Hours & ${mins} Mins`;
         document.getElementById("modalSummaryUser").innerText = u;
         document.getElementById("modalSummaryStation").innerText = st;
         document.getElementById("modalSummaryTime").innerText = `${savedStartStr} ➔ ${breakEndTime}`;
-        document.getElementById("modalSummarySync").innerText = synced
-          ? "✅ Synced to Cloud"
-          : "⏳ Saved offline — will auto-sync";
+        document.getElementById("modalSummarySync").innerText = "✅ Synced to Cloud";
         document.getElementById("breakSummaryModal").classList.add("open");
 
         clearInterval(breakTimerInterval);
@@ -2350,8 +2249,6 @@
 
   /* ---------- Bootstrap ---------- */
   document.addEventListener("DOMContentLoaded", () => {
-    updateNetworkIndicator();
-    updateSyncBanner();
     updateTrainCounter();
     applySavedInspector();
 
@@ -2359,10 +2256,6 @@
     const lastScreen = safeGet("quality_hub_last_screen", "screenHub");
     // Security: never restore screenSupervisor without PIN
     navigateTo(lastScreen === "screenSupervisor" ? "screenHub" : lastScreen);
-
-    if (syncQueue.length > 0 && navigator.onLine) {
-      flushCloudQueue(false);
-    }
   });
 </script>
 </body>
