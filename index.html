@@ -995,7 +995,7 @@
     <div class="field-group">
       <label class="field-label" for="trainNumber">Train Number (70XX)</label>
       <div class="train-box-wrapper">
-        <input type="tel" id="trainNumber" class="input-field" placeholder="70.." maxlength="4" inputmode="numeric" pattern="[0-9]*" value="70" autocomplete="off">
+        <input type="tel" id="trainNumber" class="input-field" placeholder="70.." maxlength="4" inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" value="70" autocomplete="off">
       </div>
     </div>
 
@@ -1558,11 +1558,34 @@
     saveLastInspector(userSelect.value);
   });
 
+  function dismissTrainKeyboard() {
+    trainInput.setAttribute("readonly", "readonly");
+    trainInput.blur();
+    if (document.activeElement && typeof document.activeElement.blur === "function") {
+      document.activeElement.blur();
+    }
+    setTimeout(() => {
+      trainInput.removeAttribute("readonly");
+      trainInput.blur();
+      arrivalBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 80);
+  }
+
+  trainInput.addEventListener("pointerdown", function () {
+    this.removeAttribute("readonly");
+  });
+
   trainInput.addEventListener("focus", function () {
+    this.removeAttribute("readonly");
     if (this.value === "70") this.setSelectionRange(2, 2);
   });
 
   trainInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      dismissTrainKeyboard();
+      return;
+    }
     if (this.selectionStart <= 2 && (e.key === "Backspace" || e.key === "Delete") && this.value.length <= 2) {
       e.preventDefault();
     }
@@ -1574,8 +1597,7 @@
     if (!d.startsWith("70")) d = "70" + d.replace(/^70*/, "");
     this.value = d.slice(0, 4);
     if (this.value.length === 4) {
-      this.blur();
-      arrivalBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+      dismissTrainKeyboard();
     }
   });
 
